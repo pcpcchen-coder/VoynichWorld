@@ -1,0 +1,465 @@
+{
+  "schema_version": "1.0",
+  "content_version": "0.2",
+  "generated_at": "2026-07-25",
+  "language": "zh-Hant",
+  "canonical_source": "docs/Vellora_WorldBible_v0.1.md",
+  "canon_levels": {
+    "A": "v0.1 明寫的原始正典",
+    "B": "由 v0.1 科學與生態機制直接推出的必要製作設定",
+    "C": "可替換的 v0.2 製作提案",
+    "D": "正典刻意保持未定的謎題與留白"
+  },
+  "entities": [
+    {
+      "id": "celestial.oq",
+      "category": "celestial",
+      "name_zh": "歐柯",
+      "name_en": "Oq",
+      "canon_level": "A",
+      "summary": "K 型橙矮母星，約 0.7 太陽質量、表面溫度約 4,500 K。",
+      "source_section": "第二章／母星：歐柯",
+      "visual_asset": "assets/ip-bible/01-cosmos-orbits.png"
+    },
+    {
+      "id": "celestial.om",
+      "category": "celestial",
+      "name_zh": "歐墨",
+      "name_en": "Om",
+      "canon_level": "A",
+      "summary": "遙遠紅矮伴星；數百年級相對週期與擾動是長冬推手之一。",
+      "source_section": "第二章／遠伴星：歐墨",
+      "visual_asset": "assets/ip-bible/01-cosmos-orbits.png"
+    },
+    {
+      "id": "celestial.vellora",
+      "category": "planet",
+      "name_zh": "薇蘿",
+      "name_en": "Vellora",
+      "canon_level": "A",
+      "summary": "約 1.1–1.2 地球質量、厚而濕潤大氣、32 地球小時一日、軸傾約 12° 的生命行星。",
+      "source_section": "第二章／三顆衛星與潮汐曆、自轉與日長",
+      "visual_asset": "assets/ip-bible/01-cosmos-orbits.png"
+    },
+    {
+      "id": "celestial.moon.leng",
+      "category": "moon",
+      "name_zh": "稜",
+      "name_en": "Leng",
+      "canon_level": "A",
+      "summary": "薇蘿三衛星之一；與珂、墨共同形成複合潮汐曆。",
+      "source_section": "第二章／三顆衛星與潮汐曆",
+      "visual_asset": "assets/ip-bible/01-cosmos-orbits.png"
+    },
+    {
+      "id": "celestial.moon.ke",
+      "category": "moon",
+      "name_zh": "珂",
+      "name_en": "Ke",
+      "canon_level": "A",
+      "summary": "薇蘿三衛星之一；與稜、墨共同主宰水池潮汐與繁殖節律。",
+      "source_section": "第二章／三顆衛星與潮汐曆",
+      "visual_asset": "assets/ip-bible/01-cosmos-orbits.png"
+    },
+    {
+      "id": "celestial.moon.mo",
+      "category": "moon",
+      "name_zh": "墨",
+      "name_en": "Mo",
+      "canon_level": "A",
+      "summary": "薇蘿三衛星之一；與稜、珂共同主宰水池潮汐與繁殖節律。",
+      "source_section": "第二章／三顆衛星與潮汐曆",
+      "visual_asset": "assets/ip-bible/01-cosmos-orbits.png"
+    },
+    {
+      "id": "system.chlora",
+      "category": "planetary_life_system",
+      "name_zh": "綠脈",
+      "name_en": "The Chlora",
+      "canon_level": "A",
+      "summary": "橫跨全球、共享水分、養分、免疫與化學訊號的共生生命網。",
+      "source_section": "第五章／生命的核心：綠脈共生網路",
+      "visual_asset": "assets/ip-bible/03-chlora-living-soil-cutaway.png"
+    },
+    {
+      "id": "system.withering",
+      "category": "ecological_crisis",
+      "name_zh": "脈枯",
+      "name_en": "The Withering",
+      "canon_level": "A",
+      "summary": "由降溫、水循環變慢、硫化中毒、管路封閉與生物泵正回饋構成的生態總崩潰。",
+      "source_section": "第九章／生態危機：脈枯",
+      "visual_asset": "assets/ip-bible/05-withering-biome.png"
+    },
+    {
+      "id": "system.original_vein",
+      "category": "mystery",
+      "name_zh": "原脈",
+      "name_en": "Original Vein",
+      "canon_level": "D",
+      "summary": "傳說中仍具全部潛能的原始根源；可能不是一個地點，真相刻意未定。",
+      "source_section": "第九至十二章／原脈主線",
+      "visual_asset": null
+    },
+    {
+      "id": "place.nine_pool_rings",
+      "category": "geography",
+      "name_zh": "九大池環",
+      "name_en": "Nine Pool-Rings",
+      "canon_level": "A",
+      "summary": "九組相連溫泉水池與其周邊綠脈組織構成的全球地理—生理分區。",
+      "source_section": "第三章／環狀大陸與內海",
+      "visual_asset": "assets/ip-bible/02-nine-pool-rings-map.png"
+    },
+    {
+      "id": "place.pool_ring.first_spring",
+      "category": "biome",
+      "name_zh": "初泉環",
+      "name_en": "First-Spring Ring",
+      "canon_level": "C",
+      "summary": "階梯溫泉與礦物台地型池環；v0.2 製作暫名。",
+      "source_section": "ip-bible/02-geography-climate-biomes.md",
+      "visual_asset": "assets/ip-bible/02-nine-pool-rings-map.png"
+    },
+    {
+      "id": "place.pool_ring.mist_crown",
+      "category": "biome",
+      "name_zh": "霧冠環",
+      "name_en": "Mist-Crown Ring",
+      "canon_level": "C",
+      "summary": "高弧山脊與常年雲霧型池環；v0.2 製作暫名。",
+      "source_section": "ip-bible/02-geography-climate-biomes.md",
+      "visual_asset": "assets/ip-bible/02-nine-pool-rings-map.png"
+    },
+    {
+      "id": "place.pool_ring.bell_tide",
+      "category": "biome",
+      "name_zh": "鐘潮環",
+      "name_en": "Bell-Tide Ring",
+      "canon_level": "C",
+      "summary": "高潮差、狹長池口與鐘管草群落型池環；v0.2 製作暫名。",
+      "source_section": "ip-bible/02-geography-climate-biomes.md",
+      "visual_asset": "assets/ip-bible/02-nine-pool-rings-map.png"
+    },
+    {
+      "id": "place.pool_ring.suture_forest",
+      "category": "biome",
+      "name_zh": "縫林環",
+      "name_en": "Suture-Forest Ring",
+      "canon_level": "C",
+      "summary": "多層拼裝林與縫葉群落型池環；v0.2 製作暫名。",
+      "source_section": "ip-bible/02-geography-climate-biomes.md",
+      "visual_asset": "assets/ip-bible/02-nine-pool-rings-map.png"
+    },
+    {
+      "id": "place.pool_ring.arch_garden",
+      "category": "biome",
+      "name_zh": "脊園環",
+      "name_en": "Arch-Garden Ring",
+      "canon_level": "C",
+      "summary": "濕原、林島與拱背獸遷徙廊道型池環；v0.2 製作暫名。",
+      "source_section": "ip-bible/02-geography-climate-biomes.md",
+      "visual_asset": "assets/ip-bible/02-nine-pool-rings-map.png"
+    },
+    {
+      "id": "place.pool_ring.lamp_marsh",
+      "category": "biome",
+      "name_zh": "燈沼環",
+      "name_en": "Lamp-Marsh Ring",
+      "canon_level": "C",
+      "summary": "長夜黑水濕地與螢光花型池環；v0.2 製作暫名。",
+      "source_section": "ip-bible/02-geography-climate-biomes.md",
+      "visual_asset": "assets/ip-bible/02-nine-pool-rings-map.png"
+    },
+    {
+      "id": "place.pool_ring.indigo_hill",
+      "category": "biome",
+      "name_zh": "靛丘環",
+      "name_en": "Indigo-Hill Ring",
+      "canon_level": "C",
+      "summary": "富色素礦物、藥用植物與記脈種源庫型池環；v0.2 製作暫名。",
+      "source_section": "ip-bible/02-geography-climate-biomes.md",
+      "visual_asset": "assets/ip-bible/02-nine-pool-rings-map.png"
+    },
+    {
+      "id": "place.pool_ring.sulfur_rift",
+      "category": "biome",
+      "name_zh": "硫裂環",
+      "name_en": "Sulfur-Rift Ring",
+      "canon_level": "C",
+      "summary": "年輕裂谷、缺氧地下水與脈枯前線型池環；v0.2 製作暫名。",
+      "source_section": "ip-bible/02-geography-climate-biomes.md",
+      "visual_asset": "assets/ip-bible/05-withering-biome.png"
+    },
+    {
+      "id": "place.pool_ring.still_heart",
+      "category": "biome",
+      "name_zh": "靜心環",
+      "name_en": "Still-Heart Ring",
+      "canon_level": "C",
+      "summary": "深內海與古老導管匯流型池環；是原脈線索入口但不等同原脈。",
+      "source_section": "ip-bible/02-geography-climate-biomes.md",
+      "visual_asset": "assets/ip-bible/02-nine-pool-rings-map.png"
+    },
+    {
+      "id": "guild.fungal_skeleton",
+      "category": "symbiotic_guild",
+      "name_zh": "真菌骨架群",
+      "name_en": "Fungal Skeleton Guild",
+      "canon_level": "A",
+      "summary": "建立菌絲網、導管外壁、土壤黏結與跨譜系癒合的構成群。",
+      "source_section": "第五至六章",
+      "visual_asset": "assets/ip-bible/03-chlora-living-soil-cutaway.png"
+    },
+    {
+      "id": "guild.photosynthetic_tissue",
+      "category": "symbiotic_guild",
+      "name_zh": "光合組織群",
+      "name_en": "Photosynthetic Tissue Guild",
+      "canon_level": "A",
+      "summary": "使用遠紅光捕光色素與花青素、可跨宿主縫合或內養的光合構成群。",
+      "source_section": "第五至七章",
+      "visual_asset": "assets/ip-bible/03-chlora-living-soil-cutaway.png"
+    },
+    {
+      "id": "guild.nitrogen_fixers",
+      "category": "symbiotic_guild",
+      "name_zh": "固氮夥伴群",
+      "name_en": "Nitrogen-Fixing Partners",
+      "canon_level": "A",
+      "summary": "居住於根瘤與囊球、為共生體提供可用氮的微生物功能群。",
+      "source_section": "第五至六章",
+      "visual_asset": "assets/ip-bible/03-chlora-living-soil-cutaway.png"
+    },
+    {
+      "id": "guild.water_storage_symbionts",
+      "category": "symbiotic_guild",
+      "name_zh": "海綿型儲水共生體",
+      "name_en": "Sponge-Like Water Symbionts",
+      "canon_level": "A",
+      "summary": "被植物器官化、形成多孔囊球與活土水庫的類動物共生群。",
+      "source_section": "第六章／共生器官",
+      "visual_asset": "assets/ip-bible/03-chlora-living-soil-cutaway.png"
+    },
+    {
+      "id": "guild.biolu_colonies",
+      "category": "symbiotic_guild",
+      "name_zh": "發光菌落群",
+      "name_en": "Bioluminescent Colonies",
+      "canon_level": "A",
+      "summary": "負責黃昏授粉訊號、警報與節律同步的發光共生群。",
+      "source_section": "第六至八章",
+      "visual_asset": "assets/ip-bible/04-healthy-pool-ring-biome.png"
+    },
+    {
+      "id": "guild.sulfur_microbes",
+      "category": "microbial_guild",
+      "name_zh": "厭氧產硫群",
+      "name_en": "Anaerobic Sulfur Producers",
+      "canon_level": "A",
+      "summary": "在低流速缺氧管路爆發、產生硫化氫並毒害管壁的微生物群。",
+      "source_section": "第七至九章",
+      "visual_asset": "assets/ip-bible/05-withering-biome.png"
+    },
+    {
+      "id": "species.weaver",
+      "category": "sapient_species",
+      "name_zh": "織脈者",
+      "name_en": "The Weavers",
+      "canon_level": "A",
+      "summary": "具掌舌化學感受器與可見皮下脈紋、能讀取綠脈化學語言的智慧種族。",
+      "source_section": "第十章／織脈者",
+      "visual_asset": "assets/ip-bible/11-weaver-anatomy.png"
+    },
+    {
+      "id": "species.bellpipe",
+      "category": "flora",
+      "name_zh": "鐘管草",
+      "name_en": "Bellpipe",
+      "canon_level": "A",
+      "summary": "以中空根管和潮汐共鳴同步周圍開花的拼裝植物。",
+      "source_section": "第六章／三個代表性物種",
+      "visual_asset": "assets/ip-bible/06-flora-lineup.png"
+    },
+    {
+      "id": "species.sutureleaf",
+      "category": "flora",
+      "name_zh": "縫葉",
+      "name_en": "Sutureleaf",
+      "canon_level": "A",
+      "summary": "同株縫合五種葉形、分擔光譜與防禦功能的嫁接嵌合體。",
+      "source_section": "第六章／三個代表性物種",
+      "visual_asset": "assets/ip-bible/06-flora-lineup.png"
+    },
+    {
+      "id": "species.embercrown",
+      "category": "flora",
+      "name_zh": "燼冠",
+      "name_en": "Embercrown",
+      "canon_level": "A",
+      "summary": "斷網後硫代謝與同源異位失控形成的發熱病態植物型。",
+      "source_section": "第六章／三個代表性物種",
+      "visual_asset": "assets/ip-bible/06-flora-lineup.png"
+    },
+    {
+      "id": "species.naiadin",
+      "category": "fauna",
+      "name_zh": "潾者",
+      "name_en": "The Naiadin",
+      "canon_level": "A",
+      "summary": "半透明、內養光合藻、以黏液在池間搬運孢子與胚芽的兩棲信使。",
+      "source_section": "第八章／潾者",
+      "visual_asset": "assets/ip-bible/08-lian-naiadin-character-sheet.png"
+    },
+    {
+      "id": "species.archback",
+      "category": "fauna",
+      "name_zh": "拱背獸",
+      "name_en": "Archback",
+      "canon_level": "A",
+      "summary": "背負共生植群、邊行走邊修剪與施肥綠脈的大型半自養園丁。",
+      "source_section": "第八章／其他重要動物",
+      "visual_asset": "assets/ip-bible/07-fauna-lineup.png"
+    },
+    {
+      "id": "species.lampmoth",
+      "category": "fauna",
+      "name_zh": "燈蛾群",
+      "name_en": "Lampmoths",
+      "canon_level": "A",
+      "summary": "在黃昏以生物光辨認螢光花並完成授粉的群體飛行動物。",
+      "source_section": "第八章／其他重要動物",
+      "visual_asset": "assets/ip-bible/07-fauna-lineup.png"
+    },
+    {
+      "id": "species.drawmite",
+      "category": "fauna",
+      "name_zh": "汲蟲",
+      "name_en": "Drawmites",
+      "canon_level": "A",
+      "summary": "生活在導管內、清理沉積的微小清道夫；缺氧死後屍體會加速栓塞。",
+      "source_section": "第八章／其他重要動物",
+      "visual_asset": "assets/ip-bible/07-fauna-lineup.png"
+    },
+    {
+      "id": "species.riven",
+      "category": "fauna_state",
+      "name_zh": "裂獸",
+      "name_en": "Riven",
+      "canon_level": "B",
+      "summary": "溫馴共生動物斷網後失去化學抑制、行為與代謝失控的症候群總稱。",
+      "source_section": "第八章／其他重要動物",
+      "visual_asset": "assets/ip-bible/07-fauna-lineup.png"
+    },
+    {
+      "id": "character.korin",
+      "category": "character",
+      "name_zh": "珂潾",
+      "name_en": "Korin",
+      "canon_level": "A",
+      "summary": "高化學感受力的年輕記脈者、博物學者與《伏尼契手稿》田野筆記作者。",
+      "source_section": "第十一章／主角：珂潾",
+      "visual_asset": "assets/ip-bible/09-named-characters-lineup.png"
+    },
+    {
+      "id": "character.jin",
+      "category": "character",
+      "name_zh": "燼",
+      "name_en": "Jin",
+      "canon_level": "A",
+      "summary": "務實寡言、帶灼傷疤的焚脈派前線行動者；珂潾的理念對手與盟友。",
+      "source_section": "第十一章／重要配角",
+      "visual_asset": "assets/ip-bible/09-named-characters-lineup.png"
+    },
+    {
+      "id": "character.lian",
+      "category": "character",
+      "name_zh": "漣",
+      "name_en": "Lian",
+      "canon_level": "A",
+      "summary": "異常年長、能與珂潾以化學訊號對話的潾者嚮導與良心。",
+      "source_section": "第十一章／重要配角",
+      "visual_asset": "assets/ip-bible/08-lian-naiadin-character-sheet.png"
+    },
+    {
+      "id": "character.auri",
+      "category": "character",
+      "name_zh": "奧芮",
+      "name_en": "Auri",
+      "canon_level": "D",
+      "summary": "追查原脈後失蹤的導師；性別、生死與失蹤真相刻意保持未定。",
+      "source_section": "第十一章／重要配角",
+      "visual_asset": "assets/ip-bible/09-named-characters-lineup.png"
+    },
+    {
+      "id": "character.confluence_voice",
+      "category": "character",
+      "name_zh": "穹母",
+      "name_en": "The Confluence Voice",
+      "canon_level": "A",
+      "summary": "已半融入網路、由眾多生命齊聲發話的融脈教領袖。",
+      "source_section": "第十一章／重要配角",
+      "visual_asset": "assets/ip-bible/09-named-characters-lineup.png"
+    },
+    {
+      "id": "faction.vein_archive",
+      "category": "faction",
+      "name_zh": "記脈院",
+      "name_en": "Vein Archive",
+      "canon_level": "A",
+      "summary": "主張記錄、保種、尋找原脈並重播健康新網的陣營。",
+      "source_section": "第九至十章／三大勢力",
+      "visual_asset": "assets/ip-bible/10-faction-costumes.png"
+    },
+    {
+      "id": "faction.burn_the_vein",
+      "category": "faction",
+      "name_zh": "焚脈派",
+      "name_en": "Burn-the-Vein",
+      "canon_level": "A",
+      "summary": "主張主動焚燒與隔離中毒網路段、犧牲局部保全整體的陣營。",
+      "source_section": "第九至十章／三大勢力",
+      "visual_asset": "assets/ip-bible/10-faction-costumes.png"
+    },
+    {
+      "id": "faction.merge_cult",
+      "category": "faction",
+      "name_zh": "融脈教",
+      "name_en": "Merge Cult",
+      "canon_level": "A",
+      "summary": "主張放棄個體邊界、讓所有生命融入網路共同生死的陣營。",
+      "source_section": "第九至十章／三大勢力",
+      "visual_asset": "assets/ip-bible/10-faction-costumes.png"
+    },
+    {
+      "id": "substance.indolk",
+      "category": "substance",
+      "name_zh": "靛乳",
+      "name_en": "Indolk",
+      "canon_level": "A",
+      "summary": "鐘管草汁液；低劑量暫通輕微栓塞，過量造成訊號紊亂。",
+      "source_section": "第七章／藥理三例",
+      "visual_asset": "assets/ip-bible/06-flora-lineup.png"
+    },
+    {
+      "id": "substance.suran",
+      "category": "substance",
+      "name_zh": "縫苦",
+      "name_en": "Suran",
+      "canon_level": "A",
+      "summary": "縫葉生物鹼；強效止痛與麻醉，也是治療窗狹窄的致命毒。",
+      "source_section": "第七章／藥理三例",
+      "visual_asset": "assets/ip-bible/06-flora-lineup.png"
+    },
+    {
+      "id": "substance.emberash",
+      "category": "substance",
+      "name_zh": "燼灰",
+      "name_en": "Emberash",
+      "canon_level": "A",
+      "summary": "燼冠焚燒後灰分，可中和局部硫化物並暫時保住小段綠脈。",
+      "source_section": "第七章／藥理三例",
+      "visual_asset": "assets/ip-bible/06-flora-lineup.png"
+    }
+  ]
+}
