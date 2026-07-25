@@ -1,17 +1,18 @@
 # 薇蘿世界角色與生態 IP 聖經
 
-**VELLORA Character & Ecosystem IP Bible · v0.2 · 2026-07-25**
+**VELLORA Character & Ecosystem IP Bible · v0.3 · 2026-07-25**
 
 ![珂潾、燼與漣面向脈枯前線](../assets/ip-bible/12-story-key-art.png)
 
-這份文件集把 [`docs/Vellora_WorldBible_v0.1.md`](../docs/Vellora_WorldBible_v0.1.md) 的設定整理成可供概念設計、小說、遊戲、動畫、授權與後續資料化直接使用的 IP 規格。它完整覆蓋 repo 既有的虛構天體、世界機制、具名植物、動物、智慧物種、具名人物與勢力，並補上地貌、氣候、生態位、外形、性格、聲音、動態、敘事功能和不可偏移的設計界線。
+這份文件集把 [`docs/Vellora_WorldBible_v0.1.md`](../docs/Vellora_WorldBible_v0.1.md) 的設定整理成可供概念設計、小說、遊戲、動畫、授權與後續資料化直接使用的 IP 規格。它完整覆蓋 repo 既有的虛構天體、世界機制、具名植物、動物、智慧物種、具名人物與勢力，並補上地貌、氣候、生態位、外形、性格、聲音、動態、敘事功能、文章插畫和不可偏移的設計界線。
 
 ## 本版交付
 
-- 12 張原創視覺：天文、世界地圖、活土剖面、健康與脈枯環境、全植物、全動物、漣、全具名人物、三勢力、織脈者解剖、故事主視覺。
-- 9 份開發文件：視覺語言、天文行星、地貌氣候、生命系統、植物、動物、人物、勢力文化、製作規格。
+- 12 張原創概念視覺：天文、世界地圖、活土剖面、健康與脈枯環境、全植物、全動物、漣、全具名人物、三勢力、織脈者解剖、故事主視覺。
+- 12 張珂潾世界互動文章插畫：九池環探索、跨物種合作、脈枯前線、奧芮留白、穹母門檻與種源送出。
+- 10 份編號開發文件：視覺語言、天文行星、地貌氣候、生命系統、植物、動物、人物、勢力文化、製作規格、主角文章插畫。
 - 1 份機器可讀實體索引：[`data/vellora_ip_entities_v0.2.json`](../data/vellora_ip_entities_v0.2.json)。
-- 1 份可重現圖像提示集：[`IMAGE_PROMPTS.md`](IMAGE_PROMPTS.md)。
+- 2 份可重現圖像提示集：[`IMAGE_PROMPTS.md`](IMAGE_PROMPTS.md)、[`KORIN_ARTICLE_PROMPTS.md`](KORIN_ARTICLE_PROMPTS.md)。
 
 ## 正典層級
 
@@ -37,6 +38,8 @@
 | 所有具名人物與關係、弧線 | [`06-characters.md`](06-characters.md) |
 | 織脈者、三勢力、日常文化 | [`07-factions-and-culture.md`](07-factions-and-culture.md) |
 | 遊戲／動畫／授權製作規格 | [`08-production-guide.md`](08-production-guide.md) |
+| 12 張珂潾世界互動文章插畫 | [`09-korin-article-illustrations.md`](09-korin-article-illustrations.md) |
+| 重現珂潾插畫的提示規格 | [`KORIN_ARTICLE_PROMPTS.md`](KORIN_ARTICLE_PROMPTS.md) |
 
 ## 完整覆蓋清單
 
@@ -72,6 +75,15 @@
 | 10 | [`10-faction-costumes.png`](../assets/ip-bible/10-faction-costumes.png) | 三勢力服裝語彙 |
 | 11 | [`11-weaver-anatomy.png`](../assets/ip-bible/11-weaver-anatomy.png) | 織脈者物種特徵 |
 | 12 | [`12-story-key-art.png`](../assets/ip-bible/12-story-key-art.png) | 故事主視覺 |
+
+### 珂潾文章插畫
+
+![珂潾在初泉環診斷活土](../assets/ip-bible/korin-article/01-firstspring-diagnosis.png)
+
+第二組 12 張敘事圖全部位於
+[`assets/ip-bible/korin-article/`](../assets/ip-bible/korin-article/)，依「探索 → 合作 → 危機 → 選擇 → 延續」
+排序。完整圖像、章節用途、圖說、替代文字與正典界線見
+[`09-korin-article-illustrations.md`](09-korin-article-illustrations.md)。
 
 ## 設計總句
 

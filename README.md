@@ -11,7 +11,7 @@
 <img src="assets/cover.jpg" alt="薇蘿世界設定聖經封面" width="340">
 
 [![License: CC BY-NC-SA 4.0](https://img.shields.io/badge/License-CC%20BY--NC--SA%204.0-lightgrey.svg)](LICENSE)
-![Version](https://img.shields.io/badge/version-v0.1-blue)
+![Version](https://img.shields.io/badge/version-v0.3-blue)
 ![Pages](https://img.shields.io/badge/手稿逐頁資料-209%20頁-green)
 
 </div>
@@ -25,6 +25,7 @@
 - [路線 A：伏尼契手稿中文導讀](#路線-a伏尼契手稿中文導讀)
 - [路線 B：薇蘿世界 VELLORA](#路線-b薇蘿世界-vellora)
 - [角色與生態 IP 聖經 v0.2](#角色與生態-ip-聖經-v02)
+- [珂潾文章插畫集 v0.3](#珂潾文章插畫集-v03)
 - [手稿六大分區 → 世界六個面向](#手稿六大分區--世界六個面向)
 - [逐頁分區資料](#逐頁分區資料)
 - [倉庫結構](#倉庫結構)
@@ -142,7 +143,22 @@
   外形、生理、生態位、性格印象、聲音、動態與危機狀態。
 - 逐一建立全部具名角色（珂潾、燼、漣、奧芮、穹母）的個性、弱點、弧線、關係與表演規格。
 - 收錄 12 張原創概念圖、三勢力服裝、織脈者解剖、製作 QA、圖像提示集與機器可讀實體索引。
+- 另收錄 12 張以珂潾為固定視點的世界互動文章插畫，含圖說、替代文字、章節位置與完整提示集。
 - 以 A／B／C／D 四層標示原始正典、必要推導、製作提案與刻意留白，避免虛構延伸冒充手稿內容。
+
+### 珂潾文章插畫集 v0.3
+
+<div align="center">
+<img src="assets/ip-bible/korin-article/12-seeds-into-the-current.png" alt="珂潾把筆記副本與多樣種源交給漣" width="760">
+</div>
+
+[`ip-bible/09-korin-article-illustrations.md`](ip-bible/09-korin-article-illustrations.md)
+收錄 12 張可直接置入文章的寬幅敘事插畫。場景從初泉環的嚐味診斷一路經過霧冠、鐘潮、縫林、脊園、
+燈沼、靛丘、硫裂與靜心環，並涵蓋珂潾與漣、燼、拱背獸、燈蛾、活土、奧芮遺留物及穹母的互動。
+
+- 每張附文章用途、角色狀態、世界資訊、正典界線、圖說與無障礙替代文字。
+- 以「探索 → 合作 → 危機 → 選擇 → 延續」排序，可直接作為長篇設定文或小說章首的視覺節奏。
+- 完整生成規格見 [`ip-bible/KORIN_ARTICLE_PROMPTS.md`](ip-bible/KORIN_ARTICLE_PROMPTS.md)。
 
 ### 設定聖經內容（19 頁 / 16 章）
 
@@ -246,10 +262,12 @@ VoynichWorld/
 │   ├── Vellora_WorldBible_v0.1.md             # Markdown 版（GitHub 可直接閱讀）
 │   └── Vellora_WorldBible_v0.1.docx           # Word 排版版（19 頁）
 │
-├── ip-bible/                                  # v0.2 角色與生態 IP 聖經
+├── ip-bible/                                  # v0.2–v0.3 角色、生態與敘事視覺
 │   ├── README.md                              # 導覽、覆蓋清單與圖像索引
 │   ├── 00-visual-language.md … 08-production-guide.md
-│   └── IMAGE_PROMPTS.md                       # 可重現圖像提示集
+│   ├── 09-korin-article-illustrations.md       # 12 張珂潾文章插畫與圖說
+│   ├── IMAGE_PROMPTS.md                       # v0.2 概念圖提示集
+│   └── KORIN_ARTICLE_PROMPTS.md               # v0.3 文章插畫提示集
 │
 ├── data/
 │   ├── voynich_pages_classification.json      # 209 頁逐頁分區資料（設定所依據）
@@ -262,7 +280,9 @@ VoynichWorld/
     ├── cover.jpg                              # 設定聖經封面
     ├── sample_ch5.jpg                         # 內頁樣張：綠脈共生網路
     ├── sample_science_notes.jpg               # 內頁樣張：科學可信度附註對照表
-    └── ip-bible/                              # 12 張角色、生物、環境與世界概念圖
+    └── ip-bible/
+        ├── 01-cosmos-orbits.png … 12-story-key-art.png
+        └── korin-article/                     # 12 張珂潾世界互動文章插畫
 ```
 
 ---
@@ -277,6 +297,7 @@ VoynichWorld/
 | 逐頁翻 209 頁圖版 | [`guide-full/index.html`](guide-full/index.html) |
 | 世界觀設定全文 | [`docs/Vellora_WorldBible_v0.1.md`](docs/Vellora_WorldBible_v0.1.md) |
 | 全角色、動植物、星球、地貌與氣候 IP 設定 | [`ip-bible/README.md`](ip-bible/README.md) |
+| 12 張珂潾世界互動文章插畫 | [`ip-bible/09-korin-article-illustrations.md`](ip-bible/09-korin-article-illustrations.md) |
 | 可列印的 PDF | [`guide/伏尼契手稿中文導讀_第一版.pdf`](guide/) |
 
 ### 在本機跑起來
@@ -333,6 +354,7 @@ node build_vellora.js     # 產生 薇蘿世界設定聖經_v0.1.docx
 
 - [x] **v0.1** 世界觀設定聖經（16 章）
 - [x] **v0.2** 角色與生態 IP 聖經：全具名角色／動植物、星球地貌氣候、12 張概念圖、實體索引
+- [x] **v0.3** 珂潾文章插畫集：12 張世界互動敘事圖、圖說、替代文字、文章位置與提示集
 - [ ] **植物圖鑑**：把手稿植物逐頁重畫為「拼裝體」條目，做成可收集的偽手稿圖版
 - [ ] **逐隻動物設定畫冊**：由 v0.2 角色板擴成多姿態、生命階段與棲地頁
 - [ ] **遊戲核心玩法文件**：「嚐味診斷」機制、探索循環、多結局分支
