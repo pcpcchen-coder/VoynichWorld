@@ -24,6 +24,7 @@
 - [兩條路線的分工](#兩條路線的分工)
 - [路線 A：伏尼契手稿中文導讀](#路線-a伏尼契手稿中文導讀)
 - [路線 B：薇蘿世界 VELLORA](#路線-b薇蘿世界-vellora)
+- [角色與生態 IP 聖經 v0.2](#角色與生態-ip-聖經-v02)
 - [手稿六大分區 → 世界六個面向](#手稿六大分區--世界六個面向)
 - [逐頁分區資料](#逐頁分區資料)
 - [倉庫結構](#倉庫結構)
@@ -127,6 +128,22 @@
 主角 **珂潾** 是能用舌與掌「嚐」懂綠脈化學語言的記錄者；她追尋失蹤導師與傳說中的「原脈」，
 最終要在三大勢力（**焚脈／融脈／記脈**）之間，替整個世界做出選擇——這也構成遊戲的多結局。
 
+### 角色與生態 IP 聖經 v0.2
+
+<div align="center">
+<img src="assets/ip-bible/12-story-key-art.png" alt="珂潾、燼與漣面向脈枯前線" width="760">
+</div>
+
+[`ip-bible/`](ip-bible/) 把 v0.1 世界設定擴充成可直接供概念設計、小說、遊戲、動畫與授權使用的
+**角色與生態 IP 規格**：
+
+- 完整覆蓋歐柯系、薇蘿、三衛星、九大池環、綠脈、脈枯與原脈留白。
+- 逐一建立全部具名植物（鐘管草、縫葉、燼冠）與動物（潾者、拱背獸、燈蛾群、汲蟲、裂獸）的
+  外形、生理、生態位、性格印象、聲音、動態與危機狀態。
+- 逐一建立全部具名角色（珂潾、燼、漣、奧芮、穹母）的個性、弱點、弧線、關係與表演規格。
+- 收錄 12 張原創概念圖、三勢力服裝、織脈者解剖、製作 QA、圖像提示集與機器可讀實體索引。
+- 以 A／B／C／D 四層標示原始正典、必要推導、製作提案與刻意留白，避免虛構延伸冒充手稿內容。
+
 ### 設定聖經內容（19 頁 / 16 章）
 
 完整內容見 **[`docs/Vellora_WorldBible_v0.1.md`](docs/Vellora_WorldBible_v0.1.md)**（可在 GitHub 直接閱讀），
@@ -229,8 +246,14 @@ VoynichWorld/
 │   ├── Vellora_WorldBible_v0.1.md             # Markdown 版（GitHub 可直接閱讀）
 │   └── Vellora_WorldBible_v0.1.docx           # Word 排版版（19 頁）
 │
+├── ip-bible/                                  # v0.2 角色與生態 IP 聖經
+│   ├── README.md                              # 導覽、覆蓋清單與圖像索引
+│   ├── 00-visual-language.md … 08-production-guide.md
+│   └── IMAGE_PROMPTS.md                       # 可重現圖像提示集
+│
 ├── data/
-│   └── voynich_pages_classification.json      # 209 頁逐頁分區資料（設定所依據）
+│   ├── voynich_pages_classification.json      # 209 頁逐頁分區資料（設定所依據）
+│   └── vellora_ip_entities_v0.2.json           # IP 實體機器可讀索引
 │
 ├── tools/
 │   └── build_vellora.js                       # 由內容產生 Word 檔的 docx-js 腳本
@@ -238,7 +261,8 @@ VoynichWorld/
 └── assets/
     ├── cover.jpg                              # 設定聖經封面
     ├── sample_ch5.jpg                         # 內頁樣張：綠脈共生網路
-    └── sample_science_notes.jpg               # 內頁樣張：科學可信度附註對照表
+    ├── sample_science_notes.jpg               # 內頁樣張：科學可信度附註對照表
+    └── ip-bible/                              # 12 張角色、生物、環境與世界概念圖
 ```
 
 ---
@@ -252,6 +276,7 @@ VoynichWorld/
 | 手稿到底是什麼、目前研究到哪 | [`guide/index.html`](guide/index.html)（下載後用瀏覽器開） |
 | 逐頁翻 209 頁圖版 | [`guide-full/index.html`](guide-full/index.html) |
 | 世界觀設定全文 | [`docs/Vellora_WorldBible_v0.1.md`](docs/Vellora_WorldBible_v0.1.md) |
+| 全角色、動植物、星球、地貌與氣候 IP 設定 | [`ip-bible/README.md`](ip-bible/README.md) |
 | 可列印的 PDF | [`guide/伏尼契手稿中文導讀_第一版.pdf`](guide/) |
 
 ### 在本機跑起來
@@ -307,8 +332,9 @@ node build_vellora.js     # 產生 薇蘿世界設定聖經_v0.1.docx
 **路線 B · 薇蘿世界**
 
 - [x] **v0.1** 世界觀設定聖經（16 章）
+- [x] **v0.2** 角色與生態 IP 聖經：全具名角色／動植物、星球地貌氣候、12 張概念圖、實體索引
 - [ ] **植物圖鑑**：把手稿植物逐頁重畫為「拼裝體」條目，做成可收集的偽手稿圖版
-- [ ] **潾者與動物設定畫冊**
+- [ ] **逐隻動物設定畫冊**：由 v0.2 角色板擴成多姿態、生命階段與棲地頁
 - [ ] **遊戲核心玩法文件**：「嚐味診斷」機制、探索循環、多結局分支
 - [ ] **序章短篇小說**（由設定聖經序章擴寫）
 - [ ] **conlang（織脈者文字）** 的多通道書寫系統原型
