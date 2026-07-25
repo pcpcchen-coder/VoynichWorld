@@ -1,0 +1,559 @@
+// 薇蘿世界設定聖經 — Word generator
+const docx = require('docx');
+const fs = require('fs');
+const {
+  Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType,
+  TableOfContents, PageBreak, Table, TableRow, TableCell, WidthType,
+  BorderStyle, ShadingType, LevelFormat, Footer, PageNumber, TabStopType, TabStopPosition
+} = docx;
+
+const BODY = "Noto Serif CJK TC";
+const SANS = "Noto Sans CJK TC";
+const INK = "1F2A24";      // deep green-black
+const ACCENT = "2E6E4E";   // vellora green
+const MUTE = "6B6459";     // sepia
+const RULE = "B9AE92";
+
+// ---------- helpers ----------
+function t(text, opts = {}) {
+  return new TextRun({ text, font: opts.font || BODY, size: opts.size || 21,
+    bold: opts.bold, italics: opts.italics, color: opts.color || INK, break: opts.break });
+}
+function p(text, opts = {}) {
+  const runs = Array.isArray(text) ? text : [t(text, opts)];
+  return new Paragraph({
+    children: runs,
+    spacing: { after: opts.after ?? 140, line: opts.line ?? 300, before: opts.before ?? 0 },
+    alignment: opts.align || AlignmentType.JUSTIFIED,
+    indent: opts.indent,
+  });
+}
+function h1(text) {
+  return new Paragraph({
+    heading: HeadingLevel.HEADING_1,
+    spacing: { before: 320, after: 160 },
+    children: [new TextRun({ text, font: SANS, size: 30, bold: true, color: ACCENT })],
+    border: { bottom: { color: RULE, style: BorderStyle.SINGLE, size: 8, space: 6 } },
+  });
+}
+function h2(text) {
+  return new Paragraph({
+    heading: HeadingLevel.HEADING_2,
+    spacing: { before: 220, after: 110 },
+    children: [new TextRun({ text, font: SANS, size: 24, bold: true, color: INK })],
+  });
+}
+function h3(text) {
+  return new Paragraph({
+    heading: HeadingLevel.HEADING_3,
+    spacing: { before: 160, after: 80 },
+    children: [new TextRun({ text, font: SANS, size: 21, bold: true, color: ACCENT })],
+  });
+}
+function quote(text) {
+  return new Paragraph({
+    spacing: { before: 120, after: 160, line: 300 },
+    indent: { left: 360, right: 360 },
+    border: { left: { color: ACCENT, style: BorderStyle.SINGLE, size: 18, space: 12 } },
+    children: [new TextRun({ text, font: BODY, size: 21, italics: true, color: MUTE })],
+  });
+}
+function bullets(items) {
+  return items.map(it => new Paragraph({
+    numbering: { reference: "dot", level: 0 },
+    spacing: { after: 70, line: 290 },
+    alignment: AlignmentType.JUSTIFIED,
+    children: Array.isArray(it) ? it : [t(it)],
+  }));
+}
+function label(strong, rest) {
+  return p([t(strong, { bold: true, color: ACCENT }), t(rest)]);
+}
+// table
+function cell(text, { w, header, bg } = {}) {
+  const runs = Array.isArray(text) ? text : [new TextRun({ text, font: SANS, size: header ? 19 : 19, bold: !!header, color: header ? "FFFFFF" : INK })];
+  return new TableCell({
+    width: { size: w, type: WidthType.DXA },
+    shading: { type: ShadingType.CLEAR, fill: header ? ACCENT : (bg || "FFFFFF") },
+    margins: { top: 60, bottom: 60, left: 90, right: 90 },
+    children: [new Paragraph({ spacing: { after: 0, line: 260 }, children: runs })],
+  });
+}
+function table(headers, rows, widths) {
+  const trs = [];
+  trs.push(new TableRow({ tableHeader: true, children: headers.map((hh, i) => cell(hh, { w: widths[i], header: true })) }));
+  rows.forEach((r, ri) => {
+    trs.push(new TableRow({ children: r.map((c, i) => cell(c, { w: widths[i], bg: ri % 2 ? "F1EEE4" : "FFFFFF" })) }));
+  });
+  return new Table({
+    columnWidths: widths,
+    width: { size: widths.reduce((a, b) => a + b, 0), type: WidthType.DXA },
+    borders: {
+      top: { style: BorderStyle.SINGLE, size: 4, color: RULE },
+      bottom: { style: BorderStyle.SINGLE, size: 4, color: RULE },
+      left: { style: BorderStyle.SINGLE, size: 4, color: RULE },
+      right: { style: BorderStyle.SINGLE, size: 4, color: RULE },
+      insideHorizontal: { style: BorderStyle.SINGLE, size: 2, color: RULE },
+      insideVertical: { style: BorderStyle.SINGLE, size: 2, color: RULE },
+    },
+    rows: trs,
+  });
+}
+function spacer(after = 120) { return new Paragraph({ spacing: { after }, children: [t("")] }); }
+
+const K = []; // children
+
+// ---------- COVER ----------
+K.push(new Paragraph({ spacing: { before: 1400, after: 0 }, alignment: AlignmentType.CENTER,
+  children: [new TextRun({ text: "薇 蘿 世 界", font: SANS, size: 62, bold: true, color: ACCENT })] }));
+K.push(new Paragraph({ spacing: { before: 60, after: 0 }, alignment: AlignmentType.CENTER,
+  children: [new TextRun({ text: "V E L L O R A", font: SANS, size: 26, color: MUTE, characterSpacing: 60 })] }));
+K.push(new Paragraph({ spacing: { before: 360, after: 0 }, alignment: AlignmentType.CENTER,
+  children: [new TextRun({ text: "世界觀設定聖經　World Bible", font: SANS, size: 26, bold: true, color: INK })] }));
+K.push(new Paragraph({ spacing: { before: 40, after: 0 }, alignment: AlignmentType.CENTER,
+  children: [new TextRun({ text: "以《伏尼契手稿》為基石的失落生態誌", font: BODY, size: 22, color: MUTE })] }));
+K.push(new Paragraph({ spacing: { before: 520, after: 0 }, alignment: AlignmentType.CENTER,
+  children: [new TextRun({ text: "科學奇幻 × 生態危機　·　遊戲與文學開發基礎文件", font: BODY, size: 20, color: MUTE })] }));
+K.push(new Paragraph({ spacing: { before: 40, after: 0 }, alignment: AlignmentType.CENTER,
+  children: [new TextRun({ text: "版本 v0.1　·　2026", font: SANS, size: 18, color: RULE })] }));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 使用說明 / TOC ----------
+K.push(h1("如何使用本文件"));
+K.push(p([
+  t("這是一份"), t("開發基礎文件（World Bible）", { bold: true }),
+  t("，不是小說本身。它的任務是把《伏尼契手稿》真實存在的六大圖版分區——植物草藥、天文占星、浴療生物、宇宙摺頁、藥劑部件、配方星號——重新詮釋為"),
+  t("一個真實存在過的失落世界所留下的田野筆記", { bold: true, color: ACCENT }),
+  t("，並在物理、化學與生物學可自洽的前提下，反推出這個世界的恆星、氣候、地質、植物成因、動物群、智慧種族與危機，最後長出可供遊戲與文學發展的主角與故事主線。"),
+]));
+K.push(p([
+  t("全書遵守一條原則："), t("奇幻只出現在「我們尚未知道的地方」，不出現在「我們已知會被違反的地方」。", { bold: true }),
+  t("每一項看似魔法的設定，後面都對應一個真實的地球現象（見末章〈科學可信度附註〉）。"),
+]));
+K.push(spacer(80));
+K.push(h3("目錄"));
+K.push(new TableOfContents("目錄", { hyperlink: true, headingStyleRange: "1-2" }));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 0. 開場故事 ----------
+K.push(h1("序章　一頁犢皮上的世界"));
+K.push(quote("「若你正讀著這些字，代表水已經退到我畫下這條線的地方。請把最後一頁翻到光下——那不是插圖，那是回家的路。」——記脈者珂潾，於脈枯第七年"));
+K.push(p("霧是綠色的。不是被草地映綠，而是霧本身帶著細碎的螢光孢子，在橙色的晨光裡像懸浮的粉末。珂潾蹲在池緣，把一片剛採下的葉子按進舌下。葉子在她口腔裡釋放出一串味道——先是銅鏽般的鹹，接著是薄荷轉苦，最後拖著一縷焦味。她閉上眼。焦味的意思是：這條脈，快斷了。"));
+K.push(p("在薇蘿，植物不會只是植物。她手裡這一株，根像一組被誰精心焊接過的黃銅管路，莖上同時開著三種不同的花，葉緣還長著本該屬於另一種蕨類的細齒。這在她的世界裡再正常不過——這裡的生命不靠「分家」演化，而靠「合體」。整顆星球的綠色，其實是同一張網。"));
+K.push(p("而那張網，正在死去。"));
+K.push(p([
+  t("珂潾翻開隨身的犢皮本，蘸了池水調開的靛藍，開始畫。她畫下這株植物的每一段管路、每一朵不該共存的花、根部纏著的那圈發亮絲線。她在旁邊寫下只有織脈者讀得懂的字——那種字一半是聲音，一半是氣味，離開了這座池子就再也無法被還原。她不知道的是，數百年後、在另一顆藍色星球上，會有人捧著這本筆記，逐頁猜測、爭論、著迷，卻始終讀不出一個字。"),
+]));
+K.push(p([ t("他們會叫它《伏尼契手稿》。", { italics: true, color: MUTE }),
+  t("　他們不會知道，這是一份訃聞，也是一張種子清單。") ]));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 1. 總覽 ----------
+K.push(h1("第一章　設定總覽與核心概念"));
+K.push(h2("一句話設定"));
+K.push(quote("《伏尼契手稿》是「薇蘿（Vellora）」——一顆環繞橙矮星、整個生物圈由單一共生網路串起的星球——上，一位名叫珂潾的博物學者，在生態總崩潰（脈枯）來臨前，為搶救物種而留下的田野筆記。"));
+K.push(h2("三個支柱概念"));
+K.push(label("① 綠脈（The Chlora）：", "薇蘿的生命不是一株一株的個體，而是一張橫跨全球的地下共生網路。植物之間以類似菌根與維管束的管路彼此相連，共享水分、養分與化學訊號。所謂「物種」在這裡是模糊的，因為生命傾向融合而非分化。"));
+K.push(label("② 嵌合成形（Chimeric morphogenesis）：", "因為生命靠合體，任何一株植物都可能是多個譜系嫁接、融合、甚至基因水平轉移後的「拼裝體」。這正好解釋了手稿裡那些無法對應單一現存物種、器官張冠李戴的奇異植物。"));
+K.push(label("③ 脈枯（The Withering）：", "一場正在發生的生態崩潰。綠脈的地下管路開始中毒、栓塞、逐段自我封閉；被隔離的植物失去網路的支援與免疫，瘋長成有毒的怪物。世界正滑入一場「長冬」，而珂潾的筆記，是崩潰現場的即時紀錄。"));
+K.push(h2("手稿六大分區 → 世界六個面向"));
+K.push(p("本設定刻意讓手稿真實的圖版結構，一一對應世界的六個知識領域。這讓整份設定與真實文物嚴密咬合："));
+K.push(spacer(40));
+K.push(table(
+  ["手稿真實分區（頁數）", "在薇蘿世界中的意義", "對應本書章節"],
+  [
+    ["植物／草藥圖版（約116頁）", "綠脈植物的形態圖鑑：拼裝體、管路根、共生花", "第五、六章"],
+    ["藥劑／植物部件圖版（約21頁）", "植物部件的化學與藥理：色素、毒素、次級代謝物", "第七章"],
+    ["浴療／生物圖版（約20頁）", "水池生態與潾者：網路的繁殖與傳播機制", "第八章"],
+    ["天文／占星圖版（約21頁）", "恆星、衛星與軌道週期：氣候與潮汐的曆法", "第二章"],
+    ["宇宙／大型摺頁圖版（約13頁）", "全球地理與板塊：環狀大陸與大池的地圖", "第三章"],
+    ["星號段落／配方區（約15頁）", "記錄者的實驗與對策：保種、解毒、脈枯應變", "第九、十一章"],
+  ],
+  [3200, 3600, 2200]
+));
+K.push(p([ t("（頁數依你桌面〈伏尼契手稿中文導讀〉之 pages.json 逐頁分類統計；分區為既有詮釋，非原文翻譯。）", { size: 18, color: MUTE }) ]));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 2. 天文 ----------
+K.push(h1("第二章　天文與行星系統（源自天文／占星圖版）"));
+K.push(p("手稿的天文區充滿放射狀的星圖、環環相扣的圓盤與眾多小小的「星子」。我們不把它讀成占星迷信，而是讀成一位觀測者對自己頭頂真實天象的紀錄。由此反推出薇蘿的天空。"));
+K.push(h2("母星：歐柯（Oq），一顆橙矮星"));
+K.push(label("恆星類型：", "K型橙矮星，質量約為太陽的 0.7 倍，表面溫度約 4,500K，發出偏橙紅、較柔和的光。"));
+K.push(label("為何選橙矮星：", "K矮星是天文學界公認最適合孕育並「長期維持」生命的恆星——它比太陽暗、但壽命可達數百億年，閃焰活動遠比紅矮星溫和穩定。這給了薇蘿一個古老、緩慢、深度演化的生物圈，足以長出「全球一張網」這種需要漫長時間的結構。"));
+K.push(label("光害與代價：", "橙矮星送到地表的能量偏少、且偏向紅光與遠紅光。這直接決定了薇蘿植物的顏色（見第七章）——它們不是綠色，而是偏靛藍、墨綠與紫，因為要用額外的色素去「撿」較弱的光。手稿大量使用藍與綠顏料，正好呼應。"));
+K.push(h2("遠伴星：歐墨（Om）"));
+K.push(p("歐柯有一顆遙遠的紅矮星伴星「歐墨」，以極長的週期繞行。平時它只是天上一顆特別亮的紅星；但每隔約數百年，兩星相對位置改變，會微幅影響薇蘿接收的輻射與軌道擾動。手稿天文區反覆描繪的「雙心圓盤」，被詮釋為歐柯與歐墨的相對曆法——而歐墨的迫近，正是脈枯背後「長冬」週期的天文推手之一。"));
+K.push(h2("三顆衛星與潮汐曆"));
+K.push(p("薇蘿有三顆大小不一的衛星，織脈者稱之為稜、珂、墨。三顆衛星的軌道週期不同，疊加出複雜的潮汐節律——這對一個「水池就是繁殖器官」的生物圈至關重要（見第八章）。手稿裡那些被分成 12、若干等分的圓形圖，被詮釋為三月疊加的潮汐與繁殖曆，而非黃道十二宮。"));
+K.push(spacer(40));
+K.push(table(
+  ["天體", "設定參數", "對世界的影響"],
+  [
+    ["歐柯（母星）", "K型橙矮星，0.7 太陽質量，偏紅光", "決定植物色素與低而穩定的能量預算"],
+    ["歐墨（伴星）", "遠距紅矮星，數百年級週期", "長週期氣候擾動；長冬的推手"],
+    ["稜／珂／墨（三衛星）", "週期各異，共同主宰潮汐", "潮汐驅動水池生態與繁殖曆"],
+    ["薇蘿（行星）", "約 1.1–1.2 地球質量，厚而濕潤的大氣", "溫暖、多霧、高濕；利於全球網路"],
+  ],
+  [2400, 3400, 3200]
+));
+K.push(h2("自轉與日長"));
+K.push(p("薇蘿自轉較慢，一日約 32 地球小時，且自轉軸傾角小（約 12°）。小傾角意味著季節溫和、日照穩定，反而讓「潮汐與伴星週期」成為主導的長節律。漫長的白晝與黃昏，讓大量生物演化出黃昏活躍與生物發光的習性（見第八章）。"));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 3. 地質地理 ----------
+K.push(h1("第三章　地質與地理（源自宇宙／大型摺頁圖版）"));
+K.push(p("手稿最壯觀的是那幾張需要攤開的巨大圓形摺頁，被許多研究者猜測為「宇宙圖」。在薇蘿世界裡，它們是真正的東西：一張以水池為節點、以綠脈為道路的全球地圖。"));
+K.push(h2("環狀大陸與內海"));
+K.push(p("薇蘿的板塊運動造就一種特殊格局：陸地不是散落的塊體，而傾向排成幾道巨大的環——環抱著溫暖的內海與潟湖群。板塊在地函熱柱上方緩慢張裂與聚合，沿裂谷噴出富含礦物的溫泉水，這些溫泉正是水池生態的能量與養分來源之一（呼應地球上的熱泉與化能生態）。"));
+K.push(label("九大池環：", "織脈者把世界分成九個「池環」，每一環是一圈相連的溫泉水池與其周邊的綠脈組織。手稿摺頁上的九個同心或並列圓盤，對應的就是這九環，而非天體。"));
+K.push(h2("土壤即器官"));
+K.push(p("在薇蘿，土壤不只是礦物碎屑，而是綠脈的一部分——密布著菌絲狀導管、儲水海綿組織與化學訊號通道。挖開一鏟土，你會看到它像切開肌肉一樣「滲出汁液」。這解釋了手稿植物那種誇張、像內臟或管路的根系：畫的不是根，而是根與土壤網路的接口。"));
+K.push(h2("地質時間尺度"));
+K.push(p("由於歐柯壽命極長，薇蘿的生物圈已演化了遠比地球更久的時間。全球性的共生網路需要億萬年才能長成——這是它的力量，也是它的脆弱：一個高度整合、少有備援的系統，一旦核心管路中毒，崩潰會像骨牌一樣連鎖。"));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 4. 氣候 ----------
+K.push(h1("第四章　氣候系統"));
+K.push(h2("溫暖、潮濕、多霧的常態"));
+K.push(p("薇蘿的常態氣候由三個因素決定：偏紅但穩定的日照、厚而富含水氣與二氧化碳的大氣（溫和的溫室效應），以及遍布全球的水池與濕潤土壤。結果是一個溫暖、濕度極高、經常起霧的世界。這種環境對「靠水傳播、靠網路連結」的生命極為友善。"));
+K.push(h2("生物泵：植物自己造雨"));
+K.push(p([
+  t("薇蘿最關鍵的氣候機制是「生物泵」：全球綠脈透過巨量蒸散作用，把地下水抽到空中，形成雲與霧，再降回地表。這對應地球上真實的「"),
+  t("生物泵／森林造雨", { bold: true }),
+  t("」假說（如亞馬遜雨林維持自身降雨）。在薇蘿，這個效應被放大到全球尺度——"),
+  t("氣候由生命維持，而不只是生命適應氣候。", { bold: true, color: ACCENT }),
+]));
+K.push(h2("連鎖式的致命脆弱"));
+K.push(p("正因氣候由綠脈維持，脈枯才如此致命：當網路逐段栓塞、蒸散量下降，雲霧變少、降雨減弱，地表變乾，剩餘的網路更難運水，於是栓塞得更快——一個正回饋的死亡螺旋。這就是「長冬」的物理本質：不是單純變冷，而是生物泵熄火後，濕潤世界迅速沙化。"));
+K.push(h2("季節與長週期"));
+K.push(...bullets([
+  "短週期：三顆衛星疊加的潮汐節律（數日到數十日），主宰水池的漲退與繁殖窗口。",
+  "中週期：小傾角帶來的溫和季節，以霧季與清季交替呈現，而非明顯的四季。",
+  "長週期：伴星歐墨的數百年級迫近，疊加軌道擾動，構成「長冬」的天文節拍——脈枯正發生在這個下行段。",
+]));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 5. 綠脈 ----------
+K.push(h1("第五章　生命的核心：綠脈共生網路"));
+K.push(quote("「別問這是哪一種植物。在薇蘿，正確的問題是：這是網路的哪一段，現在正想成為什麼。」"));
+K.push(h2("一個星球，一張網"));
+K.push(p("薇蘿生命的根本設計，是把地球上零散存在的共生現象，推到極致並全球化。理解綠脈，只需要疊加四個真實的地球機制："));
+K.push(...bullets([
+  [ t("地衣模式：", { bold: true, color: ACCENT }), t("真菌與藻類合體成單一生物。薇蘿的每一株植物，本質上都是「真菌骨架＋光合組織＋固氮夥伴」的複合體。") ],
+  [ t("菌根網路（Wood Wide Web）：", { bold: true, color: ACCENT }), t("地球森林已透過地下真菌菌絲交換養分與訊號。薇蘿把它升級成有壓力、能長距離運輸的「管路」。") ],
+  [ t("珊瑚—蟲黃藻模式：", { bold: true, color: ACCENT }), t("動物體內養著光合共生藻。薇蘿的許多動物也內建光合夥伴，能半自養（見第八章）。") ],
+  [ t("全生物體（Holobiont）：", { bold: true, color: ACCENT }), t("生物與其體內微生物是一個演化與生理單位。在薇蘿，這個單位大到覆蓋全球。") ],
+]));
+K.push(h2("管路的物理：它如何長距離運水"));
+K.push(p([
+  t("綠脈的「管路」不是魔法，而是三種真實運輸機制的合體：植物"),
+  t("木質部的蒸散拉力", { bold: true }), t("（水被葉面蒸散像抽吸般拉上來）、"),
+  t("韌皮部的壓力流", { bold: true }), t("（糖從源到匯的正壓運輸）、以及"),
+  t("根壓與真菌菌絲的滲透泵", { bold: true }),
+  t("。三者串成一套能跨越數十公里、把水與養分在池環之間調度的循環系統。手稿植物那些像水管、像血管的根，畫的就是這套系統的接口。"),
+]));
+K.push(h2("化學語言：網路如何溝通"));
+K.push(p([
+  t("綠脈用化學訊號溝通——這對應地球植物真實的化學傳訊：受傷時釋放"),
+  t("茉莉酸、水楊酸與揮發性有機物", { bold: true }),
+  t("警告鄰株、召喚天敵的天敵。薇蘿把這套語言複雜化到近似「語法」：不同分子的濃度比例與釋放節奏，構成可被解讀的訊息。能「嚐」懂這套語言的織脈者（如珂潾），等於握有與整個生物圈對話的能力。這也是手稿文字無法被解讀的關鍵——見第十章。"),
+]));
+K.push(h2("為什麼是合體，而不是分家？"));
+K.push(p("地球演化的主旋律是「分化與競爭」：一個物種分裂成多個，各佔生態位。薇蘿走了另一條路——在資源穩定但偏低（橙矮星）、環境長期潮濕連通的條件下，「合作與整併」比「競爭與分家」更划算。能接上網路、共享資源與免疫的譜系存活下來；孤立者被淘汰。數十億年後，整個生物圈收斂成一張互聯的巨網。這是本設定最核心、也最「有憑有據」的演化假說。"));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 6. 植物形成機制（重點）----------
+K.push(h1("第六章　植物的形成機制（重點章｜源自植物草藥圖版）"));
+K.push(p("這是全書的核心：逐一拆解手稿植物「為什麼長成那樣」，並為每一種怪異特徵，指定一個真實的生物學成因。原則是——手稿畫得越離奇，我們越要用真機制去解釋它，而不是用魔法搪塞。"));
+K.push(h2("六種成形機制"));
+
+K.push(h3("① 嫁接嵌合體（Graft chimera）"));
+K.push(p("兩個不同譜系的組織在癒合處融合，長出一株同時帶有雙方特徵的植物。地球上真實存在（如「賓十字莓 + Laburnocytisus」嫁接嵌合體）。在薇蘿，綠脈天生擅長嫁接，任何兩段靠近的組織都可能自發癒合。→ 解釋手稿中「一株莖上開出多種花、葉」的植物。"));
+K.push(h3("② 基因水平轉移（Horizontal gene transfer）"));
+K.push(p("基因跨物種直接轉移。地球真實案例：寄生植物菟絲子會與宿主交換大量基因；被子植物 Amborella 的粒線體吞入了整段外來基因體。薇蘿的網路把這變成常態——一段有用的性狀（如抗旱、產毒）可以在譜系間「傳閱」。→ 解釋為何毫不相關的植物會共享同一種奇特器官。"));
+K.push(h3("③ 共生器官（Symbiotic organ）"));
+K.push(p("植物的某個「器官」其實是另一個生物。地球案例：豆科的根瘤是固氮菌住進去蓋的房子；菌根是真菌的器官化。薇蘿的植物長著大量這類「外包器官」——儲水的是海綿動物親戚，發光的是共生菌落。→ 解釋手稿植物上那些不像植物組織的囊、球、鬚。"));
+K.push(h3("④ 趨同與擬態（Convergence & mimicry）"));
+K.push(p("親緣很遠的生物，因面對相同問題而長出相似構造（如仙人掌與大戟）；或一種植物擬態另一種以騙傳粉者。→ 解釋手稿中反覆出現、看似同源其實各自獨立演化的「器官母題」。"));
+K.push(h3("⑤ 畸形發生與同源異位（Teratology & homeosis）"));
+K.push(p([
+  t("控制器官身分的基因（如地球的 "), t("ABC 花器官模型", { bold: true }),
+  t("）一旦錯亂，就會「把花瓣長成葉、把葉長成根」——這叫同源異位轉變，地球植物真實可見。薇蘿網路的化學訊號一旦被脈枯干擾，就會大量誘發這類畸形。→ 解釋手稿後段那些器官錯位、比例失衡的「病態」植物。"),
+]));
+K.push(h3("⑥ 記錄者的風格化（Observer stylisation）"));
+K.push(p("最後一個機制是誠實的：有些怪異來自繪者本人。珂潾為了在小小犢皮上塞進化學與生態資訊，會刻意誇張根系、用符號化的方式標註網路接口。→ 對應真實手稿研究中「植物為風格化或複合構圖」的觀察，也保留了「不是每個細節都要坐實」的創作彈性。"));
+
+K.push(h2("特徵 → 成因 對照表（供美術與敘事查用）"));
+K.push(spacer(40));
+K.push(table(
+  ["手稿常見的怪異特徵", "真實生物學機制", "薇蘿世界內解釋"],
+  [
+    ["根像黃銅管路／內臟", "木質部＋韌皮部＋菌根運輸", "綠脈的水力管路接口"],
+    ["一株多種花／葉", "嫁接嵌合體", "組織自發癒合的拼裝體"],
+    ["不相關植物共享奇異器官", "基因水平轉移", "性狀在網路中被「傳閱」"],
+    ["植物上長出囊球鬚等異物", "共生器官（根瘤／菌根式）", "外包給共生生物的器官"],
+    ["器官錯位、花變葉", "同源異位（ABC 模型錯亂）", "脈枯化學訊號干擾誘發畸形"],
+    ["發光的花／葉脈", "生物發光＋共生菌", "黃昏授粉的螢光訊號"],
+    ["藍綠靛紫的葉色", "遠紅光捕光色素＋花青素", "橙矮星弱光下的補光策略"],
+  ],
+  [3000, 2900, 3100]
+));
+K.push(h2("三個代表性物種（可直接用於遊戲圖鑑）"));
+K.push(label("鐘管草（Bellpipe）：", "根部是一組會共鳴的中空管，靠潮汐水位變化被動發聲，用聲音同步周圍植物的開花節奏。成因：共生器官＋物理共振。危機中，斷網的鐘管草會發出持續低鳴——玩家可循聲找到栓塞點。"));
+K.push(label("縫葉（Sutureleaf）：", "同一株上縫著五種不同葉形，是典型嫁接嵌合體。每種葉負責一種光譜或一種化學防禦。斷網後失去協調，葉子彼此爭奪養分，把自己撕裂。成因：嫁接嵌合體＋同源異位。"));
+K.push(label("燼冠（Embercrown）：", "脈枯野化的產物：失去網路免疫後瘋長，花冠積聚硫化物而泛紅發熱，對其他植物有毒。它是「病症」的具象化，也是故事中焚脈派主張焚燒的對象。成因：畸形發生＋硫代謝失控。"));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 7. 生化藥理 ----------
+K.push(h1("第七章　色素、毒素與藥理（源自藥劑／植物部件圖版）"));
+K.push(h2("為什麼薇蘿的葉子不是綠的"));
+K.push(p([
+  t("地球植物是綠的，因為葉綠素反射綠光、太陽是黃白星、綠光又很充足，「浪費」得起。薇蘿的母星歐柯偏紅、能量偏少，植物「浪費不起」，於是演化出額外的補光色素——能吸收"),
+  t("遠紅光", { bold: true }),
+  t("的類葉綠素（對應地球真實存在的葉綠素 f／d，能利用近紅外光），再疊加大量花青素類色素防護與捕光。反射光譜落在靛藍、墨綠與紫。這在化學上完全站得住腳，也解釋了手稿為何偏愛藍與綠顏料。"),
+]));
+K.push(h2("次級代謝：毒、藥與訊號同源"));
+K.push(p([
+  t("薇蘿植物的化學武器庫，直接沿用地球植物的「次級代謝物」邏輯——"),
+  t("生物鹼、萜類、酚類", { bold: true }),
+  t("。同一類分子，低劑量是訊號、中劑量是藥、高劑量是毒（如同地球的洋地黃、咖啡因、嗎啡）。手稿的藥劑區被詮釋為一份劑量學筆記：珂潾記錄哪個部件、萃取到什麼濃度、對誰有什麼效果。"),
+]));
+K.push(h2("硫：脈枯的化學簽名"));
+K.push(p([
+  t("本設定給脈枯一個明確的化學兇手：", ),
+  t("硫化氫（H₂S）與地下水的缺氧酸化", { bold: true, color: ACCENT }),
+  t("。這對應地球歷史上真實的「海洋缺氧—硫化事件（euxinia）」，曾與多次大滅絕相伴。當綠脈的地下管路循環變慢，厭氧產硫菌大量繁殖，硫化物毒害管壁，網路只能像植物應對氣泡栓塞那樣，逐段把中毒管路封死——結果就是連鎖斷網。玩家會學到：聞到臭雞蛋味（硫化氫），代表這段脈快死了。"),
+]));
+K.push(h2("藥理三例"));
+K.push(...bullets([
+  [ t("靛乳（Indolk）：", { bold: true, color: ACCENT }), t("鐘管草汁液，低劑量能暫時「打通」輕微栓塞的管路，是織脈者的急救藥；過量會讓網路訊號紊亂。原型邏輯：血管擴張劑的雙面性。") ],
+  [ t("縫苦（Suran）：", { bold: true, color: ACCENT }), t("縫葉的生物鹼，強效止痛與麻醉，也是致命毒。對應嗎啡型分子的治療窗狹窄。") ],
+  [ t("燼灰（Emberash）：", { bold: true, color: ACCENT }), t("燼冠燒成的灰，能中和局部硫化物、暫時保住一小段脈——這是焚脈派的理論依據，也是他們「以火治火」的雙刃。") ],
+]));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 8. 動物與生態 ----------
+K.push(h1("第八章　動物群與生態系（源自浴療／生物圖版）"));
+K.push(p("手稿的浴療區畫滿了泡在池中、以綠色管道相連的裸體小人。與其把它讀成人體或婦科，我們把它讀成薇蘿最關鍵的一種生物——以及整個以水池為核心的動物生態。"));
+K.push(h2("潾者（The Naiadin）：網路的信使"));
+K.push(p([
+  t("潾者是薇蘿的關鍵物種：一種柔軟、半透明、體型近似孩童的兩棲動物，體內養著光合共生藻（故能半自養）。牠們生活在池中，靠身上的黏液攜帶綠脈的繁殖體（孢子與胚芽）"),
+  t("在被隔離的水池之間游動、授粉、播遷", { bold: true }),
+  t("——牠們是網路的「行動生殖系統」。這對應地球上極致的互利共生（無花果與榕小蜂、絲蘭與絲蘭蛾：植物與其專屬傳粉動物彼此離不開對方）。"),
+]));
+K.push(p("手稿裡那些「以管相連的浴女」，畫的正是潾者與綠脈的連接：綠管不是裝飾，是牠們把繁殖體交接給網路的臍帶。珂潾把牠們畫得像人，一半是觀察便利，一半是因為——潾者確實是織脈者最古老的夥伴，某種意義上是「表親」。"));
+K.push(h2("其他重要動物"));
+K.push(...bullets([
+  [ t("拱背獸（Archbacks）：", { bold: true, color: ACCENT }), t("大型半自養草食獸，背上馱著整叢共生植物，邊走邊修剪與施肥網路。功能等同地球的巨型草食者兼「園丁」，是維持綠脈健康的關鍵。") ],
+  [ t("燈蛾群（Lampmoths）：", { bold: true, color: ACCENT }), t("黃昏與長夜的授粉者，靠生物發光辨識螢光花。對應地球夜行授粉與深海發光邏輯——弱光世界裡，光就是訊號。") ],
+  [ t("汲蟲（Drawmites）：", { bold: true, color: ACCENT }), t("生活在管路內的微小清道夫，正常時清理沉積、維持管路暢通；脈枯時卻因缺氧大量死亡，屍體反而加速栓塞。") ],
+  [ t("裂獸（Riven）：", { bold: true, color: ACCENT }), t("脈枯野化區出現的掠食性怪物——原是溫馴的共生動物，斷網失去化學抑制後，行為與代謝雙雙失控。牠們是生態崩潰的「怪物臉」，也是遊戲的主要威脅。") ],
+]));
+K.push(h2("食物網的特殊之處"));
+K.push(p("因為大量生物半自養（體內有共生藻），薇蘿的食物網不是尖尖的金字塔，而更像一張網：能量既從陽光進來，也從溫泉的化學能進來（化能合成，對應地球熱泉生態）。這讓生態系異常穩定——直到綠脈這個「共同基礎設施」被抽掉，整張網才會一起塌。"));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 9. 危機 ----------
+K.push(h1("第九章　生態危機：脈枯（末世主線｜源自配方／星號區）"));
+K.push(quote("脈枯不是敵人放的火，是一個活了太久、太成功、太整合的系統，開始承受自己的重量。"));
+K.push(h2("成因鏈（完全由前述機制推導）"));
+K.push(...bullets([
+  "天文觸發：伴星歐墨迫近＋軌道擾動，把薇蘿推入長週期的降溫下行段（長冬起點）。",
+  "氣候轉折：氣溫與日照微降，生物泵蒸散量下滑，降雨減少，地表與地下水循環變慢。",
+  "化學中毒：地下管路循環一慢，厭氧產硫菌爆發，硫化氫毒害管壁（euxinia 模式）。",
+  "網路自保：綠脈像植物封閉栓塞的木質部一樣，逐段把中毒管路封死，造成大面積斷網。",
+  "生態崩潰：斷網植物失去共享免疫與養分，畸形野化、產毒（燼冠）；共生動物失控（裂獸）。",
+  "正回饋：斷網→蒸散更少→更乾→循環更慢→更多中毒→更多斷網。死亡螺旋成形。",
+]));
+K.push(h2("三種「解方」＝三種價值觀（勢力衝突的根源）"));
+K.push(label("焚脈派的解方——切除：", "像防火巷一樣，主動焚燒、隔離中毒的網路段，犧牲局部保全整體。有效但殘忍，且每次切除都讓世界更破碎。"));
+K.push(label("融脈教的解方——合一：", "既然孤立即死，就徹底放棄個體、把所有生命（包括人）融進網路成為單一超級生物，以求同生共死。是救贖，也是自我消滅。"));
+K.push(label("記脈院的解方——保種與重播：", "珂潾所屬。主張徹底記錄每個譜系（＝手稿本身），保存種源，並尋找傳說中的「原脈（母脈）」——網路最初的、仍具全部潛能的原始根源，以之重新培育出一張健康的新網。這是最溫和、也最不確定能否成功的路。"));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 10. 種族與勢力 ----------
+K.push(h1("第十章　智慧種族與勢力"));
+K.push(h2("織脈者（The Weavers）"));
+K.push(p("薇蘿的智慧種族。外形近於人類，但皮膚下有可見的細緻脈紋，掌心與舌部布滿化學感受器——他們能「嚐」到綠脈的化學語言。織脈者不是綠脈的主人，而是它最深的共生夥伴：他們照料水池、引導嫁接、解讀網路訊息，換取食物、藥物與知識。文化上，他們把「記錄與照料生命」視為最高天職。"));
+K.push(h2("三大勢力"));
+K.push(spacer(40));
+K.push(table(
+  ["勢力", "核心主張", "手段與形象", "故事功能"],
+  [
+    ["記脈院", "記錄、保種、尋找原脈重播", "田野學者、圖鑑、種源庫；理性溫和", "主角陣營；希望但不確定"],
+    ["焚脈派", "切除中毒段以保全體", "以火隔離、鐵腕檢疫；悲壯務實", "強力反方；正確卻殘酷"],
+    ["融脈教", "放棄個體、全體融入網路", "神祕儀式、集體化；狂熱誘惑", "誘惑性歧路；哲學終極選項"],
+  ],
+  [1600, 3000, 2400, 2200]
+));
+K.push(h2("為什麼手稿無法被解讀（設定內解釋）"));
+K.push(p([
+  t("織脈者的文字是"), t("多通道書寫", { bold: true, color: ACCENT }),
+  t("：紙面上的符號只記錄一半資訊（語音與語法），另一半資訊編碼在書寫時滲入犢皮的"),
+  t("化學殘留與筆序節奏", { bold: true }),
+  t("裡——要用舌與掌的化學感受器「讀」出來。這解釋了手稿真實的統計怪象（有語言般的規律，卻對不上任何已知語音系統）：因為它本來就不是純語音文字。離開薇蘿、離開能嚐味的讀者，這套字就永遠只剩一半，注定不可解。這是一個既尊重真實研究、又完全原創的設定。"),
+]));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 11. 角色 ----------
+K.push(h1("第十一章　主角與角色群"));
+K.push(h2("主角：珂潾（Korin）"));
+K.push(label("身分：", "記脈院的年輕記脈者（博物學者兼製圖者）。這本《伏尼契手稿》就是她的田野筆記。"));
+K.push(label("天賦：", "罕見的強化學感受力——她能「嚐」出綠脈訊號中極細微的變化，甚至能感知栓塞與中毒的前兆。這讓她成為最好的診斷者，也讓脈枯的痛苦對她如影隨形。"));
+K.push(label("動機：", "她的導師（亦如親長）奧芮，數年前追查「原脈」的下落時，走進一片脈枯野化區後失蹤，只留下半本殘缺筆記。珂潾出發，一半是為了完成保種任務，一半是為了找到奧芮、以及奧芮堅信存在的原脈。"));
+K.push(label("弧線：", "從「相信只要記錄得夠完整、就能拯救世界」的理想主義者，成長為必須親手在焚脈、融脈、重播三條路之間做出取捨的決策者。她最終明白：田野筆記的意義不是留住過去，而是給未來一個重新開始的機會。"));
+K.push(h2("重要配角"));
+K.push(...bullets([
+  [ t("燼（Jin）——焚脈派field-agent：", { bold: true, color: ACCENT }), t("務實、話少、帶著灼傷疤。與珂潾理念對立卻多次並肩，是「正確但殘酷」的人性化身，也是可能的盟友或對手。") ],
+  [ t("漣（Lian）——潾者：", { bold: true, color: ACCENT }), t("一隻異常年長、能與珂潾以化學訊號「對話」的潾者，成為她穿越池環的嚮導與良心。透過漣，玩家理解網路的視角。") ],
+  [ t("奧芮（Auri）——失蹤的導師：", { bold: true, color: ACCENT }), t("珂潾的追尋核心。他/她是否還活著、原脈是否真實、殘本裡藏著什麼——構成主線的謎題引擎。") ],
+  [ t("穹母（The Confluence Voice）——融脈教領袖：", { bold: true, color: ACCENT }), t("已半融入網路、聲音由眾多生命齊聲發出的存在。提供最誘人也最恐怖的終極選項。") ],
+]));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 12. 故事主線 ----------
+K.push(h1("第十二章　故事主線與三幕大綱"));
+K.push(h2("一句話故事"));
+K.push(quote("一位能「嚐」懂世界的年輕記錄者，在生態總崩潰中逐頁畫下正在死去的生命，追尋失蹤導師與傳說中的「原脈」，最終必須在焚燒、融合與重播之間，替整個世界做出選擇。"));
+K.push(h2("第一幕：診斷"));
+K.push(p("珂潾在家鄉池環記錄物種，卻發現脈枯逼近的化學前兆遠比長老們承認的更快。她循著奧芮殘本的線索出發，穿越數個池環，見證斷網、畸形與野化，收集標本、繪製圖鑑（＝手稿成形）。她結識嚮導漣，並與焚脈派的燼首次衝突：燼要燒掉一整片她認為還能救的網。"));
+K.push(h2("第二幕：分歧"));
+K.push(p("追尋原脈的路上，珂潾深入更嚴重的崩潰區。她逐漸拼出奧芮的理論，也目睹三大勢力的手段與代價：焚脈派的防火巷確實擋住了崩潰，卻把世界切成孤島；融脈教的合一儀式帶來詭異的平靜與大量失去自我的信徒。她自己的強感受力開始成為負擔——她能感覺到每一段脈的死亡。中點反轉：原脈或許不是一個「地方」，而奧芮的失蹤另有真相。"));
+K.push(h2("第三幕：選擇"));
+K.push(p("珂潾找到原脈（或其真相），也找到奧芮（或其遺留）。她掌握了足以左右結局的知識，必須做出取捨——這正是遊戲的多結局節點："));
+K.push(...bullets([
+  [ t("重播結局：", { bold: true, color: ACCENT }), t("以原脈與保存的種源重新培育新網。世界縮小、艱難，但仍是「許多個體」的世界。希望，代價是漫長。") ],
+  [ t("焚脈結局：", { bold: true, color: ACCENT }), t("接受切除邏輯，燒出足夠防火巷，保住破碎但存活的核心。務實的倖存，永久的傷疤。") ],
+  [ t("融脈結局：", { bold: true, color: ACCENT }), t("全體融入網路成為單一超生物，永不孤立，也永不再是「個人」。生存與自我，只能二選一。") ],
+  [ t("記錄結局（隱藏）：", { bold: true, color: ACCENT }), t("珂潾無法阻止崩潰，只能確保筆記完整、種源封存，並想辦法把它送出薇蘿——於是這本書漂過某道縫隙，數百年後落在一顆藍色星球上。（＝與現實《伏尼契手稿》接軌的元結局。）") ],
+]));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 13. 抵達地球 & 手稿橋接 ----------
+K.push(h1("第十三章　手稿如何抵達地球（元設定與留白）"));
+K.push(p("本作採「手稿＝真實文物」的核心設定，因此「它怎麼到地球」應當保持為一個franchise級的大謎題，而非一次講完。以下提供可選假說，供不同媒介取用："));
+K.push(...bullets([
+  [ t("縫隙漂流（建議主線）：", { bold: true, color: ACCENT }), t("薇蘿與地球在某次天文/時空事件中短暫相接，筆記被送出。細節永遠只給暗示，維持真實文物的曖昧感。") ],
+  [ t("種源信標：", { bold: true, color: ACCENT }), t("手稿不只是書，是一個「求救與播種」的信標——內容經過設計，等待「能讀懂的物種」出現。呼應真實網路上流傳的浪漫假說。") ],
+  [ t("純巧合鏡像：", { bold: true, color: ACCENT }), t("兩個世界獨立發展，手稿只是恰好與地球某文物重疊——最保守、最保留現實質感的版本。") ],
+]));
+K.push(p([
+  t("無論採哪一種，都建議守住一條線：", ),
+  t("永遠不在正典裡「證實」它是外星來的。", { bold: true }),
+  t("讓讀者與玩家永遠保有一絲「這會不會是真的」——這正是《伏尼契手稿》本身最迷人的地方。"),
+]));
+
+K.push(h1("第十四章　當時的地球是什麼樣子（真實對照）"));
+K.push(p([
+  t("《伏尼契手稿》的犢皮，經放射性碳定年落在約"),
+  t("公元 1404–1438 年", { bold: true, color: ACCENT }),
+  t("（十五世紀初）。若把珂潾「送出筆記」的時刻對到地球的這個年代，當時的地球是這樣的環境，恰好與薇蘿形成主題鏡像："),
+]));
+K.push(...bullets([
+  "氣候：中世紀溫暖期剛結束，地球正滑入「小冰期」的前段——變冷、歉收、飢荒與疫病陰影。這與薇蘿的「長冬」是刻意的鏡像：兩個世界都在降溫的門檻上。",
+  "歐洲：文藝復興早期，手抄本與草藥誌盛行，正是《伏尼契手稿》這類圖文本的時代背景。",
+  "東亞：明朝永樂—宣德年間，鄭和下西洋的年代，全球博物知識正在流動。",
+  "美洲：前哥倫布時期，阿茲特克文明興盛——這呼應真實學界的一個假說（Tucker & Janick《Flora of the Voynich Codex》主張手稿植物近似墨西哥/阿茲特克植物）。在本設定中，這個「阿茲特克假說」可作為地球學者研究手稿時的一條著名『美麗誤讀』彩蛋。",
+]));
+K.push(p("主題意義：地球的十五世紀與薇蘿的脈枯，共享同一個母題——當維持生命的大系統（地球的氣候、薇蘿的綠脈）開始轉冷、轉壞，紀錄與知識如何成為跨越災難的方舟。這讓一個奇幻世界，牢牢扣住現實的重量。"));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 15. 延展 ----------
+K.push(h1("第十五章　遊戲與文學延展建議"));
+K.push(h2("遊戲面"));
+K.push(...bullets([
+  [ t("核心循環：", { bold: true, color: ACCENT }), t("探索池環 → 採集與繪製標本（親手『畫出手稿』）→ 用化學感受診斷脈枯 → 施行嫁接/急救/切除的抉擇 → 標本與種源入庫解鎖科技與劇情。") ],
+  [ t("招牌機制：", { bold: true, color: ACCENT }), t("『嚐味診斷』——把氣味/化學訊號做成可玩的解謎與探測系統（聞到硫＝快斷脈）。這是本作獨一無二的賣點。") ],
+  [ t("圖鑑即進度：", { bold: true, color: ACCENT }), t("玩家完成的圖鑑頁面，逐步拼出一份『玩家自己的伏尼契手稿』，收集與敘事合一。") ],
+  [ t("多結局：", { bold: true, color: ACCENT }), t("焚脈／融脈／重播／記錄四線，對應第十二章，鼓勵多周目與價值反思。") ],
+]));
+K.push(h2("文學面"));
+K.push(...bullets([
+  [ t("敘事載體：", { bold: true, color: ACCENT }), t("以珂潾的田野筆記為第一人稱主體，穿插『圖鑑條目』與『化學訊號的翻譯片段』，形成獨特的博物誌小說質感（近《安娜與國王》式自然史＋《沙丘》式生態史詩）。") ],
+  [ t("出版形態：", { bold: true, color: ACCENT }), t("正文小說＋精裝『薇蘿博物圖鑑』設定畫冊雙軌，畫冊本身就是可販售的實體『偽手稿』。") ],
+  [ t("短篇擴張：", { bold: true, color: ACCENT }), t("三大勢力各出一本中篇（焚脈者的悔、融脈者的極樂、記脈者的執），建立世界厚度。") ],
+]));
+K.push(h2("美術方向（給概念設計）"));
+K.push(...bullets([
+  "色調：橙紅天光＋靛藍墨綠植被＋螢光點綴；犢皮質感與手繪線稿為視覺母語。",
+  "植物：一律採『拼裝體』邏輯設計——每株都要看得出是多器官癒合，根部一律畫成管路/接口。",
+  "潾者與水池：柔和、半透明、以綠色臍管與網路相連，避免情色化，強調『信使/親族』的溫柔感。",
+  "怪物（裂獸/燼冠）：從溫馴原型『壞掉』而來，保留原生物的殘影，讓恐怖帶著哀傷。",
+]));
+K.push(new Paragraph({ children: [new PageBreak()] }));
+
+// ---------- 16. 科學附註 ----------
+K.push(h1("第十六章　科學可信度附註與參考"));
+K.push(p("本設定的每一項奇幻，皆對應一個真實的地球科學現象。以下為對照清單，供寫作與審查時查核『有憑有據』。"));
+K.push(spacer(40));
+K.push(table(
+  ["薇蘿設定", "對應的真實科學"],
+  [
+    ["綠脈全球共生網路", "菌根網路（Wood Wide Web）、地衣、珊瑚—蟲黃藻、全生物體 holobiont 概念"],
+    ["管路長距離運水", "木質部蒸散拉力、韌皮部壓力流、根壓與菌絲滲透運輸"],
+    ["網路化學語言", "植物揮發性訊號（茉莉酸/水楊酸/VOC）的防禦通訊"],
+    ["嵌合植物（多花多葉）", "嫁接嵌合體（如 Laburnocytisus）"],
+    ["性狀跨譜系共享", "基因水平轉移（菟絲子、Amborella 粒線體）"],
+    ["器官錯位畸形", "同源異位與 ABC 花器官模型突變"],
+    ["靛藍墨綠葉色", "遠紅光捕光色素（葉綠素 f/d）、花青素；紅矮/橙矮星下植物顏色的天體生物學推測"],
+    ["半自養動物", "光合共生（綠水螅、海蛞蝓盜食質體、珊瑚）"],
+    ["溫泉化能生態", "深海熱泉化能合成生態系"],
+    ["脈枯的硫化中毒", "海洋缺氧—硫化事件（euxinia）與大滅絕的關聯"],
+    ["網路逐段封閉", "植物木質部氣泡栓塞（cavitation）與區隔化自保"],
+    ["生物泵造雨與長冬", "森林生物泵/亞馬遜自維持降雨假說；氣候正回饋"],
+    ["橙矮星母星", "K 型矮星被視為宜居性最佳（穩定、長壽、閃焰溫和）"],
+    ["專屬傳粉共生（潾者）", "無花果—榕小蜂、絲蘭—絲蘭蛾的絕對互利共生"],
+  ],
+  [3200, 5800]
+));
+K.push(h2("關於《伏尼契手稿》的真實事實（本設定所依據）"));
+K.push(...bullets([
+  "現藏於美國耶魯大學拜內克圖書館，館藏編號 Beinecke MS 408。",
+  "犢皮經放射性碳定年約為 1404–1438 年；文字至今未被破解。",
+  "內容一般分為草藥、天文、生物（浴療）、宇宙、藥劑與配方數區，與你桌面導讀 pages.json 的分區一致。",
+  "植物多半無法對應單一現存物種，常被認為是風格化或複合構圖——這正是本設定『嵌合成形』的靈感與依據。",
+]));
+K.push(spacer(120));
+K.push(p([ t("— 全文完　·　薇蘿世界設定聖經 v0.1 —", { color: MUTE, italics: true }) ], { align: AlignmentType.CENTER }));
+
+// ---------- assemble ----------
+const doc = new Document({
+  creator: "Cowork",
+  title: "薇蘿世界設定聖經",
+  description: "以伏尼契手稿為基石的世界觀設定集",
+  features: { updateFields: true },
+  styles: {
+    default: {
+      document: { run: { font: BODY, size: 21, color: INK } },
+    },
+    paragraphStyles: [
+      { id: "Heading1", name: "Heading 1", basedOn: "Normal", next: "Normal", quickFormat: true,
+        run: { font: SANS, size: 30, bold: true, color: ACCENT } },
+      { id: "Heading2", name: "Heading 2", basedOn: "Normal", next: "Normal", quickFormat: true,
+        run: { font: SANS, size: 24, bold: true, color: INK } },
+      { id: "Heading3", name: "Heading 3", basedOn: "Normal", next: "Normal", quickFormat: true,
+        run: { font: SANS, size: 21, bold: true, color: ACCENT } },
+    ],
+  },
+  numbering: {
+    config: [{
+      reference: "dot",
+      levels: [{ level: 0, format: LevelFormat.BULLET, text: "•", alignment: AlignmentType.LEFT,
+        style: { run: { color: ACCENT }, paragraph: { indent: { left: 360, hanging: 220 } } } }],
+    }],
+  },
+  sections: [{
+    properties: { page: { size: { width: 11906, height: 16838 }, margin: { top: 1100, bottom: 1100, left: 1200, right: 1200 } } },
+    footers: {
+      default: new Footer({ children: [ new Paragraph({ alignment: AlignmentType.CENTER,
+        children: [ new TextRun({ text: "薇蘿 VELLORA　·　", font: SANS, size: 16, color: RULE }),
+          new TextRun({ children: [PageNumber.CURRENT], font: SANS, size: 16, color: RULE }) ] }) ] }),
+    },
+    children: K,
+  }],
+});
+
+Packer.toBuffer(doc).then(buf => {
+  fs.writeFileSync("/home/claude/薇蘿世界設定聖經_v0.1.docx", buf);
+  console.log("written", buf.length, "bytes");
+});

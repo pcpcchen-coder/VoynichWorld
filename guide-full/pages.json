@@ -1,0 +1,1465 @@
+[
+  {
+    "scan_page": 1,
+    "section": "館藏與裝幀",
+    "description": "封面、藏書標記或前置頁；不推定原文內容。",
+    "confidence": "高",
+    "image": "assets/pages/page-001.jpg"
+  },
+  {
+    "scan_page": 2,
+    "section": "館藏與裝幀",
+    "description": "封面、藏書標記或前置頁；不推定原文內容。",
+    "confidence": "高",
+    "image": "assets/pages/page-002.jpg"
+  },
+  {
+    "scan_page": 3,
+    "section": "館藏與裝幀",
+    "description": "封面、藏書標記或前置頁；不推定原文內容。",
+    "confidence": "高",
+    "image": "assets/pages/page-003.jpg"
+  },
+  {
+    "scan_page": 4,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-004.jpg"
+  },
+  {
+    "scan_page": 5,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-005.jpg"
+  },
+  {
+    "scan_page": 6,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-006.jpg"
+  },
+  {
+    "scan_page": 7,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-007.jpg"
+  },
+  {
+    "scan_page": 8,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-008.jpg"
+  },
+  {
+    "scan_page": 9,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-009.jpg"
+  },
+  {
+    "scan_page": 10,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-010.jpg"
+  },
+  {
+    "scan_page": 11,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-011.jpg"
+  },
+  {
+    "scan_page": 12,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-012.jpg"
+  },
+  {
+    "scan_page": 13,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-013.jpg"
+  },
+  {
+    "scan_page": 14,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-014.jpg"
+  },
+  {
+    "scan_page": 15,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-015.jpg"
+  },
+  {
+    "scan_page": 16,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-016.jpg"
+  },
+  {
+    "scan_page": 17,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-017.jpg"
+  },
+  {
+    "scan_page": 18,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-018.jpg"
+  },
+  {
+    "scan_page": 19,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-019.jpg"
+  },
+  {
+    "scan_page": 20,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-020.jpg"
+  },
+  {
+    "scan_page": 21,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-021.jpg"
+  },
+  {
+    "scan_page": 22,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-022.jpg"
+  },
+  {
+    "scan_page": 23,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-023.jpg"
+  },
+  {
+    "scan_page": 24,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-024.jpg"
+  },
+  {
+    "scan_page": 25,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-025.jpg"
+  },
+  {
+    "scan_page": 26,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-026.jpg"
+  },
+  {
+    "scan_page": 27,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-027.jpg"
+  },
+  {
+    "scan_page": 28,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-028.jpg"
+  },
+  {
+    "scan_page": 29,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-029.jpg"
+  },
+  {
+    "scan_page": 30,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-030.jpg"
+  },
+  {
+    "scan_page": 31,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-031.jpg"
+  },
+  {
+    "scan_page": 32,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-032.jpg"
+  },
+  {
+    "scan_page": 33,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-033.jpg"
+  },
+  {
+    "scan_page": 34,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-034.jpg"
+  },
+  {
+    "scan_page": 35,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-035.jpg"
+  },
+  {
+    "scan_page": 36,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-036.jpg"
+  },
+  {
+    "scan_page": 37,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-037.jpg"
+  },
+  {
+    "scan_page": 38,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-038.jpg"
+  },
+  {
+    "scan_page": 39,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-039.jpg"
+  },
+  {
+    "scan_page": 40,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-040.jpg"
+  },
+  {
+    "scan_page": 41,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-041.jpg"
+  },
+  {
+    "scan_page": 42,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-042.jpg"
+  },
+  {
+    "scan_page": 43,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-043.jpg"
+  },
+  {
+    "scan_page": 44,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-044.jpg"
+  },
+  {
+    "scan_page": 45,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-045.jpg"
+  },
+  {
+    "scan_page": 46,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-046.jpg"
+  },
+  {
+    "scan_page": 47,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-047.jpg"
+  },
+  {
+    "scan_page": 48,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-048.jpg"
+  },
+  {
+    "scan_page": 49,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-049.jpg"
+  },
+  {
+    "scan_page": 50,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-050.jpg"
+  },
+  {
+    "scan_page": 51,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-051.jpg"
+  },
+  {
+    "scan_page": 52,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-052.jpg"
+  },
+  {
+    "scan_page": 53,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-053.jpg"
+  },
+  {
+    "scan_page": 54,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-054.jpg"
+  },
+  {
+    "scan_page": 55,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-055.jpg"
+  },
+  {
+    "scan_page": 56,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-056.jpg"
+  },
+  {
+    "scan_page": 57,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-057.jpg"
+  },
+  {
+    "scan_page": 58,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-058.jpg"
+  },
+  {
+    "scan_page": 59,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-059.jpg"
+  },
+  {
+    "scan_page": 60,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-060.jpg"
+  },
+  {
+    "scan_page": 61,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-061.jpg"
+  },
+  {
+    "scan_page": 62,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-062.jpg"
+  },
+  {
+    "scan_page": 63,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-063.jpg"
+  },
+  {
+    "scan_page": 64,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-064.jpg"
+  },
+  {
+    "scan_page": 65,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-065.jpg"
+  },
+  {
+    "scan_page": 66,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-066.jpg"
+  },
+  {
+    "scan_page": 67,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-067.jpg"
+  },
+  {
+    "scan_page": 68,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-068.jpg"
+  },
+  {
+    "scan_page": 69,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-069.jpg"
+  },
+  {
+    "scan_page": 70,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-070.jpg"
+  },
+  {
+    "scan_page": 71,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-071.jpg"
+  },
+  {
+    "scan_page": 72,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-072.jpg"
+  },
+  {
+    "scan_page": 73,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-073.jpg"
+  },
+  {
+    "scan_page": 74,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-074.jpg"
+  },
+  {
+    "scan_page": 75,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-075.jpg"
+  },
+  {
+    "scan_page": 76,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-076.jpg"
+  },
+  {
+    "scan_page": 77,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-077.jpg"
+  },
+  {
+    "scan_page": 78,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-078.jpg"
+  },
+  {
+    "scan_page": 79,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-079.jpg"
+  },
+  {
+    "scan_page": 80,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-080.jpg"
+  },
+  {
+    "scan_page": 81,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-081.jpg"
+  },
+  {
+    "scan_page": 82,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-082.jpg"
+  },
+  {
+    "scan_page": 83,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-083.jpg"
+  },
+  {
+    "scan_page": 84,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-084.jpg"
+  },
+  {
+    "scan_page": 85,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-085.jpg"
+  },
+  {
+    "scan_page": 86,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-086.jpg"
+  },
+  {
+    "scan_page": 87,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-087.jpg"
+  },
+  {
+    "scan_page": 88,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-088.jpg"
+  },
+  {
+    "scan_page": 89,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-089.jpg"
+  },
+  {
+    "scan_page": 90,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-090.jpg"
+  },
+  {
+    "scan_page": 91,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-091.jpg"
+  },
+  {
+    "scan_page": 92,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-092.jpg"
+  },
+  {
+    "scan_page": 93,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-093.jpg"
+  },
+  {
+    "scan_page": 94,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-094.jpg"
+  },
+  {
+    "scan_page": 95,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-095.jpg"
+  },
+  {
+    "scan_page": 96,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-096.jpg"
+  },
+  {
+    "scan_page": 97,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-097.jpg"
+  },
+  {
+    "scan_page": 98,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-098.jpg"
+  },
+  {
+    "scan_page": 99,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-099.jpg"
+  },
+  {
+    "scan_page": 100,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-100.jpg"
+  },
+  {
+    "scan_page": 101,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-101.jpg"
+  },
+  {
+    "scan_page": 102,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-102.jpg"
+  },
+  {
+    "scan_page": 103,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-103.jpg"
+  },
+  {
+    "scan_page": 104,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-104.jpg"
+  },
+  {
+    "scan_page": 105,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-105.jpg"
+  },
+  {
+    "scan_page": 106,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-106.jpg"
+  },
+  {
+    "scan_page": 107,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-107.jpg"
+  },
+  {
+    "scan_page": 108,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-108.jpg"
+  },
+  {
+    "scan_page": 109,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-109.jpg"
+  },
+  {
+    "scan_page": 110,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-110.jpg"
+  },
+  {
+    "scan_page": 111,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-111.jpg"
+  },
+  {
+    "scan_page": 112,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-112.jpg"
+  },
+  {
+    "scan_page": 113,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-113.jpg"
+  },
+  {
+    "scan_page": 114,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-114.jpg"
+  },
+  {
+    "scan_page": 115,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-115.jpg"
+  },
+  {
+    "scan_page": 116,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-116.jpg"
+  },
+  {
+    "scan_page": 117,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-117.jpg"
+  },
+  {
+    "scan_page": 118,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-118.jpg"
+  },
+  {
+    "scan_page": 119,
+    "section": "植物／草藥圖版",
+    "description": "大型植物構圖與繞圖書寫。植物通常無法可靠對應單一現存物種，可能包含風格化或複合特徵。",
+    "confidence": "中",
+    "image": "assets/pages/page-119.jpg"
+  },
+  {
+    "scan_page": 120,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-120.jpg"
+  },
+  {
+    "scan_page": 121,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-121.jpg"
+  },
+  {
+    "scan_page": 122,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-122.jpg"
+  },
+  {
+    "scan_page": 123,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-123.jpg"
+  },
+  {
+    "scan_page": 124,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-124.jpg"
+  },
+  {
+    "scan_page": 125,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-125.jpg"
+  },
+  {
+    "scan_page": 126,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-126.jpg"
+  },
+  {
+    "scan_page": 127,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-127.jpg"
+  },
+  {
+    "scan_page": 128,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-128.jpg"
+  },
+  {
+    "scan_page": 129,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-129.jpg"
+  },
+  {
+    "scan_page": 130,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-130.jpg"
+  },
+  {
+    "scan_page": 131,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-131.jpg"
+  },
+  {
+    "scan_page": 132,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-132.jpg"
+  },
+  {
+    "scan_page": 133,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-133.jpg"
+  },
+  {
+    "scan_page": 134,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-134.jpg"
+  },
+  {
+    "scan_page": 135,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-135.jpg"
+  },
+  {
+    "scan_page": 136,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-136.jpg"
+  },
+  {
+    "scan_page": 137,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-137.jpg"
+  },
+  {
+    "scan_page": 138,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-138.jpg"
+  },
+  {
+    "scan_page": 139,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-139.jpg"
+  },
+  {
+    "scan_page": 140,
+    "section": "天文／占星圖版",
+    "description": "圓形結構、星體或黃道符號。可辨識圖像不等於文字已被解讀。",
+    "confidence": "中",
+    "image": "assets/pages/page-140.jpg"
+  },
+  {
+    "scan_page": 141,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-141.jpg"
+  },
+  {
+    "scan_page": 142,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-142.jpg"
+  },
+  {
+    "scan_page": 143,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-143.jpg"
+  },
+  {
+    "scan_page": 144,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-144.jpg"
+  },
+  {
+    "scan_page": 145,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-145.jpg"
+  },
+  {
+    "scan_page": 146,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-146.jpg"
+  },
+  {
+    "scan_page": 147,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-147.jpg"
+  },
+  {
+    "scan_page": 148,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-148.jpg"
+  },
+  {
+    "scan_page": 149,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-149.jpg"
+  },
+  {
+    "scan_page": 150,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-150.jpg"
+  },
+  {
+    "scan_page": 151,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-151.jpg"
+  },
+  {
+    "scan_page": 152,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-152.jpg"
+  },
+  {
+    "scan_page": 153,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-153.jpg"
+  },
+  {
+    "scan_page": 154,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-154.jpg"
+  },
+  {
+    "scan_page": 155,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-155.jpg"
+  },
+  {
+    "scan_page": 156,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-156.jpg"
+  },
+  {
+    "scan_page": 157,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-157.jpg"
+  },
+  {
+    "scan_page": 158,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-158.jpg"
+  },
+  {
+    "scan_page": 159,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-159.jpg"
+  },
+  {
+    "scan_page": 160,
+    "section": "浴療／生物圖版",
+    "description": "人體、液體、池槽與管道式構圖；常被推測與浴療、身體或女性醫療相關，但仍未定論。",
+    "confidence": "中",
+    "image": "assets/pages/page-160.jpg"
+  },
+  {
+    "scan_page": 161,
+    "section": "宇宙／大型摺頁圖版",
+    "description": "複合圓盤、路徑、城堡或玫瑰花結構；可能是宇宙論、地圖或象徵系統。",
+    "confidence": "低",
+    "image": "assets/pages/page-161.jpg"
+  },
+  {
+    "scan_page": 162,
+    "section": "宇宙／大型摺頁圖版",
+    "description": "複合圓盤、路徑、城堡或玫瑰花結構；可能是宇宙論、地圖或象徵系統。",
+    "confidence": "低",
+    "image": "assets/pages/page-162.jpg"
+  },
+  {
+    "scan_page": 163,
+    "section": "宇宙／大型摺頁圖版",
+    "description": "複合圓盤、路徑、城堡或玫瑰花結構；可能是宇宙論、地圖或象徵系統。",
+    "confidence": "低",
+    "image": "assets/pages/page-163.jpg"
+  },
+  {
+    "scan_page": 164,
+    "section": "宇宙／大型摺頁圖版",
+    "description": "複合圓盤、路徑、城堡或玫瑰花結構；可能是宇宙論、地圖或象徵系統。",
+    "confidence": "低",
+    "image": "assets/pages/page-164.jpg"
+  },
+  {
+    "scan_page": 165,
+    "section": "宇宙／大型摺頁圖版",
+    "description": "複合圓盤、路徑、城堡或玫瑰花結構；可能是宇宙論、地圖或象徵系統。",
+    "confidence": "低",
+    "image": "assets/pages/page-165.jpg"
+  },
+  {
+    "scan_page": 166,
+    "section": "宇宙／大型摺頁圖版",
+    "description": "複合圓盤、路徑、城堡或玫瑰花結構；可能是宇宙論、地圖或象徵系統。",
+    "confidence": "低",
+    "image": "assets/pages/page-166.jpg"
+  },
+  {
+    "scan_page": 167,
+    "section": "宇宙／大型摺頁圖版",
+    "description": "複合圓盤、路徑、城堡或玫瑰花結構；可能是宇宙論、地圖或象徵系統。",
+    "confidence": "低",
+    "image": "assets/pages/page-167.jpg"
+  },
+  {
+    "scan_page": 168,
+    "section": "宇宙／大型摺頁圖版",
+    "description": "複合圓盤、路徑、城堡或玫瑰花結構；可能是宇宙論、地圖或象徵系統。",
+    "confidence": "低",
+    "image": "assets/pages/page-168.jpg"
+  },
+  {
+    "scan_page": 169,
+    "section": "宇宙／大型摺頁圖版",
+    "description": "複合圓盤、路徑、城堡或玫瑰花結構；可能是宇宙論、地圖或象徵系統。",
+    "confidence": "低",
+    "image": "assets/pages/page-169.jpg"
+  },
+  {
+    "scan_page": 170,
+    "section": "宇宙／大型摺頁圖版",
+    "description": "複合圓盤、路徑、城堡或玫瑰花結構；可能是宇宙論、地圖或象徵系統。",
+    "confidence": "低",
+    "image": "assets/pages/page-170.jpg"
+  },
+  {
+    "scan_page": 171,
+    "section": "宇宙／大型摺頁圖版",
+    "description": "複合圓盤、路徑、城堡或玫瑰花結構；可能是宇宙論、地圖或象徵系統。",
+    "confidence": "低",
+    "image": "assets/pages/page-171.jpg"
+  },
+  {
+    "scan_page": 172,
+    "section": "宇宙／大型摺頁圖版",
+    "description": "複合圓盤、路徑、城堡或玫瑰花結構；可能是宇宙論、地圖或象徵系統。",
+    "confidence": "低",
+    "image": "assets/pages/page-172.jpg"
+  },
+  {
+    "scan_page": 173,
+    "section": "宇宙／大型摺頁圖版",
+    "description": "複合圓盤、路徑、城堡或玫瑰花結構；可能是宇宙論、地圖或象徵系統。",
+    "confidence": "低",
+    "image": "assets/pages/page-173.jpg"
+  },
+  {
+    "scan_page": 174,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-174.jpg"
+  },
+  {
+    "scan_page": 175,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-175.jpg"
+  },
+  {
+    "scan_page": 176,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-176.jpg"
+  },
+  {
+    "scan_page": 177,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-177.jpg"
+  },
+  {
+    "scan_page": 178,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-178.jpg"
+  },
+  {
+    "scan_page": 179,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-179.jpg"
+  },
+  {
+    "scan_page": 180,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-180.jpg"
+  },
+  {
+    "scan_page": 181,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-181.jpg"
+  },
+  {
+    "scan_page": 182,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-182.jpg"
+  },
+  {
+    "scan_page": 183,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-183.jpg"
+  },
+  {
+    "scan_page": 184,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-184.jpg"
+  },
+  {
+    "scan_page": 185,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-185.jpg"
+  },
+  {
+    "scan_page": 186,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-186.jpg"
+  },
+  {
+    "scan_page": 187,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-187.jpg"
+  },
+  {
+    "scan_page": 188,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-188.jpg"
+  },
+  {
+    "scan_page": 189,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-189.jpg"
+  },
+  {
+    "scan_page": 190,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-190.jpg"
+  },
+  {
+    "scan_page": 191,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-191.jpg"
+  },
+  {
+    "scan_page": 192,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-192.jpg"
+  },
+  {
+    "scan_page": 193,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-193.jpg"
+  },
+  {
+    "scan_page": 194,
+    "section": "藥劑／植物部件圖版",
+    "description": "植物根、葉、容器或藥罐式物件；可能接近藥典或製備索引。",
+    "confidence": "中",
+    "image": "assets/pages/page-194.jpg"
+  },
+  {
+    "scan_page": 195,
+    "section": "星號段落／配方區",
+    "description": "以短段落和邊緣星號為主；「配方」是慣用名稱，不代表內容已被翻譯。",
+    "confidence": "中",
+    "image": "assets/pages/page-195.jpg"
+  },
+  {
+    "scan_page": 196,
+    "section": "星號段落／配方區",
+    "description": "以短段落和邊緣星號為主；「配方」是慣用名稱，不代表內容已被翻譯。",
+    "confidence": "中",
+    "image": "assets/pages/page-196.jpg"
+  },
+  {
+    "scan_page": 197,
+    "section": "星號段落／配方區",
+    "description": "以短段落和邊緣星號為主；「配方」是慣用名稱，不代表內容已被翻譯。",
+    "confidence": "中",
+    "image": "assets/pages/page-197.jpg"
+  },
+  {
+    "scan_page": 198,
+    "section": "星號段落／配方區",
+    "description": "以短段落和邊緣星號為主；「配方」是慣用名稱，不代表內容已被翻譯。",
+    "confidence": "中",
+    "image": "assets/pages/page-198.jpg"
+  },
+  {
+    "scan_page": 199,
+    "section": "星號段落／配方區",
+    "description": "以短段落和邊緣星號為主；「配方」是慣用名稱，不代表內容已被翻譯。",
+    "confidence": "中",
+    "image": "assets/pages/page-199.jpg"
+  },
+  {
+    "scan_page": 200,
+    "section": "星號段落／配方區",
+    "description": "以短段落和邊緣星號為主；「配方」是慣用名稱，不代表內容已被翻譯。",
+    "confidence": "中",
+    "image": "assets/pages/page-200.jpg"
+  },
+  {
+    "scan_page": 201,
+    "section": "星號段落／配方區",
+    "description": "以短段落和邊緣星號為主；「配方」是慣用名稱，不代表內容已被翻譯。",
+    "confidence": "中",
+    "image": "assets/pages/page-201.jpg"
+  },
+  {
+    "scan_page": 202,
+    "section": "星號段落／配方區",
+    "description": "以短段落和邊緣星號為主；「配方」是慣用名稱，不代表內容已被翻譯。",
+    "confidence": "中",
+    "image": "assets/pages/page-202.jpg"
+  },
+  {
+    "scan_page": 203,
+    "section": "星號段落／配方區",
+    "description": "以短段落和邊緣星號為主；「配方」是慣用名稱，不代表內容已被翻譯。",
+    "confidence": "中",
+    "image": "assets/pages/page-203.jpg"
+  },
+  {
+    "scan_page": 204,
+    "section": "星號段落／配方區",
+    "description": "以短段落和邊緣星號為主；「配方」是慣用名稱，不代表內容已被翻譯。",
+    "confidence": "中",
+    "image": "assets/pages/page-204.jpg"
+  },
+  {
+    "scan_page": 205,
+    "section": "星號段落／配方區",
+    "description": "以短段落和邊緣星號為主；「配方」是慣用名稱，不代表內容已被翻譯。",
+    "confidence": "中",
+    "image": "assets/pages/page-205.jpg"
+  },
+  {
+    "scan_page": 206,
+    "section": "星號段落／配方區",
+    "description": "以短段落和邊緣星號為主；「配方」是慣用名稱，不代表內容已被翻譯。",
+    "confidence": "中",
+    "image": "assets/pages/page-206.jpg"
+  },
+  {
+    "scan_page": 207,
+    "section": "星號段落／配方區",
+    "description": "以短段落和邊緣星號為主；「配方」是慣用名稱，不代表內容已被翻譯。",
+    "confidence": "中",
+    "image": "assets/pages/page-207.jpg"
+  },
+  {
+    "scan_page": 208,
+    "section": "星號段落／配方區",
+    "description": "以短段落和邊緣星號為主；「配方」是慣用名稱，不代表內容已被翻譯。",
+    "confidence": "中",
+    "image": "assets/pages/page-208.jpg"
+  },
+  {
+    "scan_page": 209,
+    "section": "星號段落／配方區",
+    "description": "以短段落和邊緣星號為主；「配方」是慣用名稱，不代表內容已被翻譯。",
+    "confidence": "中",
+    "image": "assets/pages/page-209.jpg"
+  }
+]

@@ -1,0 +1,13 @@
+node_modules/
+.DS_Store
+*.log
+~$*
+
+# 暫存與輸出
+*.tmp
+/out/
+/build/
+
+# 預設不追蹤 PDF，但保留已發布的導讀 PDF
+*.pdf
+!guide/*.pdf

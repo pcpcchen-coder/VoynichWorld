@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>伏尼契手稿中文導讀 - 第一版</title>
+<style>
+@page { size: A4; margin: 18mm 16mm 20mm; @bottom-center { content: counter(page); font-size: 9pt; color:#776b58;} }
+:root{--ink:#2c2822;--paper:#f4eedf;--accent:#276b62;--gold:#a67b32;--muted:#6e665b;--card:#fffaf0;}
+*{box-sizing:border-box} html{scroll-behavior:smooth} body{margin:0;background:#ded5c3;color:var(--ink);font-family:"Noto Sans CJK TC","PingFang TC","Microsoft JhengHei",sans-serif;line-height:1.72}
+.page{max-width:960px;margin:24px auto;background:var(--paper);padding:44px 56px;box-shadow:0 8px 32px #0002;position:relative}
+.cover{min-height:92vh;display:flex;flex-direction:column;justify-content:center;overflow:hidden;background:linear-gradient(135deg,#efe3c8,#f9f4e9)}
+.cover:before{content:"";position:absolute;inset:0;background:url('assets/folio33.jpg') center/cover;opacity:.16;filter:sepia(.3)}
+.cover>*{position:relative}.kicker{letter-spacing:.22em;color:var(--accent);font-weight:700}.cover h1{font-family:"Noto Serif CJK TC","Songti TC",serif;font-size:50px;line-height:1.15;margin:.2em 0}.subtitle{font-size:21px;color:#514b42;max-width:700px}.edition{margin-top:36px;border-left:4px solid var(--gold);padding-left:16px;color:#5e5548}
+h1,h2,h3{font-family:"Noto Serif CJK TC","Songti TC",serif;line-height:1.28} h2{font-size:30px;border-bottom:1px solid #b8aa90;padding-bottom:8px;margin-top:1.6em} h3{font-size:21px;color:#245f57;margin-top:1.5em}
+a{color:#195d73}.toc a{text-decoration:none}.toc ol{columns:2;column-gap:42px}.toc li{margin:.35em 0}
+.heroimg{width:100%;max-height:620px;object-fit:contain;background:#1e1b17;padding:12px;border-radius:4px}.caption{font-size:12px;color:var(--muted);text-align:center;margin-top:6px}
+.callout{background:var(--card);border-left:5px solid var(--accent);padding:16px 20px;margin:18px 0}.warning{border-left-color:#a25b3b}.fact-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}.fact{background:#fff9ed;border:1px solid #d8cbb4;padding:14px;border-radius:6px}.fact b{display:block;color:var(--accent);font-size:18px}
+table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}th,td{border:1px solid #c8baa2;padding:9px;vertical-align:top}th{background:#e7dcc5;text-align:left}.score{white-space:nowrap;color:#8d641f}.tag{display:inline-block;border:1px solid #8f9b87;border-radius:999px;padding:2px 9px;margin:2px;font-size:12px;background:#eef2e9}
+.timeline{border-left:3px solid #b39864;margin-left:10px;padding-left:22px}.timeline p{margin:0 0 16px}.timeline b{color:var(--accent)}
+.diagram{background:#fff9ed;border:1px solid #d8cbb4;padding:18px;margin:18px 0}.flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px}.node{border:1px solid #8c7b5e;padding:8px 12px;border-radius:5px;background:white}.arrow{font-weight:bold;color:var(--gold)}
+.code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#25231f;color:#eee5d5;padding:14px;white-space:pre-wrap;border-radius:5px;font-size:12px}.small{font-size:13px;color:var(--muted)}.refs li{margin:.65em 0;word-break:break-word}.print-break{break-before:page}
+.toolbar{position:sticky;top:0;z-index:20;background:#292720;color:white;padding:9px 16px;display:flex;gap:12px;align-items:center}.toolbar input{flex:1;max-width:380px;padding:7px}.toolbar button{padding:7px 12px;cursor:pointer}.hidden{display:none!important}.highlight{background:#ffe493}
+@media print{body{background:white}.toolbar{display:none}.page{box-shadow:none;margin:0;max-width:none;padding:0}.cover{min-height:250mm;break-after:page}section{break-inside:auto}h2{break-after:avoid}.print-break{break-before:page}}
+@media(max-width:700px){.page{margin:0;padding:28px 20px}.cover h1{font-size:38px}.fact-grid{grid-template-columns:1fr}.toc ol{columns:1}}
+</style>
+</head>
+<body>
+<div class="toolbar"><strong>伏尼契手稿中文導讀</strong><input id="q" placeholder="搜尋章節或關鍵字…"><button onclick="window.print()">列印 / 存成 PDF</button></div>
+<main>
+<section class="page cover" id="cover"><div class="kicker">VOYNICH MANUSCRIPT · MS 408</div><h1>伏尼契手稿中文導讀</h1><p class="subtitle">一本約六百年前寫成、至今仍未被可靠解讀的圖像手稿：植物、星象、浴池、藥罐與未知文字的系統化入門。</p><div class="edition"><b>第一版 · 研究與應用型導讀</b><br>適用於閱讀、YouTube 腳本、AI Agent 知識庫與後續逐頁研究。</div></section>
+
+<section class="page toc" id="toc"><h2>目錄</h2><ol>
+<li><a href="#quick">一分鐘認識它</a></li><li><a href="#history">流傳史與年代</a></li><li><a href="#anatomy">手稿的六大區段</a></li><li><a href="#plants">神祕植物到底是什麼</a></li><li><a href="#script">未知文字與統計規律</a></li><li><a href="#theories">主要破解理論評估</a></li><li><a href="#myths">常見都市傳說核對</a></li><li><a href="#reading">如何自己閱讀原稿</a></li><li><a href="#folio">示範頁導讀</a></li><li><a href="#ai">AI 研究工作流</a></li><li><a href="#database">後續資料庫規格</a></li><li><a href="#acceptance">驗收標準</a></li><li><a href="#glossary">名詞表</a></li><li><a href="#refs">參考資料</a></li>
+</ol><div class="callout"><b>版本定位</b><br>這不是「已破解翻譯本」，而是把可靠史料、主流研究、爭議假說與可執行研究方法分層呈現的導讀。任何聲稱已完整翻譯的內容，都應先檢查是否經同行評審、能否重現、是否能一致解釋全書。</div></section>
+
+<section class="page" id="quick"><h2>一分鐘認識伏尼契手稿</h2><img class="heroimg" src="assets/folio33.jpg" alt="伏尼契手稿植物頁"><div class="caption">植物頁示例。原作公有領域；數位圖像來源：Wikimedia Commons / Yale Beinecke。</div><div class="fact-grid">
+<div class="fact"><b>館藏編號</b>Beinecke MS 408，收藏於耶魯大學 Beinecke 珍本與手稿圖書館。</div><div class="fact"><b>材料年代</b>羊皮紙放射性碳定年約落在 1404–1438 年。</div><div class="fact"><b>核心謎團</b>文字系統未被可靠解讀，作者、語言與用途均無定論。</div><div class="fact"><b>圖像主題</b>植物、天文／占星、裸女浴池與管道、宇宙圖、藥材與短條目。</div></div>
+<div class="callout warning"><b>最重要的辨識：</b>「畫中植物無法確認」不等於「它們一定是地球上已滅絕或不存在的植物」。更保守的解釋包括：中世紀風格化描繪、不同部位拼合、抄本失真、象徵性圖像，或作者刻意創造的分類圖。</div></section>
+
+<section class="page" id="history"><h2>流傳史與年代</h2><div class="timeline">
+<p><b>1404–1438</b>　羊皮紙最可能的製作年代。這是材料年代，不一定等於書寫的精確年份，但通常不會相差太久。</p>
+<p><b>17 世紀</b>　布拉格收藏家 Georg Baresch 曾向耶穌會學者 Athanasius Kircher 求助。Jan Marek Marci 後來把手稿寄給 Kircher，隨書信件成為早期流傳的重要證據。</p>
+<p><b>1912</b>　古書商 Wilfrid M. Voynich 從義大利 Frascati 附近的耶穌會收藏中購得手稿，並積極向學界宣傳。</p>
+<p><b>1961–1969</b>　手稿經 Anne Nill、書商 H. P. Kraus 之手，最終捐贈給耶魯 Beinecke 圖書館。</p>
+<p><b>2009</b>　四份羊皮紙樣本接受加速器質譜放射性碳定年。</p>
+<p><b>今日</b>　高解析掃描、轉寫資料、字形編碼與計算語言學工具，使全球研究者可以遠端協作，但完整解讀仍未形成學術共識。</p></div>
+<h3>可以確定與不能確定</h3><table><tr><th>層級</th><th>目前狀態</th></tr><tr><td>高可信</td><td>羊皮紙為十五世紀初；手稿確實是古物；具有穩定書寫規律與多個圖像區段。</td></tr><tr><td>中可信</td><td>內容可能與草藥、醫療、占星或自然哲學有關；存在多名抄寫者或不同書寫手。</td></tr><tr><td>未定</td><td>語言、編碼方式、作者、地點、真正用途、每幅植物的物種。</td></tr></table></section>
+
+<section class="page" id="anatomy"><h2>手稿的六大區段</h2><table><tr><th>區段</th><th>主要圖像</th><th>常見推測</th><th>注意事項</th></tr>
+<tr><td>植物（Herbal）</td><td>每頁一至兩株大型植物</td><td>草藥學、藥性、採集指南</td><td>多數無法無歧義辨識，常呈現拼合感。</td></tr>
+<tr><td>天文／占星</td><td>日月、星盤、黃道十二宮</td><td>曆法、醫療占星、採藥時機</td><td>部分符號可辨，但文字仍未知。</td></tr>
+<tr><td>浴療／生物</td><td>裸女、池槽、管道、綠色液體</td><td>浴療、婦科、生殖、體液循環</td><td>「生物學」是現代方便命名，不代表真是解剖學。</td></tr>
+<tr><td>宇宙圖</td><td>同心圓、折頁、九玫瑰圖</td><td>宇宙論、地圖、城市或流程圖</td><td>圖像極複雜，解讀差異很大。</td></tr>
+<tr><td>藥劑</td><td>根、葉、切片、藥罐</td><td>配藥、藥材庫、處方索引</td><td>可能與前方植物頁形成交叉索引。</td></tr>
+<tr><td>條目／配方</td><td>短段文字，左側常有星號</td><td>配方、步驟、索引條目</td><td>缺乏可讀標題，無法確認條目真正功能。</td></tr></table>
+<div class="diagram"><b>合理的整體假說（仍未證實）</b><div class="flow"><span class="node">植物辨識</span><span class="arrow">→</span><span class="node">星象／採集時機</span><span class="arrow">→</span><span class="node">處理與浴療</span><span class="arrow">→</span><span class="node">藥材部件</span><span class="arrow">→</span><span class="node">配方條目</span></div></div></section>
+
+<section class="page" id="plants"><h2>神祕植物：為什麼看起來不像地球植物？</h2><h3>五種可能性</h3><table><tr><th>假說</th><th>說明</th><th>目前評估</th></tr>
+<tr><td>風格化寫生</td><td>中世紀草藥書重視可用特徵，不一定追求現代植物學的精確比例。</td><td class="score">★★★★☆</td></tr>
+<tr><td>複合植物</td><td>根、葉、花可能取自不同物種，為了表達藥材組合、性質或分類。</td><td class="score">★★★★☆</td></tr>
+<tr><td>抄寫失真</td><td>經多次轉抄後，細節逐代變形，尤其是作者未見過原植物時。</td><td class="score">★★★☆☆</td></tr>
+<tr><td>象徵／記憶圖</td><td>圖像可能是助記符、器官隱喻、星象對應或秘密學派的符號。</td><td class="score">★★★☆☆</td></tr>
+<tr><td>滅絕或外星植物</td><td>吸引人，但目前缺乏獨立證據，也無法解釋整套文字規律。</td><td class="score">★☆☆☆☆</td></tr></table>
+<h3>植物辨識的工程化方法</h3><ol><li>把根、莖、葉、花、果實分割成獨立區域。</li><li>分別記錄形狀、葉序、葉緣、花瓣數、根型與色彩。</li><li>與同時代草藥抄本比較，而不是只和現代照片比較。</li><li>允許「一張圖由多物種部件構成」的候選模型。</li><li>每個候選必須留下反證條件，避免只挑相似部分。</li></ol></section>
+
+<section class="page" id="script"><h2>未知文字：它像語言，卻又很不尋常</h2><p>研究者通常把文字暫稱為 <b>Voynichese</b>。為了計算分析，常使用 EVA（Extensible Voynich Alphabet）等轉寫系統，把未知字形映射成拉丁字母代碼；這只是轉寫，不是翻譯。</p><div class="callout"><b>已觀察到的規律</b><br>詞形有高頻模式；某些字形偏好出現在詞首或詞尾；不同區段的詞彙分布不同；頁面主題、抄寫者與統計群聚之間存在關聯。這些現象使「完全隨機亂寫」較難成立，但仍不能直接證明它是正常自然語言。</div>
+<h3>為何傳統密碼學難以處理</h3><ul><li>沒有已知明文、雙語對照或確定專有名詞。</li><li>字母邊界與詞界可能是誤判。</li><li>可能同時包含縮寫、同音替換、字形變體或多層編碼。</li><li>圖像和文字的對應關係尚未確認。</li></ul>
+<div class="code">研究資料最小單位：
+folio_id, side, section, scribe, paragraph_id,
+line_id, token_id, eva_token, glyph_image,
+position_x, position_y, nearby_illustration, uncertainty</div></section>
+
+<section class="page" id="theories"><h2>主要破解理論評估</h2><table><tr><th>理論</th><th>優點</th><th>主要問題</th><th>可信度</th></tr>
+<tr><td>加密的自然語言</td><td>可解釋詞頻與區段差異</td><td>尚無方案能穩定翻譯全書並預測新頁</td><td class="score">★★★☆☆</td></tr>
+<tr><td>人工語言／分類碼</td><td>可解釋規律性與低熵</td><td>缺乏碼本；圖文對應不明</td><td class="score">★★★☆☆</td></tr>
+<tr><td>中世紀縮寫系統</td><td>符合醫藥與拉丁書寫傳統</td><td>字形與展開規則尚未被一致證明</td><td class="score">★★★☆☆</td></tr>
+<tr><td>自動生成／偽書</td><td>能解釋重複近似詞</td><td>製作成本高，且主題群聚與抄手差異需額外解釋</td><td class="score">★★☆☆☆</td></tr>
+<tr><td>希伯來文、土耳其語、羅曼語、Pahlavi 等特定語言</td><td>個別片段常可配出讀法</td><td>容易產生任意對應；通常無法覆蓋全書</td><td class="score">★–★★☆☆☆</td></tr>
+<tr><td>外星／失落文明</td><td>敘事吸引人</td><td>沒有可驗證證據，亦非必要假設</td><td class="score">☆☆☆☆☆</td></tr></table>
+<h3>「真正破解」應通過的測試</h3><ol><li>事先固定字形、詞界與讀法規則。</li><li>在未參與建模的頁面上盲測。</li><li>同一詞在不同頁面應保持一致語義或可解釋變化。</li><li>翻譯必須與圖像、文法、年代、材料文化同時相容。</li><li>由獨立研究者重現，不依賴作者臨場調整。</li></ol></section>
+
+<section class="page" id="myths"><h2>常見說法核對</h2><table><tr><th>說法</th><th>判定</th><th>較精確的說法</th></tr>
+<tr><td>「書裡全是地球上沒有的植物」</td><td>誇大</td><td>多數植物無法確定辨識；這不等於證明它們不存在。</td></tr>
+<tr><td>「AI 已經破解」</td><td>尚無共識</td><td>有許多模型與語言假說，但沒有被廣泛接受、可重現的完整翻譯。</td></tr>
+<tr><td>「它是近代惡作劇」</td><td>不太可能</td><td>羊皮紙確為十五世紀初，墨水與物質研究也支持古代製作；但內容是否有意義仍可討論。</td></tr>
+<tr><td>「作者是 Roger Bacon」</td><td>年代不符</td><td>Bacon 逝於 1294，早於羊皮紙年代一個多世紀。</td></tr>
+<tr><td>「裸女代表外星生物」</td><td>無證據</td><td>更接近浴療、醫療占星、婦科或象徵性體液系統的研究方向。</td></tr></table></section>
+
+<section class="page" id="reading"><h2>如何自己閱讀原稿</h2><ol><li><b>先看館藏頁：</b>確認 folio 編號、正反面（r = recto，v = verso）與折頁。</li><li><b>先圖後文：</b>辨識區段、構圖、標籤位置、文字避開圖像的方式。</li><li><b>比鄰頁：</b>不要孤立解釋單頁；比較前後頁的圖像與高頻詞。</li><li><b>分層筆記：</b>觀察、推測、外部證據、反證必須分欄。</li><li><b>保留不確定性：</b>使用信心分數與候選集合，不做單一斷言。</li></ol>
+<div class="code">逐頁筆記模板
+頁碼：f___r / f___v
+區段：Herbal / Astro / Bio / Cosmo / Pharma / Recipes
+客觀觀察：
+圖像部件：
+文字版面：
+候選解釋 A / B / C：
+支持證據：
+反證與缺口：
+信心：0-100%
+待比對頁面：</div></section>
+
+<section class="page" id="folio"><h2>示範頁導讀：植物頁</h2><img class="heroimg" src="assets/folio33.jpg" alt="植物頁示範"><h3>客觀觀察</h3><p>頁面中央是一株具有細長羽狀葉、三個深色花頭及纖細根系的植物。文字段落位於植物上方與左側，書寫時似乎刻意繞開圖像。植物的比例與根、葉、花之間的關係不完全符合現代植物學圖鑑。</p><h3>候選解釋</h3><p><span class="tag">藥用植物寫生</span><span class="tag">多物種拼合</span><span class="tag">象徵性花頭</span><span class="tag">抄本變形</span></p><h3>不能從這一頁推出的結論</h3><p>無法僅憑外觀斷定它是已滅絕植物、外星植物或某一確切物種；也無法證明旁邊文字就是植物名稱或藥效。合理研究需要跨頁詞彙、同時代圖譜與材料分析共同支持。</p></section>
+
+<section class="page" id="ai"><h2>AI 深度分析工作流</h2><div class="diagram"><div class="flow"><span class="node">高解析頁面</span><span class="arrow">→</span><span class="node">版面分割</span><span class="arrow">→</span><span class="node">字形偵測</span><span class="arrow">→</span><span class="node">EVA 對齊</span><span class="arrow">→</span><span class="node">跨頁特徵庫</span><span class="arrow">→</span><span class="node">假說盲測</span></div></div>
+<h3>建議模型模組</h3><table><tr><th>模組</th><th>用途</th><th>輸出</th></tr><tr><td>Layout segmentation</td><td>分離文字、植物、星盤、人物、容器</td><td>polygon / mask</td></tr><tr><td>Glyph detector</td><td>偵測字形及連字</td><td>字形框、置信度</td></tr><tr><td>Writer clustering</td><td>依筆跡分群</td><td>scribe embedding</td></tr><tr><td>Topic model</td><td>比對詞彙群與圖像區段</td><td>頁面主題分布</td></tr><tr><td>Plant-part retrieval</td><td>根、葉、花分部件相似搜尋</td><td>候選清單與反例</td></tr><tr><td>Hypothesis evaluator</td><td>對翻譯理論做留出頁盲測</td><td>一致性、覆蓋率、複雜度</td></tr></table>
+<h3>Agent Prompt 模板</h3><div class="code">你是伏尼契手稿研究助理。請嚴格分離：
+A. 圖像可直接觀察的事實
+B. 研究文獻已支持的結論
+C. 合理但未證實的推測
+D. 都市傳說或無法驗證說法
+
+對每個結論提供：來源、反證、信心分數、可重現步驟。
+不得把 EVA 轉寫當作翻譯；不得因局部相似就宣稱辨識成功。</div></section>
+
+<section class="page" id="database"><h2>後續資料庫與檔案結構</h2><div class="code">Voynich-Research/
+├── README.md
+├── guide/
+│   ├── index.html
+│   └── 伏尼契手稿中文導讀.pdf
+├── data/
+│   ├── folios.csv
+│   ├── tokens_eva.csv
+│   ├── glyphs.parquet
+│   ├── plant_parts.csv
+│   └── hypotheses.yaml
+├── images/
+│   ├── full/
+│   ├── text_regions/
+│   ├── glyphs/
+│   └── plant_parts/
+├── notes/
+│   └── f001r.md ...
+├── agents/
+│   ├── system-prompt.md
+│   └── evaluation-rubric.md
+└── scripts/
+    ├── segment_pages.py
+    ├── align_eva.py
+    ├── build_search_index.py
+    └── evaluate_hypothesis.py</div>
+<h3>核心資料表：folios.csv</h3><table><tr><th>欄位</th><th>說明</th></tr><tr><td>folio_id</td><td>例如 f1r、f78v</td></tr><tr><td>section</td><td>植物、天文、浴療、宇宙、藥劑、配方</td></tr><tr><td>quire / bifolio</td><td>書帖與雙葉關係</td></tr><tr><td>scribe</td><td>抄寫者群組與信心</td></tr><tr><td>image_url / license</td><td>來源與使用授權</td></tr><tr><td>notes_path</td><td>逐頁 Markdown</td></tr><tr><td>review_status</td><td>未整理、初審、交叉驗證、完成</td></tr></table></section>
+
+<section class="page" id="acceptance"><h2>後續全卷版驗收標準</h2><ol><li><b>頁面覆蓋：</b>所有現存 folio 均有索引與高解析來源。</li><li><b>來源可追溯：</b>每個歷史事實、辨識假說與圖像均附來源。</li><li><b>分層清楚：</b>事實、推測、都市傳說不混寫。</li><li><b>逐頁一致：</b>使用固定模板，可由程式自動轉 PDF、HTML 與知識庫。</li><li><b>搜尋可用：</b>可按頁碼、區段、字形、植物部件、研究者與理論搜尋。</li><li><b>AI 可評測：</b>任何翻譯假說都必須有訓練集／留出集與可重現分數。</li><li><b>版權合規：</b>優先使用公有領域原作與清楚授權的掃描圖。</li></ol>
+<div class="callout"><b>第一版完成範圍：</b>本導讀建立了內容架構、研究原則、HTML 搜尋與 PDF 印刷版。逐頁 200+ 頁全卷註解、完整 EVA 對齊與植物候選資料庫屬下一階段。</div></section>
+
+<section class="page" id="glossary"><h2>名詞表</h2><table><tr><th>名詞</th><th>解釋</th></tr><tr><td>Folio</td><td>手稿的一葉；正面為 recto（r），背面為 verso（v）。</td></tr><tr><td>Codex</td><td>裝訂成冊的手抄本形式。</td></tr><tr><td>Voynichese</td><td>對伏尼契手稿未知文字的非正式稱呼。</td></tr><tr><td>EVA</td><td>Extensible Voynich Alphabet，研究用字形轉寫系統，不是翻譯。</td></tr><tr><td>Paleography</td><td>古文字學，研究書寫形態、年代與抄寫者。</td></tr><tr><td>Codicology</td><td>古籍形制學，研究書帖、裝訂、材料與製作過程。</td></tr><tr><td>Radiocarbon dating</td><td>透過碳-14 測定有機材料年代的方法。</td></tr><tr><td>Rosettes folio</td><td>著名大型折頁，包含九個相連圓形區域。</td></tr></table></section>
+
+<section class="page refs" id="refs"><h2>參考資料與延伸閱讀</h2><ol>
+<li>Yale Beinecke Rare Book & Manuscript Library, “The Beinecke Cipher (Voynich) Manuscript,” MS 408. https://beinecke.library.yale.edu/beinecke/collections/beinecke-cipher-voynich-manuscript</li>
+<li>Yale Beinecke, “Voynich Manuscript” collection highlight. https://beinecke.library.yale.edu/collections/highlights/voynich-manuscript</li>
+<li>University of Arizona / Phys.org, “Experts determine age of book nobody can read” (2011), regarding radiocarbon dating. https://phys.org/news/2011-02-experts-age.html</li>
+<li>René Zandbergen, Voynich Manuscript research site: illustrations, history, radiocarbon dating and bibliography. https://www.voynich.nu/</li>
+<li>Rachel Sterneck, Annie Polish, Claire Bowern, “Topic Modeling in the Voynich Manuscript,” 2021. https://arxiv.org/abs/2107.02858</li>
+<li>Wikimedia Commons, “Voynich Manuscript (33).jpg,” public-domain reproduction sourced from Yale Beinecke. https://commons.wikimedia.org/wiki/File:Voynich_Manuscript_(33).jpg</li>
+</ol><p class="small">編輯原則：優先採用館藏機構、材料研究與可重現的計算研究。對未經同行評審或無法覆蓋全書的「破解」主張，只作為假說紀錄，不視為定論。</p></section>
+</main>
+<script>
+const input=document.getElementById('q');
+input.addEventListener('input',()=>{const q=input.value.trim().toLowerCase(); document.querySelectorAll('main section.page:not(.cover):not(.toc)').forEach(s=>{s.classList.toggle('hidden',q && !s.innerText.toLowerCase().includes(q));});});
+</script>
+</body></html>
