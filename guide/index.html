@@ -28,10 +28,10 @@ table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}th,td{bor
 <body>
 <div class="toolbar"><strong>伏尼契手稿中文導讀</strong><input id="q" placeholder="搜尋章節或關鍵字…"><button onclick="window.print()">列印 / 存成 PDF</button></div>
 <main>
-<section class="page cover" id="cover"><div class="kicker">VOYNICH MANUSCRIPT · MS 408</div><h1>伏尼契手稿中文導讀</h1><p class="subtitle">一本約六百年前寫成、至今仍未被可靠解讀的圖像手稿：植物、星象、浴池、藥罐與未知文字的系統化入門。</p><div class="edition"><b>第一版 · 研究與應用型導讀</b><br>適用於閱讀、YouTube 腳本、AI Agent 知識庫與後續逐頁研究。</div></section>
+<section class="page cover" id="cover"><div class="kicker">VOYNICH MANUSCRIPT · MS 408</div><h1>伏尼契手稿中文導讀</h1><p class="subtitle">一本約六百年前寫成、至今仍未被可靠解讀的圖像手稿：植物、星象、浴池、藥罐與未知文字的系統化入門。</p><div class="edition"><b>第一版 · 研究與應用型導讀</b><br>適用於閱讀、YouTube 腳本、AI Agent 知識庫與後續逐頁研究。<br><b>2026 年 11 月增補：</b>新增〈頁序之謎〉，收錄 2026 年「手稿裝訂錯誤」研究。</div></section>
 
 <section class="page toc" id="toc"><h2>目錄</h2><ol>
-<li><a href="#quick">一分鐘認識它</a></li><li><a href="#history">流傳史與年代</a></li><li><a href="#anatomy">手稿的六大區段</a></li><li><a href="#plants">神祕植物到底是什麼</a></li><li><a href="#script">未知文字與統計規律</a></li><li><a href="#theories">主要破解理論評估</a></li><li><a href="#myths">常見都市傳說核對</a></li><li><a href="#reading">如何自己閱讀原稿</a></li><li><a href="#folio">示範頁導讀</a></li><li><a href="#ai">AI 研究工作流</a></li><li><a href="#database">後續資料庫規格</a></li><li><a href="#acceptance">驗收標準</a></li><li><a href="#glossary">名詞表</a></li><li><a href="#refs">參考資料</a></li>
+<li><a href="#quick">一分鐘認識它</a></li><li><a href="#history">流傳史與年代</a></li><li><a href="#anatomy">手稿的六大區段</a></li><li><a href="#plants">神祕植物到底是什麼</a></li><li><a href="#script">未知文字與統計規律</a></li><li><a href="#binding">頁序之謎：手稿可能被裝訂錯了</a></li><li><a href="#theories">主要破解理論評估</a></li><li><a href="#myths">常見都市傳說核對</a></li><li><a href="#reading">如何自己閱讀原稿</a></li><li><a href="#folio">示範頁導讀</a></li><li><a href="#ai">AI 研究工作流</a></li><li><a href="#database">後續資料庫規格</a></li><li><a href="#acceptance">驗收標準</a></li><li><a href="#glossary">名詞表</a></li><li><a href="#refs">參考資料</a></li>
 </ol><div class="callout"><b>版本定位</b><br>這不是「已破解翻譯本」，而是把可靠史料、主流研究、爭議假說與可執行研究方法分層呈現的導讀。任何聲稱已完整翻譯的內容，都應先檢查是否經同行評審、能否重現、是否能一致解釋全書。</div></section>
 
 <section class="page" id="quick"><h2>一分鐘認識伏尼契手稿</h2><img class="heroimg" src="assets/folio33.jpg" alt="伏尼契手稿植物頁"><div class="caption">植物頁示例。原作公有領域；數位圖像來源：Wikimedia Commons / Yale Beinecke。</div><div class="fact-grid">
@@ -44,8 +44,10 @@ table{width:100%;border-collapse:collapse;margin:16px 0;font-size:14px}th,td{bor
 <p><b>1912</b>　古書商 Wilfrid M. Voynich 從義大利 Frascati 附近的耶穌會收藏中購得手稿，並積極向學界宣傳。</p>
 <p><b>1961–1969</b>　手稿經 Anne Nill、書商 H. P. Kraus 之手，最終捐贈給耶魯 Beinecke 圖書館。</p>
 <p><b>2009</b>　四份羊皮紙樣本接受加速器質譜放射性碳定年。</p>
+<p><b>2020</b>　Lisa Fagin Davis 以數位古文字學方法辨識出五位抄寫者。</p>
+<p><b>2026</b>　Colin Layfield 與 Lisa Fagin Davis 以計量方法提出：現行裝訂頁序錯亂，手稿原為依序閱讀的獨立對摺紙（見〈頁序之謎〉）。</p>
 <p><b>今日</b>　高解析掃描、轉寫資料、字形編碼與計算語言學工具，使全球研究者可以遠端協作，但完整解讀仍未形成學術共識。</p></div>
-<h3>可以確定與不能確定</h3><table><tr><th>層級</th><th>目前狀態</th></tr><tr><td>高可信</td><td>羊皮紙為十五世紀初；手稿確實是古物；具有穩定書寫規律與多個圖像區段。</td></tr><tr><td>中可信</td><td>內容可能與草藥、醫療、占星或自然哲學有關；存在多名抄寫者或不同書寫手。</td></tr><tr><td>未定</td><td>語言、編碼方式、作者、地點、真正用途、每幅植物的物種。</td></tr></table></section>
+<h3>可以確定與不能確定</h3><table><tr><th>層級</th><th>目前狀態</th></tr><tr><td>高可信</td><td>羊皮紙為十五世紀初；手稿確實是古物；具有穩定書寫規律與多個圖像區段。</td></tr><tr><td>中可信</td><td>內容可能與草藥、醫療、占星或自然哲學有關；存在多名抄寫者或不同書寫手；現行裝訂頁序可能並非原始順序（2026 計量研究，浴療與星號區證據較強）。</td></tr><tr><td>未定</td><td>語言、編碼方式、作者、地點、真正用途、每幅植物的物種。</td></tr></table></section>
 
 <section class="page" id="anatomy"><h2>手稿的六大區段</h2><table><tr><th>區段</th><th>主要圖像</th><th>常見推測</th><th>注意事項</th></tr>
 <tr><td>植物（Herbal）</td><td>每頁一至兩株大型植物</td><td>草藥學、藥性、採集指南</td><td>多數無法無歧義辨識，常呈現拼合感。</td></tr>
@@ -71,6 +73,41 @@ folio_id, side, section, scribe, paragraph_id,
 line_id, token_id, eva_token, glyph_image,
 position_x, position_y, nearby_illustration, uncertainty</div></section>
 
+<section class="page" id="binding"><h2>頁序之謎：手稿可能被裝訂錯了</h2><p class="small">2026 年 11 月增補 · 依據 Colin Layfield &amp; Lisa Fagin Davis（2026），同儕審查期刊《Digital Medievalist》第 19 卷</p>
+<div class="callout"><b>一句話：</b>研究者以統計方法比對每一頁的用字，發現「同一張對摺羊皮紙的左右兩半」彼此最相似，現行裝訂中「翻開後相對的兩頁」反而最不相似——與正常書籍恰好相反。他們據此主張：手稿原本是一張張<b>依序翻閱的獨立對摺紙</b>，後來才被讀不懂它的人層層套疊、裝訂成冊，頁序因此錯亂。<br><b>這不是翻譯。</b>沒有任何一個詞因此被讀懂。</div>
+<h3>先懂裝訂：書帖、對摺紙與 singulion</h3><p>中世紀抄本的基本單位是 <b>bifolio（對摺紙）</b>：一張羊皮紙對摺後形成 2 葉、4 頁。數張對摺紙<b>層層套疊</b>再縫在一起，稱為 <b>quire（書帖）</b>。套疊的結果是：同一張紙的左右兩半（<b>conjoint，同紙對葉</b>）會被中間其他頁隔開，只有最內層那張翻開才相對。若每張對摺紙不套疊、只是依序疊放，每一張自成一個閱讀單元，稱為 <b>singulion</b>。</p>
+<div class="code">以浴療區書帖 13（ff. 75–84）為例
+
+現行裝訂：五張對摺紙層層套疊成一個書帖
+  75 76 77 78 79 | 80 81 82 83 84
+  \_____________________________/   75 與 84 是同一張紙，中間卻隔了 8 葉
+     \_______________________/      76 與 83 同理……
+              \_____/               只有最內層的 79|80 翻開即相對
+
+假說：五張對摺紙各自獨立、依序疊放（singulion）
+  [75|84]  [76|83]  [77|82]  [78|81]  [79|80]
+  每一張打開，左右兩頁就是原本設計要並讀的一組</div>
+<h3>證據</h3><table><tr><th>證據</th><th>內容</th><th>強度</th></tr>
+<tr><td>用字相似度（LSA）</td><td>以潛在語意分析比對各頁用字。對照組《Aberdeen Bestiary》與《Speculum Humanae Salvationis》的「同紙對葉」相似度最低（0.207、0.277）；伏尼契卻最高（0.433），明顯高於「翻開相對頁」（0.298）。浴療區書帖 13：同紙 0.603 vs 相對 0.460；星號區書帖 20：同紙 0.600 vs 相對 0.438。</td><td>書帖 13、20 明確；植物區不一致</td></tr>
+<tr><td>跨越裝訂溝的圖</td><td>f78v 畫出的兩道水流越過中縫，在 f81r 接續——兩者正是同一張紙的兩半，現行裝訂中卻被 79、80 兩葉隔開。較不明顯但同樣指向此事的還有：10v|15r（潑濺狀色塊）、33v|40r（藍色花瓣）、58v|65r（一小片綠葉）、76v|83r（浴女右臂）。作者據此推論：對摺紙是在套疊裝訂<b>之前</b>就已逐張繪製完成。</td><td>可直接查驗</td></tr>
+<tr><td>顏料轉印（offset）</td><td>顏料從一頁磨印到相對頁的痕跡，顯示手稿維持現行裝訂狀態已有數百年。配合下方的縫線證據，作者推論錯裝並非後世重裝造成，而是 15 世紀第一次裝訂時就已發生。</td><td>中</td></tr>
+<tr><td>抄寫者分布</td><td>Davis（2020）辨識出五位抄寫者；幾乎每張對摺紙的四頁都出自同一人，但現行書帖內抄寫者交錯。「一個書帖通常由一位抄寫者完成」。</td><td>中</td></tr>
+<tr><td>裝訂史</td><td>耶魯修復師 Paula Zyats 的檢查顯示只有一次縫線，屬晚期哥德式（約 1400–1500）。若錯裝屬實，很可能在第一次裝訂時就已發生，裝訂者本身也讀不懂內容。</td><td>中</td></tr>
+<tr><td>放大首字</td><td>f76r 與 f105r 以放大的「首字」開頭，可能標示段落起點；兩者恰好分別是書帖 13 次選方案與書帖 20 方案的起首頁。</td><td>旁證</td></tr></table>
+<h3>研究者提出的原始順序（僅兩個書帖）</h3><table><tr><th>書帖</th><th>提出的對摺紙順序</th><th>相對頁平均相似度</th></tr>
+<tr><td>13 浴療（首選）</td><td>77|82 → 78|81 → 75|84 → 76|83 → 79|80</td><td>0.461 → 0.517（+12.1%）</td></tr>
+<tr><td>13 浴療（次選）</td><td>76|83 → 77|82 → 79|80 → 75|84 → 78|81</td><td>0.461 → 0.494（+7.1%）；以有放大首字的 f76r 起首，作者認為也可能才是原始順序</td></tr>
+<tr><td>20 星號段落</td><td>105|114 → 104|115 → 106|113 → 107|112 → 108|111 → 103|116</td><td>0.438 → 0.526（+20%）；以 f105r 起首、以原本空白的 f116v 結束；f109–110 已佚失</td></tr></table>
+<p class="small">天文、宇宙、九玫瑰摺頁與藥劑區含大型摺頁，未納入分析。植物區（書帖 1–7）結果不一致，作者坦言該區可能根本不存在一個「正確順序」。</p>
+<h3>這代表什麼、不代表什麼</h3><table><tr><th>層級</th><th>內容</th></tr>
+<tr><td>研究已支持</td><td>書帖 13、20 中「同紙對葉」的用字相似度顯著高於「翻開相對頁」，與正常書籍的模式相反。</td></tr>
+<tr><td>合理推論</td><td>手稿原本是依序閱讀的獨立對摺紙；現行裝訂的頁序至少有一部分是錯的。</td></tr>
+<tr><td>未證實</td><td>上表的具體重排是否正確；植物區是否存在原始順序；錯裝對解讀的實際影響有多大。</td></tr>
+<tr><td>常見誤讀</td><td>「AI 發現裝錯了，所以終於讀懂了」——見下方說明。</td></tr></table>
+<div class="callout warning"><b>兩個常見誤會</b><br>① <b>不是新一代 AI。</b>使用的是 1980 年代末發展的潛在語意分析（LSA：TF-IDF 加權＋奇異值分解）。手稿僅約 3.5 萬詞，作者刻意不用需要大量訓練資料的大型模型。<br>② <b>沒有讀懂任何東西。</b>論文的說法是：錯裝「可能<b>部分</b>解釋」過去的解讀為何不成功——頁序錯亂的書當然更難讀，但每一頁上的文字本身仍然無法閱讀。作者也明言：除非真的能讀懂手稿，否則無法確定這個假說正確。</div>
+<h3>爭議與限制</h3><ul><li><b>作者自述：</b>相似度分數只代表「用字習慣相近」，不必然是語意相近——連它是不是語言都還不確定；語料規模小，模型也在同一份資料上建立與測試。</li><li><b>外部評論：</b>Torsten Timm 在 Voynich Ninja 研究論壇指出，「同紙對葉較相似」這個結果站得住，但由此推出「閱讀順序」受資料約束不足；重排實驗缺少隨機置換的對照基準；植物區資料與 singulion 主張之間存在張力。Davis 在討論中同意植物區的 LSA 資料幫助不大，但認為書帖 13、20 的結果非常清楚。（論壇討論，非正式審查。）</li><li><b>前人觀察：</b>「頁序可能錯亂」並非全新說法；本研究的貢獻在於以可重現的計量方法系統性地檢驗它。</li></ul>
+<h3>對閱讀與研究的影響</h3><ul><li>Davis：「任何依賴現行頁序的研究都需要重新檢驗。」例如以相鄰頁推論章節延續、詞彙承接或圖文對應的分析。</li><li>本導讀〈如何自己閱讀原稿〉的「比鄰頁」方法同步修正：除了前後頁，也要比對<b>同一張對摺紙的另一半</b>。</li><li>完整圖版版的掃描頁碼反映<b>現行裝訂順序</b>，不是原始順序。本假說的結構化資料見倉庫 <code>data/singulion_hypothesis_2026.json</code>。</li></ul></section>
+
 <section class="page" id="theories"><h2>主要破解理論評估</h2><table><tr><th>理論</th><th>優點</th><th>主要問題</th><th>可信度</th></tr>
 <tr><td>加密的自然語言</td><td>可解釋詞頻與區段差異</td><td>尚無方案能穩定翻譯全書並預測新頁</td><td class="score">★★★☆☆</td></tr>
 <tr><td>人工語言／分類碼</td><td>可解釋規律性與低熵</td><td>缺乏碼本；圖文對應不明</td><td class="score">★★★☆☆</td></tr>
@@ -83,13 +120,15 @@ position_x, position_y, nearby_illustration, uncertainty</div></section>
 <section class="page" id="myths"><h2>常見說法核對</h2><table><tr><th>說法</th><th>判定</th><th>較精確的說法</th></tr>
 <tr><td>「書裡全是地球上沒有的植物」</td><td>誇大</td><td>多數植物無法確定辨識；這不等於證明它們不存在。</td></tr>
 <tr><td>「AI 已經破解」</td><td>尚無共識</td><td>有許多模型與語言假說，但沒有被廣泛接受、可重現的完整翻譯。</td></tr>
+<tr><td>「AI 發現手稿裝訂錯誤，所以終於看懂了」</td><td>誇大</td><td>2026 年的同儕審查研究以 LSA 統計方法提出頁序錯裝假說，但錯裝只「可能部分解釋」為何難讀；沒有翻譯出任何內容，具體重排仍待驗證。</td></tr>
 <tr><td>「它是近代惡作劇」</td><td>不太可能</td><td>羊皮紙確為十五世紀初，墨水與物質研究也支持古代製作；但內容是否有意義仍可討論。</td></tr>
 <tr><td>「作者是 Roger Bacon」</td><td>年代不符</td><td>Bacon 逝於 1294，早於羊皮紙年代一個多世紀。</td></tr>
 <tr><td>「裸女代表外星生物」</td><td>無證據</td><td>更接近浴療、醫療占星、婦科或象徵性體液系統的研究方向。</td></tr></table></section>
 
-<section class="page" id="reading"><h2>如何自己閱讀原稿</h2><ol><li><b>先看館藏頁：</b>確認 folio 編號、正反面（r = recto，v = verso）與折頁。</li><li><b>先圖後文：</b>辨識區段、構圖、標籤位置、文字避開圖像的方式。</li><li><b>比鄰頁：</b>不要孤立解釋單頁；比較前後頁的圖像與高頻詞。</li><li><b>分層筆記：</b>觀察、推測、外部證據、反證必須分欄。</li><li><b>保留不確定性：</b>使用信心分數與候選集合，不做單一斷言。</li></ol>
+<section class="page" id="reading"><h2>如何自己閱讀原稿</h2><ol><li><b>先看館藏頁：</b>確認 folio 編號、正反面（r = recto，v = verso）與折頁。</li><li><b>先圖後文：</b>辨識區段、構圖、標籤位置、文字避開圖像的方式。</li><li><b>比鄰頁與同紙對葉：</b>不要孤立解釋單頁；比較前後頁的圖像與高頻詞，也要比對同一張對摺紙的另一半——現行頁序可能是錯裝的結果（見〈頁序之謎〉）。</li><li><b>分層筆記：</b>觀察、推測、外部證據、反證必須分欄。</li><li><b>保留不確定性：</b>使用信心分數與候選集合，不做單一斷言。</li></ol>
 <div class="code">逐頁筆記模板
 頁碼：f___r / f___v
+同紙對葉（conjoint）：f___
 區段：Herbal / Astro / Bio / Cosmo / Pharma / Recipes
 客觀觀察：
 圖像部件：
@@ -139,12 +178,12 @@ D. 都市傳說或無法驗證說法
     ├── align_eva.py
     ├── build_search_index.py
     └── evaluate_hypothesis.py</div>
-<h3>核心資料表：folios.csv</h3><table><tr><th>欄位</th><th>說明</th></tr><tr><td>folio_id</td><td>例如 f1r、f78v</td></tr><tr><td>section</td><td>植物、天文、浴療、宇宙、藥劑、配方</td></tr><tr><td>quire / bifolio</td><td>書帖與雙葉關係</td></tr><tr><td>scribe</td><td>抄寫者群組與信心</td></tr><tr><td>image_url / license</td><td>來源與使用授權</td></tr><tr><td>notes_path</td><td>逐頁 Markdown</td></tr><tr><td>review_status</td><td>未整理、初審、交叉驗證、完成</td></tr></table></section>
+<h3>核心資料表：folios.csv</h3><table><tr><th>欄位</th><th>說明</th></tr><tr><td>folio_id</td><td>例如 f1r、f78v</td></tr><tr><td>section</td><td>植物、天文、浴療、宇宙、藥劑、配方</td></tr><tr><td>quire / bifolio / conjoint</td><td>書帖、雙葉關係與同紙對葉頁碼</td></tr><tr><td>proposed_order</td><td>依已發表假說提出的原始順序與出處（如 2026 singulion 假說）</td></tr><tr><td>scribe</td><td>抄寫者群組與信心</td></tr><tr><td>image_url / license</td><td>來源與使用授權</td></tr><tr><td>notes_path</td><td>逐頁 Markdown</td></tr><tr><td>review_status</td><td>未整理、初審、交叉驗證、完成</td></tr></table></section>
 
 <section class="page" id="acceptance"><h2>後續全卷版驗收標準</h2><ol><li><b>頁面覆蓋：</b>所有現存 folio 均有索引與高解析來源。</li><li><b>來源可追溯：</b>每個歷史事實、辨識假說與圖像均附來源。</li><li><b>分層清楚：</b>事實、推測、都市傳說不混寫。</li><li><b>逐頁一致：</b>使用固定模板，可由程式自動轉 PDF、HTML 與知識庫。</li><li><b>搜尋可用：</b>可按頁碼、區段、字形、植物部件、研究者與理論搜尋。</li><li><b>AI 可評測：</b>任何翻譯假說都必須有訓練集／留出集與可重現分數。</li><li><b>版權合規：</b>優先使用公有領域原作與清楚授權的掃描圖。</li></ol>
-<div class="callout"><b>第一版完成範圍：</b>本導讀建立了內容架構、研究原則、HTML 搜尋與 PDF 印刷版。逐頁 200+ 頁全卷註解、完整 EVA 對齊與植物候選資料庫屬下一階段。</div></section>
+<div class="callout"><b>第一版完成範圍：</b>本導讀建立了內容架構、研究原則、HTML 搜尋與 PDF 印刷版。逐頁 200+ 頁全卷註解、完整 EVA 對齊與植物候選資料庫屬下一階段。<br><b>2026 年 11 月增補：</b>新增〈頁序之謎〉，並同步修正時間軸、可信度表、說法核對、閱讀方法、資料庫欄位、名詞表與參考資料。</div></section>
 
-<section class="page" id="glossary"><h2>名詞表</h2><table><tr><th>名詞</th><th>解釋</th></tr><tr><td>Folio</td><td>手稿的一葉；正面為 recto（r），背面為 verso（v）。</td></tr><tr><td>Codex</td><td>裝訂成冊的手抄本形式。</td></tr><tr><td>Voynichese</td><td>對伏尼契手稿未知文字的非正式稱呼。</td></tr><tr><td>EVA</td><td>Extensible Voynich Alphabet，研究用字形轉寫系統，不是翻譯。</td></tr><tr><td>Paleography</td><td>古文字學，研究書寫形態、年代與抄寫者。</td></tr><tr><td>Codicology</td><td>古籍形制學，研究書帖、裝訂、材料與製作過程。</td></tr><tr><td>Radiocarbon dating</td><td>透過碳-14 測定有機材料年代的方法。</td></tr><tr><td>Rosettes folio</td><td>著名大型折頁，包含九個相連圓形區域。</td></tr></table></section>
+<section class="page" id="glossary"><h2>名詞表</h2><table><tr><th>名詞</th><th>解釋</th></tr><tr><td>Folio</td><td>手稿的一葉；正面為 recto（r），背面為 verso（v）。</td></tr><tr><td>Codex</td><td>裝訂成冊的手抄本形式。</td></tr><tr><td>Voynichese</td><td>對伏尼契手稿未知文字的非正式稱呼。</td></tr><tr><td>EVA</td><td>Extensible Voynich Alphabet，研究用字形轉寫系統，不是翻譯。</td></tr><tr><td>Paleography</td><td>古文字學，研究書寫形態、年代與抄寫者。</td></tr><tr><td>Codicology</td><td>古籍形制學，研究書帖、裝訂、材料與製作過程。</td></tr><tr><td>Radiocarbon dating</td><td>透過碳-14 測定有機材料年代的方法。</td></tr><tr><td>Rosettes folio</td><td>著名大型折頁，包含九個相連圓形區域。</td></tr><tr><td>Bifolio</td><td>對摺紙：一張羊皮紙對摺而成的 2 葉、4 頁。</td></tr><tr><td>Quire</td><td>書帖：數張對摺紙層層套疊後縫合的單元。</td></tr><tr><td>Conjoint</td><td>同紙對葉：同一張對摺紙的左右兩半；套疊後通常被其他頁隔開。</td></tr><tr><td>Singulion</td><td>單張對摺紙自成一組、不與其他紙套疊的結構。</td></tr><tr><td>LSA</td><td>Latent Semantic Analysis，潛在語意分析；以詞頻矩陣與奇異值分解比較文本相似度的統計方法。</td></tr></table></section>
 
 <section class="page refs" id="refs"><h2>參考資料與延伸閱讀</h2><ol>
 <li>Yale Beinecke Rare Book & Manuscript Library, “The Beinecke Cipher (Voynich) Manuscript,” MS 408. https://beinecke.library.yale.edu/beinecke/collections/beinecke-cipher-voynich-manuscript</li>
@@ -153,6 +192,10 @@ D. 都市傳說或無法驗證說法
 <li>René Zandbergen, Voynich Manuscript research site: illustrations, history, radiocarbon dating and bibliography. https://www.voynich.nu/</li>
 <li>Rachel Sterneck, Annie Polish, Claire Bowern, “Topic Modeling in the Voynich Manuscript,” 2021. https://arxiv.org/abs/2107.02858</li>
 <li>Wikimedia Commons, “Voynich Manuscript (33).jpg,” public-domain reproduction sourced from Yale Beinecke. https://commons.wikimedia.org/wiki/File:Voynich_Manuscript_(33).jpg</li>
+<li>Colin Layfield &amp; Lisa Fagin Davis, “Singulion Structure and the Voynich Manuscript,” <i>Digital Medievalist</i> 19 (2026). https://doi.org/10.4000/16k0a</li>
+<li>Lisa Fagin Davis, “How Many Glyphs and How Many Scribes? Digital Paleography and the Voynich Manuscript,” <i>Manuscript Studies</i> 5, no. 1 (2020). https://repository.upenn.edu/mss_sims/vol5/iss1/6</li>
+<li>Voynich Ninja 論壇討論串：Torsten Timm 對 Layfield &amp; Davis（2026）的方法評論與 Davis 回應。https://www.voynich.ninja/thread-5911.html</li>
+<li>Gizmodo, “No Wonder We Can’t Read the Voynich Manuscript—Its Pages Are Probably Out of Order” (2026). https://gizmodo.com/no-wonder-we-cant-read-the-voynich-manuscript-its-pages-are-probably-out-of-order-2000829044</li>
 </ol><p class="small">編輯原則：優先採用館藏機構、材料研究與可重現的計算研究。對未經同行評審或無法覆蓋全書的「破解」主張，只作為假說紀錄，不視為定論。</p></section>
 </main>
 <script>
