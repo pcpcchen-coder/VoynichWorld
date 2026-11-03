@@ -76,12 +76,12 @@
 | 檔案 | 說明 |
 |---|---|
 | [`guide/index.html`](guide/index.html) | 可搜尋 HTML 導讀，單檔離線可用，含章節即時過濾 |
-| [`guide/伏尼契手稿中文導讀_第一版.pdf`](guide/) | 固定排版印刷版，14 頁 |
+| [`guide/伏尼契手稿中文導讀_第一版.pdf`](guide/) | 固定排版印刷版，17 頁（含 2026-11 增補） |
 | `guide/assets/folio33.jpg` | 植物頁示例圖（公有領域原作） |
 
-**十四個章節**：一分鐘認識它 · 流傳史與年代 · 手稿的六大區段 · 神祕植物到底是什麼 ·
-未知文字與統計規律 · 主要破解理論評估 · 常見都市傳說核對 · 如何自己閱讀原稿 ·
-示範頁導讀 · AI 研究工作流 · 後續資料庫規格 · 驗收標準 · 名詞表 · 參考資料
+**十五個章節**：一分鐘認識它 · 流傳史與年代 · 手稿的六大區段 · 神祕植物到底是什麼 ·
+未知文字與統計規律 · **頁序之謎：手稿可能被裝訂錯了**（2026-11 新增）· 主要破解理論評估 ·
+常見都市傳說核對 · 如何自己閱讀原稿 · 示範頁導讀 · AI 研究工作流 · 後續資料庫規格 · 驗收標準 · 名詞表 · 參考資料
 
 導讀中幾個核心判斷：
 
@@ -98,6 +98,33 @@
 | [`guide-full/index.html`](guide-full/index.html) | 209 頁逐頁瀏覽器，可依頁碼、分區與關鍵字即時篩選 |
 | [`guide-full/pages.json`](guide-full/pages.json) | 逐頁分類資料（與 `data/` 同源） |
 | `guide-full/assets/pages/` | 209 張掃描衍生圖 `page-001.jpg` … `page-209.jpg` |
+
+### A-3　2026 研究更新：手稿可能被裝訂錯了　→ [`data/singulion_hypothesis_2026.json`](data/singulion_hypothesis_2026.json)
+
+2026 年，Colin Layfield（馬爾他大學）與 Lisa Fagin Davis（美國中世紀學會）在同儕審查期刊
+*Digital Medievalist* 第 19 卷發表 [〈Singulion Structure and the Voynich Manuscript〉](https://doi.org/10.4000/16k0a)，
+同年 10 月經 Gizmodo、Live Science、Smithsonian 等媒體報導後廣為流傳。
+
+**他們發現了什麼**：用統計方法比對每頁用字，「同一張對摺羊皮紙的左右兩半」彼此最相似（0.433），
+現行裝訂中「翻開相對的兩頁」反而最不相似（0.298）——兩部對照用的中世紀抄本正好相反。
+加上跨越裝訂溝的圖、顏料轉印、抄寫者分布等物證，他們主張手稿原本是**一張張依序翻閱的獨立對摺紙**（singulion），
+後來被讀不懂它的人層層套疊裝訂，頁序因此錯亂。證據在浴療區（書帖 13）與星號段落區（書帖 20）最強，
+兩區都提出了可能的原始順序；植物區結果不一致。
+
+**它沒有做到什麼**（流行報導常說錯的地方）：
+
+| 常見說法 | 實際情況 |
+|---|---|
+| 「AI 分析出來的」 | 使用 1980 年代末的**潛在語意分析（LSA）**，不是大型 AI 模型；手稿僅約 3.5 萬詞，作者刻意避開需要大量資料的模型 |
+| 「所以終於看懂了」 | **沒有翻譯任何文字。** 論文只說錯裝「可能**部分**解釋」過去為何解讀失敗 |
+| 「已經證實裝錯了」 | 屬於**已發表的假說**；作者自己也說，除非讀懂手稿，否則無法確定。研究論壇上已有方法學質疑 |
+
+依本倉庫的編輯原則，它在導讀中被歸為「研究支持的結構性發現＋未證實的重排假說」，不視為破解。
+完整說明見導讀新章〈頁序之謎〉；論文數據、重排方案、物證、限制與外部評論整理成機器可讀的
+[`data/singulion_hypothesis_2026.json`](data/singulion_hypothesis_2026.json)。
+
+> **對本倉庫資料的影響**：`scan_page` 依**現行裝訂順序**排列，不是原始順序。
+> 在完成 `scan_page` → folio 對照前，逐頁資料不做重排。
 
 ---
 
@@ -248,8 +275,8 @@ VoynichWorld/
 │
 ├── guide/                                     # 路線 A-1：中文導讀第一版
 │   ├── README.md
-│   ├── index.html                             # 可搜尋 HTML 導讀（14 章）
-│   ├── 伏尼契手稿中文導讀_第一版.pdf            # 印刷版 PDF（14 頁）
+│   ├── index.html                             # 可搜尋 HTML 導讀（15 章）
+│   ├── 伏尼契手稿中文導讀_第一版.pdf            # 印刷版 PDF（17 頁）
 │   └── assets/folio33.jpg                     # 植物頁示例圖
 │
 ├── guide-full/                                # 路線 A-2：完整圖版版
@@ -271,6 +298,7 @@ VoynichWorld/
 │
 ├── data/
 │   ├── voynich_pages_classification.json      # 209 頁逐頁分區資料（設定所依據）
+│   ├── singulion_hypothesis_2026.json         # 2026 頁序錯裝假說：數據、重排方案、物證與限制
 │   └── vellora_ip_entities_v0.2.json           # IP 實體機器可讀索引
 │
 ├── tools/
@@ -294,6 +322,7 @@ VoynichWorld/
 | 我想看… | 去這裡 |
 |---|---|
 | 手稿到底是什麼、目前研究到哪 | [`guide/index.html`](guide/index.html)（下載後用瀏覽器開） |
+| 2026「手稿裝訂錯誤」研究到底說了什麼 | 本檔[路線 A](#路線-a伏尼契手稿中文導讀) 的 A-3 節 · 導讀〈頁序之謎〉章 |
 | 逐頁翻 209 頁圖版 | [`guide-full/index.html`](guide-full/index.html) |
 | 世界觀設定全文 | [`docs/Vellora_WorldBible_v0.1.md`](docs/Vellora_WorldBible_v0.1.md) |
 | 全角色、動植物、星球、地貌與氣候 IP 設定 | [`ip-bible/README.md`](ip-bible/README.md) |
@@ -344,8 +373,10 @@ node build_vellora.js     # 產生 薇蘿世界設定聖經_v0.1.docx
 
 - [x] **v0.1** 章節導讀（HTML ＋ PDF）與研究原則
 - [x] **v0.1** 209 頁逐頁分區資料與圖版瀏覽器
+- [x] **2026-11** 增補〈頁序之謎〉：收錄 Layfield & Davis（2026）頁序錯裝假說與結構化資料
 - [ ] 逐頁 Markdown 註解（`notes/f001r.md …`，含觀察／推測／反證分層）
-- [ ] folio 編號對照（`scan_page` → `f1r/f1v`）與書帖、抄寫者欄位
+- [ ] folio 編號對照（`scan_page` → `f1r/f1v`）與書帖、同紙對葉、抄寫者欄位
+- [ ] 在 folio 對照完成後，於圖版瀏覽器提供「現行裝訂／2026 假說順序」切換檢視
 - [ ] EVA 轉寫對齊與 token 級資料表
 - [ ] 植物部件切分與相似檢索索引
 - [ ] 假說評測框架（訓練集／留出集、可重現分數）
@@ -373,6 +404,7 @@ node build_vellora.js     # 產生 薇蘿世界設定聖經_v0.1.docx
 - 內容一般分為草藥、天文／占星、生物（浴療）、宇宙、藥劑與配方數區。
 - 植物多半無法對應單一現存物種，常被認為是風格化或複合構圖——這正是本設定「嵌合成形」的靈感與依據。
 - 1912 年由古書商 Wilfrid M. Voynich 購得；1969 年入藏 Beinecke。
+- 2026 年的同儕審查研究主張現行裝訂頁序可能錯亂、原為依序閱讀的獨立對摺紙；此為**假說**，且未解讀任何文字。
 
 ### 參考資料
 
@@ -390,6 +422,12 @@ node build_vellora.js     # 產生 薇蘿世界設定聖經_v0.1.docx
 7. *Voynich manuscript*（Wikipedia）— <https://en.wikipedia.org/wiki/Voynich_manuscript>
 8. Wikimedia Commons, *Voynich Manuscript (33).jpg*（公有領域重製，來源 Yale Beinecke）—
    <https://commons.wikimedia.org/wiki/File:Voynich_Manuscript_(33).jpg>
+9. Colin Layfield & Lisa Fagin Davis, *Singulion Structure and the Voynich Manuscript*, *Digital Medievalist* 19（2026）—
+   <https://doi.org/10.4000/16k0a>
+10. Lisa Fagin Davis, *How Many Glyphs and How Many Scribes? Digital Paleography and the Voynich Manuscript*,
+    *Manuscript Studies* 5, no. 1（2020）— <https://repository.upenn.edu/mss_sims/vol5/iss1/6>
+11. Voynich Ninja 論壇：Torsten Timm 對 Layfield & Davis（2026）的方法評論與 Davis 回應 —
+    <https://www.voynich.ninja/thread-5911.html>
 
 ---
 

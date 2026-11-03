@@ -1,0 +1,132 @@
+{
+  "id": "singulion-2026",
+  "title": "Singulion Structure and the Voynich Manuscript",
+  "status": "hypothesis",
+  "status_note": "已在同儕審查期刊發表的假說；具體重排未經獨立驗證，且不構成任何文字解讀。",
+  "citation": {
+    "authors": [
+      {"name": "Colin Layfield", "affiliation": "University of Malta, Department of Information Systems"},
+      {"name": "Lisa Fagin Davis", "affiliation": "Medieval Academy of America"}
+    ],
+    "journal": "Digital Medievalist",
+    "volume": 19,
+    "year": 2026,
+    "online_since": "2026-07-10",
+    "peer_reviewed": true,
+    "doi": "10.4000/16k0a",
+    "url": "https://doi.org/10.4000/16k0a",
+    "license": "CC BY 4.0（文字）"
+  },
+  "claim": "手稿原本是一疊依序閱讀的獨立對摺紙（singulion），而非層層套疊的書帖（quire）；現行裝訂頁序因此錯亂。",
+  "does_not_claim": [
+    "沒有翻譯或解讀任何 Voynichese 文字",
+    "沒有證明錯裝是手稿無法閱讀的唯一原因（論文措辭：may partially explain）",
+    "沒有提出全書的完整原始順序"
+  ],
+  "method": {
+    "technique": "Latent Semantic Analysis (LSA)",
+    "details": "TF-IDF 加權、SVD 降維 k = 75、餘弦相似度；約 40 詞一塊；以演算法啟發式選停用詞（window 6, threshold 3）",
+    "is_modern_ai": false,
+    "why_not_large_models": "語料僅約 35,000 詞，作者刻意選擇適用小資料的 LSA",
+    "transcription": "Zandbergen ZL transcription v2a（2022-03-17），移除不確定讀法",
+    "controls": [
+      "Aberdeen Bestiary（Aberdeen University Library MS 24，13 世紀拉丁文）",
+      "Speculum Humanae Salvationis（Houghton MS Lat 121，14 世紀拉丁文）"
+    ],
+    "statistics": "常態性檢定後採 t 檢定或 Mann-Whitney 檢定，p < 0.05"
+  },
+  "definitions": {
+    "facing": "現行裝訂中翻開後相對的兩頁",
+    "confoliate": "同一葉的正反兩面",
+    "conjoint": "同一張對摺紙的左右兩半（同紙對葉）"
+  },
+  "similarity_scores": {
+    "overall": {
+      "aberdeen_bestiary": {"confoliate": 0.428, "facing": 0.398, "conjoint": 0.207},
+      "speculum": {"confoliate": 0.398, "facing": 0.398, "conjoint": 0.277},
+      "voynich": {"confoliate": 0.383, "facing": 0.298, "conjoint": 0.433}
+    },
+    "quire_13": {"confoliate": 0.530, "facing": 0.460, "conjoint": 0.603},
+    "quire_20": {"confoliate": 0.568, "facing": 0.438, "conjoint": 0.600}
+  },
+  "quires": [
+    {
+      "quire": 13,
+      "section": "浴療／生物圖版",
+      "folios": "ff. 75–84",
+      "current_bifolia_outer_to_inner": ["75|84", "76|83", "77|82", "78|81", "79|80"],
+      "proposed_orders": [
+        {
+          "rank": 1,
+          "sequence": ["77|82", "78|81", "75|84", "76|83", "79|80"],
+          "avg_facing_similarity": {"current": 0.461, "proposed": 0.517},
+          "improvement_pct": 12.1
+        },
+        {
+          "rank": 2,
+          "sequence": ["76|83", "77|82", "79|80", "75|84", "78|81"],
+          "avg_facing_similarity": {"current": 0.461, "proposed": 0.494},
+          "improvement_pct": 7.1,
+          "note": "以有放大首字的 f76r 起首，作者認為也可能才是原始順序"
+        }
+      ]
+    },
+    {
+      "quire": 20,
+      "section": "星號段落／配方區",
+      "folios": "ff. 103–116（ff. 109–110 已佚失）",
+      "current_bifolia_outer_to_inner": ["103|116", "104|115", "105|114", "106|113", "107|112", "108|111"],
+      "proposed_orders": [
+        {
+          "rank": 1,
+          "sequence": ["105|114", "104|115", "106|113", "107|112", "108|111", "103|116"],
+          "avg_facing_similarity": {"current": 0.438, "proposed": 0.526},
+          "improvement_pct": 20,
+          "note": "以有放大首字的 f105r 起首，以原本空白的 f116v 結束"
+        }
+      ]
+    }
+  ],
+  "herbal_section": {
+    "quires": "1–7",
+    "result": "結果不一致，不足以單獨支持 singulion 結構",
+    "note": "作者表示植物區可能根本不存在單一正確順序"
+  },
+  "excluded_sections": ["天文／占星", "宇宙圖", "九玫瑰大型摺頁", "藥劑（含摺頁）"],
+  "physical_evidence": [
+    {"type": "跨越裝訂溝的圖像", "detail": "f78v 的水流在同紙的 f81r 接續"},
+    {"type": "顏料轉印與污漬", "detail": "10v|15r、33v|40r、58v|65r、76v|83r 的印痕落在同一張紙兩半"},
+    {"type": "抄寫者分布", "detail": "Davis（2020）辨識五位抄寫者；幾乎每張對摺紙四頁出自同一人，但現行書帖內抄寫者交錯"},
+    {"type": "裝訂史", "detail": "Paula Zyats（2016）：只有一次縫線，屬晚期哥德式（約 1400–1500）"},
+    {"type": "放大首字", "detail": "f76r 與 f105r 以放大首字開頭，可能標示段落起點"}
+  ],
+  "limitations": [
+    "作者：除非真的能讀懂手稿，否則無法確定假說正確",
+    "相似度代表用字習慣相近，不必然是語意相近",
+    "語料小（約 35,000 詞），模型在同一份資料上建立與測試",
+    "Speculum 對照樣本較小"
+  ],
+  "critiques": [
+    {
+      "source": "Torsten Timm, Voynich Ninja 論壇討論串 #5911",
+      "url": "https://www.voynich.ninja/thread-5911.html",
+      "peer_reviewed": false,
+      "points": [
+        "同紙對葉相似度較高的結果可信，但由此推出閱讀順序受資料約束不足",
+        "重排實驗缺少隨機置換的對照基準",
+        "植物區資料與 singulion 主張之間存在張力"
+      ],
+      "author_response": "Davis 同意植物區 LSA 資料幫助不大，但認為書帖 13、20 的結果非常清楚"
+    }
+  ],
+  "repo_mapping": {
+    "scan_page_order": "data/voynich_pages_classification.json 與 guide-full/ 的 scan_page 依現行裝訂順序排列，不是原始順序",
+    "folio_mapping": "pending — scan_page 與 folio 編號的對照完成前，未把本假說套用到逐頁資料"
+  },
+  "press": [
+    "https://gizmodo.com/no-wonder-we-cant-read-the-voynich-manuscript-its-pages-are-probably-out-of-order-2000829044",
+    "https://www.livescience.com/archaeology/undeciphered-voynich-manuscript-may-have-been-bound-out-of-order-study-finds",
+    "https://www.smithsonianmag.com/smart-news/this-mysterious-medieval-manuscript-has-stumped-scholars-for-well-over-a-century-could-its-pages-have-been-bound-out-of-order-this-whole-time-180989737/"
+  ],
+  "added": "2026-11-03"
+}
