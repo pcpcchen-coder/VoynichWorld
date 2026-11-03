@@ -60,7 +60,7 @@
 |---|---|---|
 | **性質** | 非虛構、研究取向 | 虛構、世界觀開發 |
 | **目標** | 分層呈現史料／研究／假說／傳說，並提供可重現的研究流程 | 以真實科學反推一顆失落星球，長出可開發的故事與遊戲 |
-| **主要產出** | HTML 導讀 ×2、PDF 印刷版、逐頁分類資料 | 設定聖經（16 章 / Word 19 頁）、docx 產製腳本 |
+| **主要產出** | HTML 導讀 ×2、PDF 印刷版、逐頁分類資料 | 設定聖經（16 章 / Word 20 頁）、docx 產製腳本 |
 | **對「破解」的立場** | 尚無被廣泛接受、可重現的完整翻譯 | 設定內給出「為何無法解讀」的虛構解釋，不主張現實中的解答 |
 | **入口** | [`guide/`](guide/) · [`guide-full/`](guide-full/) | [`docs/Vellora_WorldBible_v0.1.md`](docs/Vellora_WorldBible_v0.1.md) |
 
@@ -187,7 +187,7 @@
 - 以「探索 → 合作 → 危機 → 選擇 → 延續」排序，可直接作為長篇設定文或小說章首的視覺節奏。
 - 完整生成規格見 [`ip-bible/KORIN_ARTICLE_PROMPTS.md`](ip-bible/KORIN_ARTICLE_PROMPTS.md)。
 
-### 設定聖經內容（19 頁 / 16 章）
+### 設定聖經內容（20 頁 / 16 章）
 
 完整內容見 **[`docs/Vellora_WorldBible_v0.1.md`](docs/Vellora_WorldBible_v0.1.md)**（可在 GitHub 直接閱讀），
 Word 排版版見 [`docs/Vellora_WorldBible_v0.1.docx`](docs/Vellora_WorldBible_v0.1.docx)。
@@ -207,7 +207,7 @@ Word 排版版見 [`docs/Vellora_WorldBible_v0.1.docx`](docs/Vellora_WorldBible_
 | 10 | 智慧種族與勢力 | — |
 | 11 | 主角與角色群 | — |
 | 12 | 故事主線與三幕大綱 | — |
-| 13 | 手稿如何抵達地球（元設定與留白） | — |
+| 13 | 手稿如何抵達地球（元設定與留白）；**散葉與錯裝**：記脈院「葉帖制」（2026-11 增補） | 呼應 2026 頁序錯裝研究 |
 | 14 | 當時的地球是什麼樣子（真實對照） | — |
 | 15 | 遊戲與文學延展建議 | — |
 | 16 | 科學可信度附註與參考 | — |
@@ -287,7 +287,7 @@ VoynichWorld/
 │
 ├── docs/                                      # 路線 B：薇蘿世界設定聖經
 │   ├── Vellora_WorldBible_v0.1.md             # Markdown 版（GitHub 可直接閱讀）
-│   └── Vellora_WorldBible_v0.1.docx           # Word 排版版（19 頁）
+│   └── Vellora_WorldBible_v0.1.docx           # Word 排版版（20 頁）
 │
 ├── ip-bible/                                  # v0.2–v0.3 角色、生態與敘事視覺
 │   ├── README.md                              # 導覽、覆蓋清單與圖像索引
@@ -359,8 +359,9 @@ python3 -m http.server 8000
 
 ```bash
 cd tools
-npm install docx          # 若環境未預裝
-node build_vellora.js     # 產生 薇蘿世界設定聖經_v0.1.docx
+npm install docx@8        # 若環境未預裝（以 8.5 驗證）
+node build_vellora.js     # 在目前目錄產生 薇蘿世界設定聖經_v0.1.docx
+# 或指定輸出路徑：node build_vellora.js ../docs/Vellora_WorldBible_v0.1.docx
 ```
 
 如需轉為 Markdown：`pandoc -t gfm 薇蘿世界設定聖經_v0.1.docx -o out.md`
@@ -386,6 +387,7 @@ node build_vellora.js     # 產生 薇蘿世界設定聖經_v0.1.docx
 - [x] **v0.1** 世界觀設定聖經（16 章）
 - [x] **v0.2** 角色與生態 IP 聖經：全具名角色／動植物、星球地貌氣候、12 張概念圖、實體索引
 - [x] **v0.3** 珂潾文章插畫集：12 張世界互動敘事圖、圖說、替代文字、文章位置與提示集
+- [x] **2026-11** 設定聖經第十三章增補「散葉與錯裝」：記脈院葉帖制，把 2026 頁序錯裝研究接入正典
 - [ ] **植物圖鑑**：把手稿植物逐頁重畫為「拼裝體」條目，做成可收集的偽手稿圖版
 - [ ] **逐隻動物設定畫冊**：由 v0.2 角色板擴成多姿態、生命階段與棲地頁
 - [ ] **遊戲核心玩法文件**：「嚐味診斷」機制、探索循環、多結局分支
