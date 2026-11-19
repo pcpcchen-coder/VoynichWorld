@@ -133,8 +133,8 @@ async function main() {
   check(p1.x === 21 && p1.y === 18, '真實按鍵向左走 3 格到取樣點旁（' + p1.x + ',' + p1.y + '）');
   await key('KeyZ');
   await drive({ onBattle: async () => {
-    await shot('battle-first-pool');
     await untilAwaiting();
+    await shot('battle-first-pool');
     await page.click('.battle [data-id="taste"]'); await sleep(150); await page.click('.battle [data-id="taste:high"]'); await sleep(300);
   } });
   check(await flag('flag.prologue.tasted_first_pool'), 'M0-02 第一次嚐味（三符讀完）');
@@ -327,15 +327,14 @@ async function main() {
   await page.goto(URL_BASE);
   await waitFor(() => window.__vellora && window.__vellora.scene() === 'title', null, 10000, '標題畫面');
   await sleep(400); await shot('mobile-title');
-  await page.click('.title-menu [data-id="load"]'); await sleep(300);
-  await page.click('[data-id="slot1"]'); await sleep(200);
-  await page.click('[data-id="load"]').catch(() => {});
-  await waitFor(() => window.__vellora.scene() === 'field', null, 8000, '手機讀檔');
+  await page.click('.title-menu [data-id="new"]');
+  await waitFor(() => window.__vellora.scene() === 'field', null, 8000, '手機新遊戲');
+  await waitFor(() => window.__vellora.ui().indexOf('dialogue') >= 0 || window.__vellora.ui().indexOf('image') >= 0, null, 15000, '手機開場');
+  for (let i = 0; i < 6; i++) { await key('KeyZ'); await sleep(250); }
+  await shot('mobile-dialogue');
   await drive();
-  await tele(ST, 24, 11, 'up');
-  await q(() => window.__vellora.face('up')); await sleep(200);
-  await page.keyboard.press('KeyZ'); await sleep(900); await shot('mobile-dialogue');
-  await drive();
+  await tele(ST, 24, 11, 'up'); await sleep(300);
+  await shot('mobile-field');
   await browser.close();
 }
 
