@@ -74,6 +74,7 @@ node web-rpg/tools/validate-data.js        # 驗證正式資料（加 --demo 驗
 node web-rpg/tests/smoke.js --official     # 冒煙測試：桌機與手機尺寸
 node web-rpg/tests/playthrough.js          # 從新遊戲自動玩到章末
 node web-rpg/tests/routes.js               # 分歧路線：隔離、失敗重來、支線、章末抉擇、存讀檔、無本機儲存
+node web-rpg/tests/cutscene-visibility.js  # 過場的旁白、全幅圖與對話不會被淡出的黑幕蓋住
 node web-rpg/tools/estimate-playtime.js    # 依對白字數、步行格數與遭遇回合估算遊玩時間
 ```
 

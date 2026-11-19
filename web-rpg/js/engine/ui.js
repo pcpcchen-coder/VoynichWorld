@@ -20,6 +20,7 @@
     UI.root = document.getElementById('game');
     UI.layer = document.getElementById('ui-layer');
     UI.fadeEl = document.getElementById('fade');
+    UI.overLayer = document.getElementById('over-layer') || UI.layer;
     UI.toastEl = document.getElementById('toasts');
     UI.bannerEl = document.getElementById('banner');
     try { document.documentElement.style.setProperty('--grain', 'url(' + V.gfx.makeGrain() + ')'); } catch (e) { /* 無紙紋亦可 */ }
@@ -28,7 +29,8 @@
   // ---- 模態堆疊：最上層取得輸入 ----
   UI.push = function (modal) {
     stack.push(modal);
-    if (modal.el && !modal.el.parentNode) UI.layer.appendChild(modal.el);
+    // 過場把畫面淡出停住時，旁白與對話框要放在黑幕之上，否則會被蓋住（其他介面仍留在一般層）
+    if (modal.el && !modal.el.parentNode) ((modal.kind === 'wait' || modal.kind === 'dialogue') ? UI.host() : UI.layer).appendChild(modal.el);
     V.input.clearFrame();
     return modal;
   };
@@ -38,6 +40,9 @@
     if (modal.el && modal.el.parentNode) modal.el.parentNode.removeChild(modal.el);
     V.input.clearFrame();
   };
+  UI.fadeHeld = false;
+  // 過場進行中且黑幕停住時回傳黑幕之上的過場層；其餘情況回傳一般介面層
+  UI.host = function () { return (UI.fadeHeld && V.cutscene && V.cutscene.running > 0) ? UI.overLayer : UI.layer; };
   UI.top = function () { return stack.length ? stack[stack.length - 1] : null; };
   UI.has = function (kind) { for (var i = 0; i < stack.length; i++) if (stack[i].kind === kind) return true; return false; };
 
@@ -155,11 +160,13 @@
     f.style.transition = 'opacity ' + Math.max(1, ms / V.runtime.speed) + 'ms linear';
     void f.offsetWidth;
     f.style.opacity = dir === 'out' ? '1' : '0';
-    return U.wait(ms + 30);
+    if (dir !== 'out') UI.fadeHeld = false;
+    return U.wait(ms + 30).then(function () { if (dir === 'out') UI.fadeHeld = true; });
   };
   UI.fadeSet = function (on, color) {
     var f = UI.fadeEl; if (color) f.style.background = color;
     f.style.transition = 'none'; f.style.opacity = on ? '1' : '0';
+    UI.fadeHeld = !!on;
   };
 
   // ---- 選擇視窗 ----
