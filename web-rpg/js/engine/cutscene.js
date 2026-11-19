@@ -58,7 +58,7 @@
         imgEl = UI.el('div', 'cs-image',
           '<div class="cs-frame"><img alt="" src="' + U.esc(c[1]) + '"></div>' +
           (c[3] ? '<div class="cs-title">' + U.esc(c[3]) + '</div>' : ''));
-        UI.layer.appendChild(imgEl);
+        UI.host().appendChild(imgEl);
         V.audio.play('folio');
         await U.wait(500);
         if (c[2]) { await Dg.lines(U.toArray(c[2])); }
