@@ -855,3 +855,74 @@ node tests/smoke.js --official       # 正式資料：開新遊戲、走完開�
 
 冒煙測試（測試房）流程：標題 → 新遊戲 → 開場過場 → 方向鍵移動 → NPC 選項分支開任務 → 商店交換 → 採集、觀察 → 味診台調劑 → 只嚐不治遭遇 → 診療遭遇（嚐味＋對症處置到穩定）→ 繪製葉帖 → 種源龕歇息與存檔 → 重新載入讀檔比對 → 章末；再以 390×844 觸控走開場、虛擬方向鍵移動、開選單、轉橫向。任何 console 錯誤都算失敗。
 **正式資料**的冒煙測試目前只走到開場結束；做完序章後建議仿照 `desktop()` 為主線加一條流程。
+
+---
+
+## 19. 擴充（序章〈味變〉實作時加入）
+
+以下欄位都是選填；不寫時行為與前面各節相同。測試房不使用它們。
+
+### 19.1 meta
+
+| 欄位 | 說明 |
+|---|---|
+| `ventDamage` | 硫氣孔每步扣的體力（覆寫圖塊預設 4） |
+| `autoDrawFolios` | true＝葉帖三項條件齊備時，地圖空閒就自動播放 `before` 行 → 繪製 → `after` 行（不必進選單） |
+| `gatherRespawn` | true＝在種源龕「入庫並歇息」或床休息後，`kind:'gather'` 的採集點重新長出來（實體寫 `respawn:false` 可排除） |
+| `bankReward` | `{ item, per }`：種源龕入庫時每件診斷樣本換 `per` 個 `item` |
+| `medCap` | 每種處置藥（`cat:'medicine'`）的持有上限；調劑與交換到上限時變暗 |
+| `battleRules.isolateAutoRead` | >0：隔離（收口）前若味序未讀全，自動補嚐（負荷 +此值）並觸發 `events.allRevealed` |
+| `battleRules.mistreatFlag` | 每次誤治（含對甜）把這個數值旗標 +1 |
+| `battleRules.noisyTutorial` | 遭遇中負荷第一次 ≥ `noisyAt` 時彈出的教學 id |
+| `endings.*.text` | 每行可用 `〔若 條件〕` 開頭（條件成立才顯示）與樣板 `{conn:區域}` 等 |
+| `endings.*.hideDims` | true＝章末畫面不顯示四向度數值（仍顯示傾向文字） |
+| `endings.*.after` | 「待續」之後的段落（下一章預告） |
+
+等級表每列可加 `tutorial: 'T-09'`：升到該級後（說明視窗之後）彈出教學。
+
+### 19.2 物品
+
+| 欄位 | 說明 |
+|---|---|
+| `material: true` | `cat:'sample'` 的藥材：不算「未入庫的診斷樣本」（撤離不損失、入庫不換籤） |
+| `treatFlag` | 處置藥對症使用時設為 true 的旗標 |
+| `use.veil` | 0–1：使用後本場遭遇受到的感官灌入再減這個比例（與防護相乘） |
+| `passive.guardCut` | 防護時保留的傷害比例（預設 0.5；多個來源取最小）。例：無孔掌套 0.3 |
+
+商店 `stock` 項目可加 `qty`（存量，換完變暗；存檔保留）與 `say`（第一次換入時的提示文字）。
+
+### 19.3 遭遇
+
+| 欄位 | 說明 |
+|---|---|
+| `softFail` | `{ on:['collapsed','evacuated'], imbalance, heal, warp:{map,x,y,dir}, lines, text, actions }`：失穩／力竭不算結束——對象留在原地（下次以 `imbalance` 開始），結果記為 `retreated`；`heal` 全回復；`warp` 傳送；`lines` 結算前播放、`text` 顯示在結算框 |
+| `clampMul` | 架夾（mid／boss 第一回合）期間，對象行為效果的倍率 |
+| `sweetFlag` | 本場對甜誤治時設為 true 的旗標 |
+| `events.revealGlyph` | `{ '甜': 行 }`：該味符第一次被正確讀出時 |
+| `events.sweetHurt` | 對甜處置或清淤時 |
+
+行為／規則新增種類：`swap`（最前面兩個互換，所有讀值作廢）、`forget`（讀值全部作廢，味序不變）、`reveal`（免費揭示最前面的味符）。
+`grow` 的 `at` 可寫 `'beforeSweet'`（插在甜的前一格；沒有甜就放最後）。
+新增欄位：`limit`（這場最多發生幾次）、`actions`（每次發生都執行的動作；`say` 只在第一次）。
+`when` 新增：`clearedGte`／`clearedLt`（已消除的味符數）、`has`（味序中含有某味）、`clearedHas`（某味已被消除過）、`mis: true`（本回合誤治）、`cond`（一般條件語法）。
+
+每場結束時引擎把本場誤治次數寫入旗標 `last_mistreats`。
+
+### 19.4 地圖與實體
+
+- **地圖 `patches`**：`[{ cond, x, y, ground: ['列', …] }]`，條件成立時用 `ground`（空白＝不改）覆寫該矩形的地面層。載入地圖時套用；狀態改變後用 `['warp', 同一張地圖, x, y]` 重新載入即更新。驗證器只檢查未套用 patches 的基本地形，所以請把基本地形畫成「都走得到」的狀態，再用 patches 擋路。
+- **遭遇實體 `dialogue`**：互動時先播這段對話（可用選項），對話裡用 `['engage', 實體id]` 開始遭遇；遭遇完成後改顯示 `calm`。
+- **遭遇實體 `override`**：覆寫同一遭遇定義的任何欄位（例：同 id 的「三符型」味序與獎勵）。
+- **object 新外觀 `kind`**：`hidden`（不畫，用來讓牆上或家具圖塊可互動）、`filterpatch`（補過的濾幕）、`valve`（隔膜瓣）、`membrane`（骨白乾膜／封板／硬化斷面）、`hatch`（舊排水口）。
+
+### 19.5 動作與其他
+
+| 動作 | 說明 |
+|---|---|
+| `['engage', 實體id]` | 直接開始目前地圖上某個遭遇實體的診療（不經確認）；結果記錄、`onResult` 與一般遭遇相同 |
+| `['heal', '50%', 0]` | 體力參數可寫百分比字串（上限的比例） |
+| `['image', 路徑, 行陣列]` | 旁白參數可為行陣列（原本即支援，驗證器已放寬） |
+
+葉帖新增欄位：`labels`（`{observe, sample, diagnose}` 的顯示名稱，例：觀察點一／二／三）、`nameAlt: [{cond, name}]`（依條件換名稱）、`note` 可為行陣列（行首 `〔若 條件〕`、可用樣板，換行顯示）、`before`／`after`（自動繪製前後播放的行）。
+
+工具：`python3 tools/gen-prologue-maps.py` 重新產生序章地形 `js/data/maps-tiles.js`；`node tools/print-map.js <地圖id>` 印出含實體位置的 ASCII 預覽。通關測試：`node tests/playthrough.js`。

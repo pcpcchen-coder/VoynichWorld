@@ -252,7 +252,7 @@ async function main() {
   console.log('T6 橋腹導管洞');
   check((await q(() => window.__vellora.player())).map === UP, '進入導管洞上層');
   await act(UP, 7, 2, 'right');
-  await act(UP, 11, 2, 'up'); await act(UP, 10, 3, 'left');
+  await act(UP, 12, 2, 'up'); await act(UP, 10, 3, 'left');
   check(await flag('flag.prologue.heard_fork_a'), 'M0-13 岔口甲：聽音高');
   await shot('conduit-upper');
   await act(UP, 17, 11, 'down');
