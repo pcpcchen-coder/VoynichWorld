@@ -34,7 +34,7 @@
   };
 
   function buildStage(st) {
-    if (stage) { scene.remove(stage); }
+    if (stage) { scene.remove(stage); M.disposeOwned(stage); }   // 換遭遇時釋放上一個舞台自己的資源
     stage = new THREE.Group(); scene.add(stage);
     var bg = BG[st.def.bg || 'cave'] || BG.cave;
     scene.background = new THREE.Color(bg.sky);

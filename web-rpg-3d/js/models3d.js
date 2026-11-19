@@ -9,7 +9,15 @@
   var M = V.models3d = {};
   var geoCache = {}, matCache = {};
 
-  M.geo = function (key, make) { return geoCache[key] || (geoCache[key] = make()); };
+  // 快取的幾何與材質標記為 shared：換地圖或換遭遇時不釋放
+  M.geo = function (key, make) { if (!geoCache[key]) { geoCache[key] = make(); geoCache[key].userData.shared = true; } return geoCache[key]; };
+  // 釋放一個群組自己擁有的幾何與材質（跳過 shared；貼圖由 tex3d 快取，不釋放）
+  M.disposeOwned = function (root) {
+    root.traverse(function (o) {
+      if (o.geometry && !o.geometry.userData.shared) o.geometry.dispose();
+      [].concat(o.material || []).forEach(function (m) { if (!m.userData.shared) m.dispose(); });
+    });
+  };
   // 材質快取：同色同參數共用
   M.mat = function (color, o) {
     o = o || {};
@@ -21,7 +29,7 @@
     if (o.map) p.map = o.map;
     if (o.side) p.side = o.side;
     if (o.flat) p.flatShading = true;
-    var m = new THREE.MeshStandardMaterial(p);
+    var m = new THREE.MeshStandardMaterial(p); m.userData.shared = true;
     return (matCache[key] = m);
   };
   M.basic = function (color, o) {
@@ -34,7 +42,8 @@
     if (o.map) p.map = o.map;
     if (o.side) p.side = o.side;
     if (o.fog === false) p.fog = false;
-    return (matCache[key] = new THREE.MeshBasicMaterial(p));
+    var mb = new THREE.MeshBasicMaterial(p); mb.userData.shared = true;
+    return (matCache[key] = mb);
   };
   function mesh(g, m, shadow) { var x = new THREE.Mesh(g, m); if (shadow !== false) { x.castShadow = true; } return x; }
   M.mesh = mesh;
@@ -48,7 +57,7 @@
   // 腳下的圓形陰影
   M.blob = function (r, a) {
     var key = 'blob';
-    var mtl = matCache[key] || (matCache[key] = new THREE.MeshBasicMaterial({ map: V.tex3d.glow(), color: 0x000000, transparent: true, opacity: 0.55, depthWrite: false }));
+    var mtl = matCache[key] || (matCache[key] = new THREE.MeshBasicMaterial({ map: V.tex3d.glow(), color: 0x000000, transparent: true, opacity: 0.55, depthWrite: false })); mtl.userData.shared = true;
     var m = new THREE.Mesh(M.geo('blobplane', function () { var g = new THREE.PlaneGeometry(1, 1); g.rotateX(-Math.PI / 2); return g; }), mtl);
     m.scale.set(r * 2, 1, r * 2); m.renderOrder = 1;
     if (a != null) { m.material = mtl.clone(); m.material.opacity = a; }
@@ -79,7 +88,7 @@
     var merged = THREE.mergeGeometries(geos, false);
     geos.forEach(function (g) { g.dispose(); });
     if (!merged) return;
-    vcMat = vcMat || new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, map: V.tex3d.vellum() });
+    if (!vcMat) { vcMat = new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, map: V.tex3d.vellum() }); vcMat.userData.shared = true; }
     var m = new THREE.Mesh(merged, vcMat); m.castShadow = true;
     list.forEach(function (o) { group.remove(o); });
     group.add(m);

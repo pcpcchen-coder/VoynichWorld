@@ -158,7 +158,7 @@
   // ======================= 地形 =======================
   W.build = function (mapRt) {
     if (!W.scene) W.init();
-    if (W.group) { disposeGroup(W.group); W.scene.remove(W.group); }
+    if (W.group) { M.disposeOwned(W.group); W.scene.remove(W.group); }
     W.group = new THREE.Group(); W.scene.add(W.group);
     W.lightSources = []; W.animated = []; W.mistGroup = null; W.grassMesh = null; W.steam = [];
     var pm = W.pm = mapRt.pm;
@@ -884,6 +884,11 @@
   // ======================= 每幀 =======================
   W.update = function (dt, focus, camera) {
     W.time += dt;
+    // 地圖色調在載入後被動作改變（例：onEnter 的 ['tone','dusk']）時，重新套用天空、光線與霧
+    if (W.pm && V.field.map && V.field.map.pm === W.pm && V.game.s) {
+      var nt = V.field.tone();
+      if (nt !== W.tone) { W.tone = nt; setTone(nt, W.cfg); }
+    }
     var t = W.time;
     W.sky.material.uniforms.time.value = t;
     W.sky.position.copy(camera.position);
