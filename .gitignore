@@ -12,3 +12,4 @@ node_modules/
 *.pdf
 !guide/*.pdf
 web-rpg-3d/tests/out/
+web-rpg-3d/dist/

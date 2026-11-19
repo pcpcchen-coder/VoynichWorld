@@ -288,7 +288,7 @@
   function angDiff(a, b) { var d = a - b; while (d > Math.PI) d -= Math.PI * 2; while (d < -Math.PI) d += Math.PI * 2; return d; }
 
   // 互動提示：地圖空閒時顯示在對象上方
-  var PROMPT_VERB = { npc: '交談', shrine: '種源龕', altar: '調劑', observe: '觀察', gather: '採集', bed: '休息', chest: '打開', gauge: '查看', sign: '閱讀', encounter: '靠近' };
+  var PROMPT_VERB = { npc: '交談', shrine: '歇息', altar: '調劑', observe: '觀察', gather: '採集', bed: '休息', chest: '打開', gauge: '查看', sign: '閱讀', encounter: '靠近' };
   function updatePrompt() {
     var idle = V.scene === 'field' && !F.busy && !V.ui.top() && !F.player.step && !F.player.queue;
     target = idle ? pickTarget() : null;

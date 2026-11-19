@@ -42,6 +42,7 @@
     if (!official.length) return fatal('找不到正式資料清單（../web-rpg/js/data/manifest.js）。3D 版需要與 2D 版放在同一個倉庫中。');
     if (!V.r3d.init(document.getElementById('view3d'))) return;
     V.runtime.dataSet = 'official';
+    if (V.dataInlined) return start();   // 單檔版（tools/build-single.js）：資料已內嵌
     loadScripts(official, function (err) {
       if (err) return fatal(err.message + '\n3D 版直接讀取 2D 版的資料檔，請確認 web-rpg/ 目錄存在。');
       start();
