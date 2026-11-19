@@ -175,8 +175,40 @@
     buildBridges(pm, cfg);
     buildMist(pm, cfg);
     setTone(tone, cfg);
+    mergeStatic();
     applyQuality();
   };
+
+  // 合併靜態網格：同一材質的不動物件併成一個網格，大幅減少 draw calls（手機友善）
+  function mergeStatic() {
+    var skip = new Set();
+    W.animated.forEach(function (a) { [].concat(a.obj).forEach(function (o) { o.traverse(function (c) { skip.add(c); }); }); });
+    if (W.steamGroup) W.steamGroup.traverse(function (c) { skip.add(c); });
+    if (W.mistGroup) W.mistGroup.traverse(function (c) { skip.add(c); });
+    W.group.updateMatrixWorld(true);
+    var groups = {}, keep = ['position', 'normal', 'uv'];
+    W.group.traverse(function (o) {
+      if (!o.isMesh || o.isInstancedMesh || skip.has(o) || o === W.terrain || o.material.transparent || o.material.isShaderMaterial) return;
+      var g = o.geometry; if (!g.attributes.position || !g.attributes.normal || !g.attributes.uv) return;
+      var k = o.material.uuid + (o.castShadow ? 's' : '');
+      (groups[k] = groups[k] || []).push(o);
+    });
+    Object.keys(groups).forEach(function (k) {
+      var list = groups[k]; if (list.length < 2) return;
+      var geos = list.map(function (o) {
+        var g = o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone();
+        Object.keys(g.attributes).forEach(function (a) { if (keep.indexOf(a) < 0) g.deleteAttribute(a); });
+        g.morphAttributes = {}; g.clearGroups();
+        g.applyMatrix4(o.matrixWorld); return g;
+      });
+      var merged = THREE.mergeGeometries(geos, false);
+      geos.forEach(function (g) { g.dispose(); });
+      if (!merged) return;
+      var m = new THREE.Mesh(merged, list[0].material); m.castShadow = list[0].castShadow; m.receiveShadow = true;
+      list.forEach(function (o) { o.parent.remove(o); });
+      W.group.add(m);
+    });
+  }
   function disposeGroup(g) {
     g.traverse(function (o) {
       if (o.geometry && !o.geometry.userData.shared) o.geometry.dispose();

@@ -59,6 +59,32 @@
   function darken(hex, k) { var c = new THREE.Color(hex); c.multiplyScalar(1 - k); return '#' + c.getHexString(); }
   M.lighten = lighten; M.darken = darken;
 
+  // 把 group 的直屬網格（排除 except、透明、發光者）合併成一個使用頂點色的網格
+  var vcMat = null;
+  function compact(group, except) {
+    var list = group.children.filter(function (o) {
+      return o.isMesh && except.indexOf(o) < 0 && !o.material.transparent && !(o.material.emissiveIntensity > 0 && o.material.emissive && o.material.emissive.getHex() !== 0) && o.geometry.attributes.uv;
+    });
+    if (list.length < 2) return;
+    var geos = list.map(function (o) {
+      o.updateMatrix();
+      var g = o.geometry.index ? o.geometry.toNonIndexed() : o.geometry.clone();
+      Object.keys(g.attributes).forEach(function (a) { if (['position', 'normal', 'uv'].indexOf(a) < 0) g.deleteAttribute(a); });
+      g.clearGroups(); g.applyMatrix4(o.matrix);
+      var n = g.attributes.position.count, col = new Float32Array(n * 3), c = o.material.color;
+      for (var i = 0; i < n; i++) { col[i * 3] = c.r; col[i * 3 + 1] = c.g; col[i * 3 + 2] = c.b; }
+      g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+      return g;
+    });
+    var merged = THREE.mergeGeometries(geos, false);
+    geos.forEach(function (g) { g.dispose(); });
+    if (!merged) return;
+    vcMat = vcMat || new THREE.MeshStandardMaterial({ vertexColors: true, roughness: 0.82, map: V.tex3d.vellum() });
+    var m = new THREE.Mesh(merged, vcMat); m.castShadow = true;
+    list.forEach(function (o) { group.remove(o); });
+    group.add(m);
+  }
+
   // ======================= 人物 =======================
   // 長袍輪廓（自下而上：裙襬 → 腰 → 胸 → 肩 → 頸）
   function robeGeo(tall) {
@@ -158,6 +184,8 @@
       body.add(g); return g;
     }
     var armL = arm(-1), armR = arm(1);
+    // 同一個關節底下的不透明、不發光部件併成一個頂點色網格（每人約 7 次繪製，原本約 18 次）
+    compact(body, [legL, legR]); compact(head, []); compact(armL, []); compact(armR, []);
     root.traverse(function (o) { if (o.isMesh) o.receiveShadow = false; });
     var shadow = M.blob(0.3); shadow.position.y = 0.02; root.add(shadow);
 
@@ -180,7 +208,7 @@
           legL.rotation.x += (0 - legL.rotation.x) * d; legR.rotation.x += (0 - legR.rotation.x) * d;
           armL.rotation.x += (Math.sin(breathe * 1.3) * 0.04 - armL.rotation.x) * d; armR.rotation.x += (-Math.sin(breathe * 1.3) * 0.04 - armR.rotation.x) * d;
           body.position.y += (0 - body.position.y) * d; body.rotation.x += (0 - body.rotation.x) * d;
-          robe.scale.set(1 + Math.sin(breathe * 1.6) * 0.012, 1, 1 + Math.sin(breathe * 1.6) * 0.012);
+          body.scale.set(1 + Math.sin(breathe * 1.6) * 0.01, 1, 1 + Math.sin(breathe * 1.6) * 0.01);
           head.rotation.y = Math.sin(breathe * 0.37) * 0.18;
           head.rotation.x = Math.sin(breathe * 0.5) * 0.05;
         }
