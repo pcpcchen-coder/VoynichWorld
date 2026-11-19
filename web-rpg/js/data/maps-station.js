@@ -111,7 +111,7 @@
 
     // ---- 孩童 Y、R ----
     { type: 'npc', id: 'yaya', actor: 'npc.yaya', x: 21, y: 26, dir: 'down', cond: [NOT_P3, { any: ['!flag.prologue.tasted_spring_source', 'flag.prologue.puma_forbade_bridge'] }],
-      move: { type: 'wander', radius: 1 }, dialogue: 'dlg.p0.npc.yaya' },
+      dialogue: 'dlg.p0.npc.yaya' },
     { type: 'npc', id: 'li', actor: 'npc.li', x: 23, y: 26, dir: 'down',
       cond: [NOT_P3, { any: ['!quest:quest.side.p0_soft_ground', 'flag.prologue.li_rescued'] }], dialogue: 'dlg.p0.npc.li' },
 

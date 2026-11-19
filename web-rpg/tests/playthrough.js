@@ -214,6 +214,7 @@ async function main() {
   await shot('station-p2');
   await act(ST, 8, 15, 'left');
   check(await flag('flag.prologue.side_tide_done'), 'S0-1 回報汐伯（三尺同）');
+  if (!(await S("s.items['item.med.pool_sugar']||0"))) await q(() => window.__vellora.give('item.med.pool_sugar', 1));
   await act(ST, 20, 25, 'left', { choices: [0] });
   check(await flag('flag.prologue.shrine_slot_filled'), 'S0-3 回潤第七格種莢');
   // 存檔與讀檔
