@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<meta name="theme-color" content="#0b0a0e">
+<title>薇蘿：葉帖紀行 3D｜VELLORA — The Loose Folios</title>
+<!-- 介面樣式與 2D 版共用（犢皮手稿面板），再疊上 3D 版的版面與控制元件 -->
+<link rel="stylesheet" href="../web-rpg/css/game.css">
+<link rel="stylesheet" href="css/game3d.css">
+</head>
+<body data-scene="boot" class="v3d">
+<div id="game">
+  <canvas id="view3d" aria-label="遊戲畫面（3D）"></canvas>
+  <canvas id="view" width="2" height="2" hidden></canvas>
+  <div id="prompt3d" hidden></div>
+  <div id="marks3d"></div>
+  <div id="hud" hidden></div>
+  <div id="banner" aria-live="polite"></div>
+  <div id="ui-layer"></div>
+  <div id="toasts" aria-live="polite"></div>
+  <div id="fade"></div>
+  <div id="over-layer"></div>
+  <div id="boot" class="boot"><p>薇蘿：葉帖紀行</p><small>載入 3D 場景中……</small></div>
+</div>
+<noscript><p style="color:#D8CCB3;padding:2em">本遊戲需要啟用 JavaScript。</p></noscript>
+
+<!-- 3D 函式庫（vendored，見 vendor/THREE-LICENSE.txt；以 tools/build-three 打包成傳統 script，可在 file:// 載入） -->
+<script src="vendor/three.min.js"></script>
+
+<!-- 共用引擎：與 2D 版（../web-rpg/）同一份程式。規則、狀態、存檔、對話、過場、遭遇規則、調劑、葉帖、選單都在這裡。 -->
+<script src="../web-rpg/js/engine/core.js"></script>
+<script src="../web-rpg/js/engine/rules.js"></script>
+<script src="../web-rpg/js/engine/tiledefs.js"></script>
+<script src="../web-rpg/js/engine/mapparse.js"></script>
+<script src="../web-rpg/js/engine/gfx.js"></script>
+<script src="../web-rpg/js/engine/sprites.js"></script>
+<script src="../web-rpg/js/engine/input.js"></script>
+<script src="../web-rpg/js/engine/audio.js"></script>
+<script src="../web-rpg/js/engine/state.js"></script>
+<script src="../web-rpg/js/engine/ui.js"></script>
+<script src="../web-rpg/js/engine/dialogue.js"></script>
+<script src="../web-rpg/js/engine/field.js"></script>
+<script src="../web-rpg/js/engine/cutscene.js"></script>
+<script src="../web-rpg/js/engine/battle.js"></script>
+<script src="../web-rpg/js/engine/save.js"></script>
+<script src="../web-rpg/js/engine/menu.js"></script>
+<script src="../web-rpg/js/engine/folio.js"></script>
+<script src="../web-rpg/js/engine/craft.js"></script>
+<script src="../web-rpg/js/engine/screens.js"></script>
+<script src="../web-rpg/js/engine/debug.js"></script>
+
+<!-- 3D 呈現層：只替換場景呈現、移動與鏡頭、輸入、遭遇場景與版面 -->
+<script src="js/quality.js"></script>
+<script src="js/tex3d.js"></script>
+<script src="js/models3d.js"></script>
+<script src="js/creatures3d.js"></script>
+<script src="js/layouts3d.js"></script>
+<script src="js/world3d.js"></script>
+<script src="js/input3d.js"></script>
+<script src="js/field3d.js"></script>
+<script src="js/battle3d.js"></script>
+<script src="js/screens3d.js"></script>
+
+<!-- 資料：與 2D 版同一批資料檔（../web-rpg/js/data/），由 main3d.js 依清單載入 -->
+<script src="../web-rpg/js/data/manifest.js"></script>
+<script src="js/main3d.js"></script>
+</body>
+</html>
