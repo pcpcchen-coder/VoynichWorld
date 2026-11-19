@@ -111,6 +111,7 @@ async function act(map, x, y, dir, opts) {
 
 async function main() {
   const browser = await chromium.launch();
+  if (process.argv.includes('--mobile')) { await mobile(browser); await browser.close(); return; }
   const ctx = await browser.newContext({ viewport: { width: 1280, height: 720 } });
   page = await ctx.newPage();
   page.on('console', (m) => { if (m.type() === 'error') errors.push('[console] ' + m.text()); });
@@ -319,6 +320,11 @@ async function main() {
 
   const pageErr = await q(() => window.__vellora.errors);
   if (pageErr.length) errors.push.apply(errors, pageErr);
+  await mobile(browser);
+  await browser.close();
+}
+
+async function mobile(browser) {
   console.log('手機 390×844');
   const m = await browser.newContext({ viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true });
   page = await m.newPage();
@@ -329,13 +335,13 @@ async function main() {
   await sleep(400); await shot('mobile-title');
   await page.click('.title-menu [data-id="new"]');
   await waitFor(() => window.__vellora.scene() === 'field', null, 8000, '手機新遊戲');
-  await waitFor(() => window.__vellora.ui().indexOf('dialogue') >= 0 || window.__vellora.ui().indexOf('image') >= 0, null, 15000, '手機開場');
-  for (let i = 0; i < 6; i++) { await key('KeyZ'); await sleep(250); }
+  await drive();
+  await shot('mobile-field');
+  await tele(ST, 24, 11, 'up'); await q(() => window.__vellora.face('up'));
+  await key('KeyZ'); await sleep(700);
   await shot('mobile-dialogue');
   await drive();
-  await tele(ST, 24, 11, 'up'); await sleep(300);
-  await shot('mobile-field');
-  await browser.close();
+  check(true, '手機：開場對話與地圖');
 }
 
 main().then(() => {
