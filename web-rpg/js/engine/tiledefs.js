@@ -26,6 +26,7 @@
     '#': { id: 'cavewall', name: '導管洞壁', layer: 'ground', walk: false },
     ':': { id: 'floor', name: '屋內地板', layer: 'ground', walk: true },
     '|': { id: 'wall', name: '屋內牆', layer: 'ground', walk: false },
+    'H': { id: 'housewall', name: '屋牆／屋頂（外觀；下方仍是 H 的格畫成屋頂，最下一列畫成牆面）', layer: 'ground', walk: false },
     'D': { id: 'door', name: '門', layer: 'ground', walk: true },
     '>': { id: 'stairs', name: '階梯', layer: 'ground', walk: true },
     '0': { id: 'void', name: '虛空（地圖外）', layer: 'ground', walk: false },
