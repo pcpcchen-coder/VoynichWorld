@@ -12,7 +12,7 @@
 
 | | |
 |---|---|
-| **可玩內容** | 序章〈味變〉，約 1 小時 |
+| **可玩內容** | 序章〈味變〉，約 1 小時（估算：只走主線約 78 分鐘，含全部支線約 96 分鐘，誤差 ±20%） |
 | **其餘內容** | 第 1 章到終章後、勢力中篇三部，共 108 小時份的劇本（[`docs/script/`](docs/script/)），尚未實作 |
 | **全作規劃** | 109 小時，見 [`docs/00-master-outline.md`](docs/00-master-outline.md) |
 
@@ -34,6 +34,7 @@
 | 取消、開選單 | X／Esc | B 鈕、右上角 ≡ |
 
 存檔寫在瀏覽器的 `localStorage`（3 個手動欄位＋自動存檔）；在種源龕可以存檔並回復。
+畫面左上角會顯示目前目標的地點與方向，可在設定中關閉。
 
 ## 核心玩法
 
@@ -72,6 +73,8 @@ web-rpg/
 node web-rpg/tools/validate-data.js        # 驗證正式資料（加 --demo 驗證測試房）
 node web-rpg/tests/smoke.js --official     # 冒煙測試：桌機與手機尺寸
 node web-rpg/tests/playthrough.js          # 從新遊戲自動玩到章末
+node web-rpg/tests/routes.js               # 分歧路線：隔離、失敗重來、支線、章末抉擇、存讀檔、無本機儲存
+node web-rpg/tools/estimate-playtime.js    # 依對白字數、步行格數與遭遇回合估算遊玩時間
 ```
 
 要把後續章節做成可玩內容：依 [`docs/ENGINE.md`](docs/ENGINE.md) 在 `js/data/` 新增資料檔並列入 `js/data/manifest.js`，

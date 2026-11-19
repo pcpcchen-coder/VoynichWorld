@@ -22,6 +22,9 @@ const ST = 'map.miststep.station', SH = 'map.miststep.sheds', TE = 'map.miststep
   BR = 'map.miststep.bridge', UP = 'map.miststep.conduit_upper', LO = 'map.miststep.conduit_lower';
 
 function log(m) { console.log('  ' + m); }
+// 環境變數 VELLORA_CKPT=<目錄>：在幾個主線節點把存檔快照寫成 JSON，供 tests/routes.js 從中途開始測支線與分歧
+const CKPT = process.env.VELLORA_CKPT;
+async function ckpt(name) { if (!CKPT) return; const snap = await q(() => window.__vellora.V.save.snapshot()); fs.mkdirSync(CKPT, { recursive: true }); fs.writeFileSync(path.join(CKPT, name + '.json'), JSON.stringify(snap)); }
 async function shot(name) { shotNo++; await page.screenshot({ path: path.join(OUT, 'pt-' + String(shotNo).padStart(2, '0') + '-' + name + '.png') }); }
 function q(fn, arg) { return page.evaluate(fn, arg); }
 async function info() { return q(() => { const a = window.__vellora; return { ui: a.ui(), busy: a.busy(), scene: a.scene(), p: a.player() }; }); }
@@ -173,6 +176,7 @@ async function main() {
   // 記脈棚：行囊匣
   await act(SH, 6, 2, 'up');
   check(await S("s.items['item.currency.sugar_tally']") >= 6, '記脈棚行囊匣（池糖籤 ×6）');
+  await ckpt('p1');
 
   console.log('支線 S0-4 別踩那一塊（P1）');
   await tele(ST, 18, 24, 'down');
@@ -218,6 +222,7 @@ async function main() {
   if (!(await S("s.items['item.med.pool_sugar']||0"))) await q(() => window.__vellora.give('item.med.pool_sugar', 1));
   await act(ST, 20, 25, 'left', { choices: [0] });
   check(await flag('flag.prologue.shrine_slot_filled'), 'S0-3 回潤第七格種莢');
+  await ckpt('p2');
   // 存檔與讀檔
   const saved = await q(() => window.__vellora.save('slot1'));
   check(saved !== false, '存檔到 slot1');
@@ -255,6 +260,7 @@ async function main() {
   await act(UP, 7, 2, 'right');
   await act(UP, 12, 2, 'up'); await act(UP, 10, 3, 'left');
   check(await flag('flag.prologue.heard_fork_a'), 'M0-13 岔口甲：聽音高');
+  await ckpt('pre_tide');
   await shot('conduit-upper');
   await act(UP, 17, 11, 'down');
   check(await flag('flag.prologue.embolus_cleared'), 'M0-13 死潮穩定（embolus_cleared）');
@@ -284,6 +290,7 @@ async function main() {
   check(await S("window.__vellora.state().encDone['" + LO + "/scab']==='stabilized'"), 'M0-14 滲硫痂口穩定');
   await walk('ArrowRight', 3); await drive();
   check(await flag('flag.prologue.slowarch_recognized') && await flag('folio.f007.c1'), 'M0-14 修剪痕：認出慢拱');
+  await ckpt('pre_boss');
 
   console.log('T7 首領：慢拱');
   await walk('ArrowRight', 1);
@@ -303,6 +310,7 @@ async function main() {
   await drive({ ms: 120000 });
   check(await flag('flag.prologue.got_auri_leaf') && (await stage()) === 's7' && await S("s.items['item.key.auri_leaf_01']===1"), 'M0-16 奧芮殘葉①、階段 s7');
   check((await q(() => window.__vellora.player())).map === ST, '回到池站（池守棚門外）');
+  await ckpt('pre_confess');
   await walk('ArrowUp', 1); await drive();
   check((await q(() => window.__vellora.player())).map === SH, '池守棚門已解鎖');
   await walk('ArrowUp', 1);
@@ -320,7 +328,7 @@ async function main() {
 
   const pageErr = await q(() => window.__vellora.errors);
   if (pageErr.length) errors.push.apply(errors, pageErr);
-  await mobile(browser);
+  if (!CKPT) await mobile(browser);
   await browser.close();
 }
 

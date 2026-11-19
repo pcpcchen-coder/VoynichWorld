@@ -838,6 +838,7 @@ D.glossary = { 'g.sequence': { term: '味序', text: '……' } };
 | `winEncounter()` | 自動以正確處置完成目前遭遇 |
 | `skipDialogue()` | 一路按確認直到對話結束 |
 | `save(slot)` | 寫入存檔欄位 |
+| `snapshot()`／`loadSnapshot(obj)` | 取得目前的存檔物件；直接以存檔物件讀檔（不經 localStorage，`tests/routes.js` 從主線節點快照開始測分歧用） |
 | `errors` | 頁面錯誤紀錄 |
 
 ---
@@ -849,6 +850,9 @@ node tools/validate-data.js          # 驗證正式資料（js/data/manifest.js�
 node tools/validate-data.js --demo   # 驗證測試房
 node tests/smoke.js                  # 瀏覽器冒煙測試（測試房，桌機＋手機觸控），截圖到 tests/out/
 node tests/smoke.js --official       # 正式資料：開新遊戲、走完開場過場、確認無 console 錯誤（清單為空則略過）
+node tests/playthrough.js            # 序章主線通關（VELLORA_CKPT=目錄 時在主線節點寫出存檔快照）
+node tests/routes.js                 # 分歧路線：隔離路線、失敗重來、支線、章末 9 種組合、存讀檔、無 localStorage（--only=iso,fail,side,endings,save,nols；--fresh 重產快照）
+node tools/estimate-playtime.js      # 遊玩時間估算（對白字數、步行格數、遭遇回合數換算；不是實測）
 ```
 
 驗證器檢查：地圖各層尺寸一致與圖塊字元合法；起始點可行走；傳送點目標地圖存在、落點可行走且不疊在傳送點上；從起始點與所有傳送落點出發，每個傳送點／觸發點走得到、每個 NPC／物件／遭遇的相鄰格走得到；所有條件可解析且參照存在（含任務階段 id）；所有動作名稱、參數型別、參照（物品、任務、遭遇、地圖、過場、對話、手技、商店、教學、詞彙、區域、四向度、音效、色調、脈況、方向、結尾）正確；對話節點 next／branch 指向存在；物品分類與 treats、配方、商店、遭遇味序與行為種類、等級表手技、葉帖條件與圖檔存在。錯誤訊息格式：`檔案 集合「id」…：說明`，有錯誤時回傳 1。
@@ -922,6 +926,15 @@ node tests/smoke.js --official       # 正式資料：開新遊戲、走完開�
 | `['engage', 實體id]` | 直接開始目前地圖上某個遭遇實體的診療（不經確認）；結果記錄、`onResult` 與一般遭遇相同 |
 | `['heal', '50%', 0]` | 體力參數可寫百分比字串（上限的比例） |
 | `['image', 路徑, 行陣列]` | 旁白參數可為行陣列（原本即支援，驗證器已放寬） |
+| `['menu', 分頁id]` | 開啟主選單到指定分頁（例：記脈棚繪圖桌 `['menu','folios']`），等選單關閉再繼續 |
+
+**支線關閉（`meta.sideQuestClose: { flag, label }`）**：該旗標成立的那一刻，所有尚未完成的支線（含沒接的）狀態改為 `missed`，不再推進或完成；條件 `quest:id=missed` 可判斷。任務日誌另列一節，標題與右側標記用 `label`（序章：「沒來得及」）。`quest:id`（不帶運算子）對 `missed` 也成立，所以「沒接才出現」的接取選項會一起消失。
+
+**目前目標（`meta.objectives: [{cond, text}]`）**：由上而下取第一個條件成立的項目，顯示在 HUD 體力列下方一行，並附在任務日誌主線卡片的「目前目標」。只寫地點與方向，不寫劇情。`V.game.objective()` 取得目前文字。
+
+**章末畫面**：面板比畫面高時可以捲動（觸控拖曳、鍵盤上下）；按確認時若還沒捲到底，先往下捲一頁，到底才回標題。按鈕列固定在面板底部。
+
+**`V.screens.loadSlot(slot)`**：`slot` 也可以是存檔物件。
 
 葉帖新增欄位：`labels`（`{observe, sample, diagnose}` 的顯示名稱，例：觀察點一／二／三）、`nameAlt: [{cond, name}]`（依條件換名稱）、`note` 可為行陣列（行首 `〔若 條件〕`、可用樣板，換行顯示）、`before`／`after`（自動繪製前後播放的行）。
 

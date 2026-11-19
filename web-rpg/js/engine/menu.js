@@ -120,21 +120,30 @@
   TAB.folios = function (m) { V.folio.tab(m, function () { setTab('folios'); }); };
 
   TAB.quests = function (m) {
-    var s = Gm.s, act = [], done = [];
-    Object.keys(s.quests).forEach(function (id) { var q = V.data.quests[id]; if (!q) return; (s.quests[id].status === 'done' ? done : act).push(id); });
+    var s = Gm.s, act = [], done = [], missed = [];
+    var MISSED = (V.data.meta && V.data.meta.sideQuestClose && V.data.meta.sideQuestClose.label) || '沒來得及';
+    Object.keys(s.quests).forEach(function (id) {
+      var q = V.data.quests[id]; if (!q) return;
+      var stt = s.quests[id].status;
+      (stt === 'done' ? done : stt === 'missed' ? missed : act).push(id);
+    });
     var items = [];
-    function row(id) { var q = V.data.quests[id]; return { id: id, label: U.esc(q.name), right: q.type === 'side' ? '支線' : '主線', cls: s.quests[id].status === 'done' ? 'done' : '' }; }
+    function row(id) { var q = V.data.quests[id], stt = s.quests[id].status; return { id: id, label: U.esc(q.name), right: stt === 'missed' ? MISSED : (q.type === 'side' ? '支線' : '主線'), cls: stt === 'done' ? 'done' : (stt === 'missed' ? 'done missed' : '') }; }
     if (act.length) { items.push({ header: true, label: '進行中' }); act.forEach(function (id) { items.push(row(id)); }); }
     if (done.length) { items.push({ header: true, label: '已完成' }); done.forEach(function (id) { items.push(row(id)); }); }
+    if (missed.length) { items.push({ header: true, label: MISSED }); missed.forEach(function (id) { items.push(row(id)); }); }
     m.onMove = function (it) {
       if (!it || it.header) return;
       var q = V.data.quests[it.id], st = s.quests[it.id];
-      var html = '<div class="q-card"><h2>' + U.esc(q.name) + '</h2><p class="tag">' + (q.type === 'side' ? '支線' : '主線') + (st.status === 'done' ? '・已完成' : '') + '</p><p>' + U.esc(q.desc || '') + '</p><ol class="q-stages">';
+      var html = '<div class="q-card"><h2>' + U.esc(q.name) + '</h2><p class="tag">' + (q.type === 'side' ? '支線' : '主線') + (st.status === 'done' ? '・已完成' : st.status === 'missed' ? '・' + MISSED : '') + '</p><p>' + U.esc(q.desc || '') + '</p><ol class="q-stages">';
       q.stages.forEach(function (sg, i) {
         if (i > st.stage) return;
         var d = st.status === 'done' || i < st.stage;
+        if (st.status === 'missed') { html += '<li class="missed">✗ ' + U.esc(sg.text) + '</li>'; return; }
         html += '<li class="' + (d ? 'done' : 'now') + '">' + (d ? '✓ ' : '▶ ') + U.esc(sg.text) + '</li>';
       });
+      if (q.type === 'main' && st.status !== 'done' && Gm.objective()) html += '</ol><p class="q-goal">目前目標：' + U.esc(Gm.objective()) + '</p><ol>';
+      if (st.status === 'missed') html += '</ol><p class="muted">' + (st.stage < 0 ? '出發前沒有接下這件事。' : '出發前沒來得及做完。') + '</p><ol>';
       m.detailEl.innerHTML = html + '</ol></div>';
     };
     if (!items.length) { m.list.set([]); m.detailEl.innerHTML = '<p class="muted pad">目前沒有任務。</p>'; return; }
@@ -193,7 +202,7 @@
     m.list.set(slotItems());
   };
   function doSave(slot) {
-    if (V.save.write(slot)) { V.audio.play('save'); UI.toast('已存入' + V.save.SLOT_NAMES[slot] + '。', 'save'); }
+    if (V.save.write(slot)) { V.audio.play('save'); UI.toast(V.save.persistent ? '已存入' + V.save.SLOT_NAMES[slot] + '。' : '已暫存到' + V.save.SLOT_NAMES[slot] + '（瀏覽器不允許寫入，關閉頁面後會消失）。', 'save'); }
     else { V.audio.play('error'); UI.toast('存檔失敗：瀏覽器不允許寫入。', 'warn'); }
   }
 
@@ -221,7 +230,8 @@
       { id: 'master', label: '主音量', right: s.master ? s.master * 10 + '%' : '關閉' },
       { id: 'sfx', label: '音效', right: s.sfx ? s.sfx * 10 + '%' : '關閉' },
       { id: 'ambience', label: '環境音', right: s.ambience ? s.ambience * 10 + '%' : '關閉' },
-      { id: 'touch', label: '觸控按鍵', right: TOUCH_NAMES[s.touch] }
+      { id: 'touch', label: '觸控按鍵', right: TOUCH_NAMES[s.touch] },
+      { id: 'goal', label: '目前目標提示', right: s.goal === 'off' ? '隱藏' : '顯示' }
     ];
   };
   M.settingsCycle = function (id) {
@@ -229,6 +239,7 @@
     function cyc(list, v) { return list[(list.indexOf(v) + 1) % list.length]; }
     if (id === 'textSpeed') s.textSpeed = cyc(['slow', 'normal', 'fast', 'instant'], s.textSpeed);
     else if (id === 'touch') s.touch = cyc(['auto', 'on', 'off'], s.touch);
+    else if (id === 'goal') s.goal = s.goal === 'off' ? 'on' : 'off';
     else if (id === 'master' || id === 'sfx' || id === 'ambience') s[id] = s[id] >= 10 ? 0 : s[id] + 2;
     V.save.saveSettings();
     V.audio.play('confirm');

@@ -24,7 +24,7 @@
   function prefix() { return 'vellora.' + ((V.data.meta && V.data.meta.id) || 'game') + '.'; }
 
   // ---- 設定 ----
-  Sv.settings = { textSpeed: 'normal', master: 8, sfx: 8, ambience: 6, touch: 'auto' };
+  Sv.settings = { textSpeed: 'normal', master: 8, sfx: 8, ambience: 6, touch: 'auto', goal: 'on' };
   Sv.loadSettings = function () {
     try { var raw = get('vellora.settings'); if (raw) { var o = JSON.parse(raw); Object.keys(Sv.settings).forEach(function (k2) { if (o[k2] != null) Sv.settings[k2] = o[k2]; }); } } catch (e) { /* 用預設 */ }
     Sv.applySettings();

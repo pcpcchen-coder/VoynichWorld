@@ -27,6 +27,7 @@
       '<div class="title-inner"><div class="title-head"><p class="title-kicker">VELLORA — The Loose Folios</p><h1>薇蘿<span>：</span>葉帖紀行</h1>' +
       '<p class="title-chapter">' + U.esc(meta.chapter || '') + (V.runtime.demo ? '<em>測試房</em>' : '') + '</p></div>' +
       '<div class="title-menu panel"></div>' +
+      (V.save.persistent ? '' : '<p class="title-warn">這個瀏覽器不允許寫入本機儲存（隱私模式或檔案權限）。遊戲可以照常進行，但存檔只會保留到關閉頁面為止。</p>') +
       '<p class="title-foot">本作為原創虛構，不是對《伏尼契手稿》的翻譯或解讀。</p></div>');
     var m = titleModal = { kind: 'title', el: el };
     var list = new UI.List(el.querySelector('.title-menu'), {
@@ -91,8 +92,9 @@
     V.save.auto();
   };
 
+  // slot 可以是欄位名稱，或已讀出的存檔物件（偵錯 API loadSnapshot 用）
   Sc.loadSlot = async function (slot) {
-    var save = V.save.read(slot);
+    var save = (slot && typeof slot === 'object') ? V.save.migrate(slot) : V.save.read(slot);
     if (!save) { UI.toast('讀取失敗：存檔不存在或已損毀。', 'warn'); return false; }
     await UI.fade('out', 300, '#0b0a0e');
     closeTitle();
@@ -159,7 +161,15 @@
         resolve(); Sc.title();
       }
       el.addEventListener('click', function (ev) { var b = ev.target.closest('button'); if (b) act(b.getAttribute('data-a')); });
-      modal.update = function () { if (V.input.pressed('confirm')) act('title'); else if (V.input.pressed('cancel') && e.allowContinue) act('stay'); };
+      var box = el.querySelector('.end-box');
+      modal.update = function () {
+        // 面板比畫面高時，上下鍵捲動；確認鍵要等捲到底（按鈕看得到）才回標題，避免一按就跳過統計
+        if (V.input.held('up')) box.scrollTop -= 14;
+        if (V.input.held('down')) box.scrollTop += 14;
+        var atEnd = box.scrollTop + box.clientHeight >= box.scrollHeight - 4;
+        if (V.input.pressed('confirm')) { if (atEnd) act('title'); else box.scrollTop += box.clientHeight * 0.8; }
+        else if (V.input.pressed('cancel') && e.allowContinue) act('stay');
+      };
       V.save.write('auto');
       UI.push(modal);
       UI.fadeSet(false);

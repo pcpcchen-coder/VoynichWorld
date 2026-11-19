@@ -141,6 +141,7 @@
     { type: 'object', id: 'bed', kind: 'bed', x: 1, y: 1, name: '珂潾的床' },
     { type: 'object', id: 'pack', kind: 'chest', x: 6, y: 1, name: '行囊匣',
       items: { 'item.use.palate_rinse': 1, 'item.use.spring_cake': 2, 'item.currency.sugar_tally': 6 } },
+    { type: 'object', id: 'draw_table', kind: 'hidden', x: 3, y: 2, name: '繪圖桌', solid: true, dialogue: 'dlg.p0.draw_table' },
     { type: 'object', id: 'old_map', kind: 'hidden', x: 3, y: 0, name: '牆上的舊圖', solid: true, dialogue: 'dlg.p0.old_drawing' },
 
     // ---- 池守棚 ----

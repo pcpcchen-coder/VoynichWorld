@@ -222,10 +222,13 @@ body.portrait .b-cmdwrap { grid-column: 1; grid-row: 2; } body.portrait .b-log {
 body.portrait .b-seqhead { flex-direction: column; gap: 0; }
 /* 橫向且高度很矮（手機橫放）：左右兩欄 */
 @media (orientation: landscape) and (max-height: 520px) {
-  .battle { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); }
+  /* 橫向矮螢幕：左欄放對象、味序、體力與紀錄；右欄整欄給指令清單（藥劑清單長時不被裁掉） */
+  .battle { display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); grid-template-rows: auto auto auto minmax(0, 1fr); }
+  .b-bottom { display: contents; }
   .b-top { grid-column: 1; grid-row: 1; } .b-seqwrap { grid-column: 1; grid-row: 2; overflow-y: auto; }
-  .b-bottom { grid-column: 2; grid-row: 1 / span 2; grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1.6fr) minmax(3.2em, .8fr); }
-  .b-cmdwrap { grid-column: 1; grid-row: 2; } .b-log { grid-row: 3; }
+  .b-seq { min-height: 0; padding-bottom: .4em; }
+  .b-player { grid-column: 1; grid-row: 3; } .b-log { grid-column: 1; grid-row: 4; min-height: 2.6em; }
+  .b-cmdwrap { grid-column: 2; grid-row: 1 / -1; }
   .b-stage { width: 5.6em; height: 5.6em; } .b-creature { width: 5em; height: 5em; }
   .b-cmdtitle { min-height: 1.5em; } .b-mood { font-size: .8rem; }
 }
@@ -367,3 +370,8 @@ body.touch-enabled.pad-on:not(.portrait) .dlg-wrap { padding-left: calc(var(--pa
 body.touch-enabled.pad-on:not(.portrait) .dlg-text { height: 3.3em; }
 body.short .dlg-text { height: 3.3em; } body.short .dlg { padding-top: .8em; padding-bottom: .5em; }
 @media (prefers-reduced-motion: reduce) { .title-bg, .b-creature, .glyph.shaky { animation: none; } }
+/* QA 補強：無本機儲存提示、章末面板觸控捲動 */
+.title-warn { max-width: 24em; margin: .6em auto 0; padding: .45em .7em; font-size: .78rem; line-height: 1.5; color: #f3e3c0; background: rgba(120,40,30,.72); border-radius: .4em; text-align: center; }
+.end-box { -webkit-overflow-scrolling: touch; overscroll-behavior: contain; touch-action: pan-y; }
+.hud-goal { margin-top: .2em; max-width: min(22em, 62vw); white-space: normal; line-height: 1.35; color: #f0e2bf; font-size: .95em; }
+.q-goal { margin: .6em 0 0; padding: .4em .6em; border-left: 3px solid var(--teal); background: rgba(70,110,110,.12); }

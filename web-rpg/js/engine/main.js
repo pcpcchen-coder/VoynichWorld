@@ -79,14 +79,16 @@
   function updateHud() {
     var s = V.game.s; if (!s) return;
     var show = V.scene === 'field' && !V.ui.has('battle') && !V.ui.has('menu') && !V.ui.has('craft') && !V.ui.has('ending') && !V.ui.has('folio');
-    var key = show ? [Math.ceil(s.stamina), V.game.maxStamina(), V.game.loadPct(), s.level].join('|') : 'off';
+    var goal = show && V.save.settings.goal !== 'off' ? V.game.objective() : '';
+    var key = show ? [Math.ceil(s.stamina), V.game.maxStamina(), V.game.loadPct(), s.level, goal].join('|') : 'off';
     if (key === hudKey) return;
     hudKey = key;
     hudEl.hidden = !show;
     if (!show) return;
     hudEl.innerHTML = '<span class="hud-lv">Lv ' + s.level + '</span>' +
       '<span class="hud-row"><b>體</b>' + V.ui.bar('hp' + (s.stamina / V.game.maxStamina() < 0.3 ? ' low' : ''), s.stamina, V.game.maxStamina()) + '</span>' +
-      '<span class="hud-row"><b>感</b>' + V.ui.bar('load' + (V.game.loadPct() >= 70 ? ' hot' : ''), s.load, V.game.maxLoad()) + '</span>';
+      '<span class="hud-row"><b>感</b>' + V.ui.bar('load' + (V.game.loadPct() >= 70 ? ' hot' : ''), s.load, V.game.maxLoad()) + '</span>' +
+      (goal ? '<span class="hud-goal">▸ ' + V.util.esc(goal) + '</span>' : '');
   }
 
   function frame(ts) {

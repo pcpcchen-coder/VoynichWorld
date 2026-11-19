@@ -68,6 +68,9 @@
       },
       notices: function () { return Gm.notices.length; },
       save: function (slot) { return V.save.write(slot || 'slot1'); },
+      snapshot: function () { return V.save.snapshot(); },
+      // 直接以存檔物件（snapshot() 的結果）讀檔，不經 localStorage
+      loadSnapshot: function (o) { return V.screens.loadSlot(JSON.parse(JSON.stringify(o))); },
       errors: []
     };
     window.addEventListener('error', function (e) { api.errors.push(String(e.message || e)); });

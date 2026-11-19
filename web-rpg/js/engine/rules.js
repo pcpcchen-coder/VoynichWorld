@@ -66,8 +66,8 @@
     if (!def.arg && !m[4]) throw new Error('條件「' + str + '」需要比較運算子，例如 ' + kind + '>=3');
     var atom = { neg: !!m[1], kind: kind, arg: m[3] || null, op: m[4] || null, val: m[5] != null ? m[5].trim() : null };
     if (atom.op === '==') atom.op = '=';
-    if (kind === 'quest' && atom.op === '=' && ['done', 'active', 'none'].indexOf(atom.val) < 0)
-      throw new Error('條件「' + str + '」：quest:=後只能是 done、active 或 none');
+    if (kind === 'quest' && atom.op === '=' && ['done', 'active', 'none', 'missed'].indexOf(atom.val) < 0)
+      throw new Error('條件「' + str + '」：quest:=後只能是 done、active、missed 或 none');
     if (kind === 'folio' && atom.op && !(atom.op === '=' && atom.val === 'ready'))
       throw new Error('條件「' + str + '」：folio 只支援 folio:ID 或 folio:ID=ready');
     if (kind !== 'quest' && atom.op === '@') throw new Error('條件「' + str + '」：@ 只用於 quest');
@@ -118,7 +118,7 @@
       }
       case 'item': { var c = ctx.item(a.arg); r = a.op ? cmp(c, a.op, a.val) : c > 0; break; }
       case 'quest': {
-        var st = ctx.questStatus(a.arg); // none|active|done
+        var st = ctx.questStatus(a.arg); // none|active|done|missed（沒來得及：已關閉）
         if (!a.op) r = st !== 'none';
         else if (a.op === '=') r = st === a.val;
         else if (a.op === '@') r = st === 'active' && ctx.questStageId(a.arg) === a.val;
@@ -184,6 +184,7 @@
     shop: ['ref:shop'],                  // 開啟以物易物
     craft: ['string?'],                  // 開啟調劑介面（參數：台名稱，可省略）
     save: [],                            // 開啟存檔介面
+    menu: ['string?'],                   // 擴充：開啟主選單（參數：分頁 id，例如 'folios'）
     sfx: ['sfx'],                        // 播音效
     toast: ['string'],                   // 顯示短提示
     tone: ['tone', 'ref:map?'],          // 改變地圖色調（省略地圖＝目前地圖）

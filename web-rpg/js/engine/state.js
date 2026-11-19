@@ -125,7 +125,27 @@
 
   // ---- 旗標 ----
   Gm.flag = function (n) { return Gm.s.flags[n]; };
-  Gm.setFlag = function (n, v) { Gm.s.flags[n] = v === undefined ? true : v; Gm.checkFolios(); V.emit('flag', n); };
+  Gm.setFlag = function (n, v) {
+    Gm.s.flags[n] = v === undefined ? true : v;
+    var sc = D().meta && D().meta.sideQuestClose;   // 擴充：此旗標成立時，未完成的支線一律關閉（status 'missed'＝沒來得及）
+    if (sc && sc.flag === n && Gm.s.flags[n]) Gm.closeSideQuests();
+    Gm.checkFolios(); V.emit('flag', n);
+  };
+  // 擴充：目前目標（meta.objectives 第一個條件成立的項目）
+  Gm.objective = function () {
+    var list = (D().meta && D().meta.objectives) || [];
+    for (var i = 0; i < list.length; i++) { try { if (Gm.cond(list[i].cond)) return list[i].text; } catch (e) { /* 忽略 */ } }
+    return '';
+  };
+  Gm.closeSideQuests = function () {
+    var qs = D().quests || {};
+    Object.keys(qs).forEach(function (id) {
+      if (qs[id].type !== 'side') return;
+      var cur = Gm.s.quests[id];
+      if (cur && cur.status === 'done') return;
+      Gm.s.quests[id] = { status: 'missed', stage: cur ? cur.stage : -1 };
+    });
+  };
 
   // ---- 物品 ----
   Gm.item = function (id) { return D().items[id]; };
@@ -191,6 +211,7 @@
       V.audio.play('quest'); V.ui.toast((q.type === 'side' ? '支線' : '主線') + '・新任務：' + q.name, 'quest');
       return;
     }
+    if (cur && cur.status === 'missed') return;   // 已關閉的支線不再推進
     if (what === 'done') {
       if (cur && cur.status === 'done') return;
       Gm.s.quests[id] = { status: 'done', stage: q.stages.length - 1 };
@@ -369,6 +390,7 @@
       case 'shop': await V.craft.openShop(a[1]); break;
       case 'craft': await V.craft.openAltar(a[1]); break;
       case 'save': await V.menu.openSaveLoad('save'); break;
+      case 'menu': await V.menu.open(a[1]); break;
       case 'sfx': V.audio.play(a[1]); break;
       case 'toast': V.ui.toast(Gm.tpl(a[1])); break;
       case 'tone': Gm.s.tones[a[2] || Gm.s.map] = a[1]; break;

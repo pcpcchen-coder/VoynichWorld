@@ -22,6 +22,37 @@
     autoDrawFolios: true,     // §11：三項條件達成時自動播放繪製演出
     gatherRespawn: true,      // §10.5：採集點在種源龕或床休息後重生
     bankReward: { item: 'item.currency.sugar_tally', per: 1 },   // 診斷樣本入庫每件換 1 支池糖籤
+    // 擴充：目前目標（HUD 一行＋任務日誌）。由上而下取第一個條件成立的項目；只寫地點與方向，不新增劇情。
+    objectives: (function () {
+      var Q = 'quest:quest.main.p0_taste_shift', P = 'flag.prologue.';
+      return [
+        { cond: [Q + '@s1', '!' + P + 'tasted_first_pool'], text: '往西走到池岸的取樣點（池邊的取樣罐），面向它按確認取樣' },
+        { cond: [Q + '@s1'], text: '繞到初階池西岸，把讀值告訴蒲嬤' },
+        { cond: [Q + '@s2', '!' + P + 'observed_station_bellpipe'], text: '巡檢：池站北側、池子上方的鐘管草叢（老聆在旁邊）' },
+        { cond: [Q + '@s2', '!' + P + 'round_gauge'], text: '巡檢：池子西岸的水位尺，先跟汐伯說話' },
+        { cond: [Q + '@s2', '!' + P + 'round_filter'], text: '巡檢：池站東北角的孢子濾幕，先跟紗說話' },
+        { cond: [Q + '@s2', '!' + P + 'round_shrine'], text: '巡檢：池站南邊的種源龕，先跟樅爺說話' },
+        { cond: [Q + '@s2', '!' + P + 'suture_stabilized'], text: '去池子東北的嫁接棚，看那株在鬧的縫葉' },
+        { cond: [Q + '@s2', '!' + P + 'first_compound_done'], text: '池子東岸的味診台：四味各調一份' },
+        { cond: [Q + '@s2'], text: '回池守棚找蒲嬤（池站西北角的門）' },
+        { cond: [Q + '@s3', '!' + P + 'terrace_seen'], text: '從池站正北的北口上階梯泉' },
+        { cond: [Q + '@s3', '!' + P + 'tasted_spring_source'], text: '階梯泉：一路往北上到三階泉源取樣（途中處理擋路的滲口）' },
+        { cond: [Q + '@s3'], text: '回池站：從階梯泉南端下去' },
+        { cond: [Q + '@s4'], text: '池站：查看水位尺旁的池面' },
+        { cond: [Q + '@s5', '!' + P + 'bridge_open'], text: '從池站東口進活土原，往東穿過去，到橋頭找篙' },
+        { cond: [Q + '@s5'], text: '活土原東端上脈橋，在橋上找下橋腹的路' },
+        { cond: [Q + '@s6', '!' + P + 'embolus_cleared', '!' + P + 'embolus_isolated'], text: '橋腹上層：聽根管的音，往最低的那一支走（中間往南）' },
+        { cond: [Q + '@s6', P + 'embolus_cleared', '!' + P + 'valve_upper_open'], text: '按栓塞後方的上層活瓣，讓淹水的階梯退水' },
+        { cond: [Q + '@s6', P + 'embolus_isolated', '!' + P + 'k_cut'], text: '中支管夾死了：去上層東支的空管，割開痂膜' },
+        { cond: [Q + '@s6', '!' + P + 'lower_seen'], text: '往南下到橋腹下層' },
+        { cond: [Q + '@s6', '!' + P + 'slowarch_recognized'], text: '下層：用活瓣甲、乙讓兩座水池輪流變淺，往東通道走' },
+        { cond: [Q + '@s6'], text: '東通道盡頭往南，進舊接口前廳' },
+        { cond: [Q + '@s7', '!' + P + 'got_auri_leaf'], text: '前廳西牆的裂縫後面：查看龕室的壁龕' },
+        { cond: [Q + '@s7', '!' + P + 'puma_confessed'], text: '回池站，進池守棚（西北角的門）找蒲嬤' },
+        { cond: [Q + '@s7'], text: '從池站正北的北口出發（出發前可以和大家說說話）' }
+      ];
+    })(),
+    sideQuestClose: { flag: 'flag.prologue.puma_confessed', label: '沒來得及' },   // §8：進入 P3 後未完成的支線自動關閉，日誌標記「沒來得及」
     medCap: 9,                // §10.2：每種處置藥持有上限 9
     endings: {
       default: {
