@@ -63,7 +63,7 @@
     } else nameEl.hidden = true;
     if (L.style === 'signal') {
       sigEl.hidden = false;
-      sigEl.innerHTML = '<span class="sig-wave" aria-hidden="true"></span>' + U.esc(L.signal);
+      sigEl.innerHTML = '<span class="sig-wave" aria-hidden="true"></span><b>訊號</b>' + U.esc(String(L.signal).replace(/^訊號[：:]\s*/, ''));
     } else sigEl.hidden = true;
     var text = Gm.s ? Gm.tpl(L.text) : L.text;
     var prefix = L.style === 'signal' ? '（' + L.translator + '譯）' : '';
@@ -123,10 +123,31 @@
     });
   };
 
-  // 連續播放多行
-  Dg.lines = async function (lines, speaker) {
+  // 播放一串「行」。每一行可以是：
+  //   '名：文'、'〔旁白〕文'、'漣〔訊號：…〕（珂潾譯：…）'、'穹母〔眾聲〕：文'、'〔若 條件〕名：文'
+  //   { cond:條件, text:'行' 或 lines:[行...], speaker:'名' }   ← 條件成立才出現
+  //   { actions:[動作...] }  { tutorial:'T-01' }
+  async function playLines(lines, speaker) {
     lines = U.toArray(lines);
-    for (var i = 0; i < lines.length; i++) await Dg.say(lines[i], speaker);
+    for (var i = 0; i < lines.length; i++) {
+      var ln = lines[i];
+      if (typeof ln === 'string') {
+        var lc = R.lineCond(ln);
+        if (lc) { if (!Gm.cond(lc.cond)) continue; ln = lc.rest; }
+        await Dg.say(ln, speaker);
+        continue;
+      }
+      if (!ln) continue;
+      if (ln.cond != null && !Gm.cond(ln.cond)) continue;
+      if (ln.text != null || ln.lines) await playLines(ln.lines || [ln.text], ln.speaker || speaker);
+      if (ln.tutorial) { Dg.hide(); await Gm.showTutorial(ln.tutorial); }
+      if (ln.actions) { Dg.hide(); await Gm.run(ln.actions); }
+    }
+  }
+  Dg.playLines = playLines;
+  // 連續播放多行，結束後關閉對話框
+  Dg.lines = async function (lines, speaker) {
+    await playLines(lines, speaker);
     Dg.hide();
   };
 
@@ -137,6 +158,7 @@
     var d = V.data.dialogues[id];
     if (!d) { console.warn('找不到對話', id); return; }
     if (Array.isArray(d)) { await Dg.lines(d); return; }
+    if (d.cond != null && !Gm.cond(d.cond)) return;
     if (!d.nodes) {
       await Dg.lines(d.lines || [], d.speaker);
       if (d.actions) await Gm.run(d.actions);
@@ -152,14 +174,14 @@
         for (var b = 0; b < n.branch.length; b++) if (Gm.cond(n.branch[b].cond)) { hit = n.branch[b]; break; }
         cur = hit ? hit.next : next; continue;
       }
-      var lines = U.toArray(n.text != null ? n.text : n.lines);
-      for (var i = 0; i < lines.length; i++) await Dg.say(lines[i], n.speaker);
+      await playLines(n.text != null ? n.text : n.lines, n.speaker);
       if (n.actions) { Dg.hide(); await Gm.run(n.actions); }
       if (n.choices) {
         var opts = n.choices.filter(function (c) { return Gm.cond(c.cond); });
         if (opts.length) {
           var k = await Dg.choice(opts);
           var ch = opts[k];
+          if (ch.lines) await playLines(ch.lines, n.speaker);
           if (ch.actions) { Dg.hide(); await Gm.run(ch.actions); }
           if ('next' in ch) next = ch.next;
         }

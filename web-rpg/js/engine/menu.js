@@ -8,7 +8,7 @@
   var M = V.menu = {};
   var TABS = [
     { id: 'status', name: '狀態' }, { id: 'items', name: '物品' }, { id: 'folios', name: '葉帖' },
-    { id: 'quests', name: '任務' }, { id: 'glossary', name: '詞彙' }, { id: 'save', name: '存檔' },
+    { id: 'quests', name: '任務' }, { id: 'glossary', name: '教學' }, { id: 'save', name: '存檔' },
     { id: 'settings', name: '設定' }, { id: 'title', name: '標題' }
   ];
   var CAT = { sample: '樣本', medicine: '處置藥', consumable: '消耗品', key: '重要物品' };
@@ -73,13 +73,15 @@
     m.detailEl.innerHTML =
       '<div class="st-card"><h2>' + U.esc(s.partyName) + '<small>記脈者・等級 ' + s.level + '</small></h2>' +
       '<div class="st-row"><span>體力</span>' + UI.bar('hp', s.stamina, Gm.maxStamina()) + '<em>' + Math.ceil(s.stamina) + ' / ' + Gm.maxStamina() + '</em></div>' +
-      '<div class="st-row"><span>感官負荷</span>' + UI.bar('load' + (Gm.loadPct() >= 70 ? ' hot' : ''), s.load, Gm.maxLoad(), '<u style="left:70%"></u>') + '<em>' + Gm.loadPct() + '%</em></div>' +
+      '<div class="st-row"><span>感官負荷</span>' + UI.bar('load' + (Gm.loadPct() >= 70 ? ' hot' : ''), s.load, Gm.maxLoad(), '<u style="left:70%"></u>') + '<em>' + Math.round(s.load) + ' / ' + Gm.maxLoad() + '</em></div>' +
       '<div class="st-row"><span>見識</span>' + UI.bar('exp', next ? s.exp - Gm.levelRow(s.level).exp : 1, next ? next - Gm.levelRow(s.level).exp : 1) + '<em>' + (next ? s.exp + ' / ' + next : s.exp + '（已達上限）') + '</em></div>' +
       '<dl class="st-dl"><dt>所在</dt><dd>' + U.esc((V.data.maps[s.map] || {}).name || '') + '</dd>' +
       '<dt>遊玩時間</dt><dd>' + U.fmtTime(s.playtime) + '</dd>' +
       '<dt>葉帖</dt><dd>' + Object.keys(s.folios).length + ' / ' + Object.keys(V.data.folios).length + '</dd>' +
       (cur$ ? '<dt>' + U.esc(cur$.name) + '</dt><dd>' + Gm.count(V.data.meta.currency) + '</dd>' : '') +
-      '<dt>穩定／隔離</dt><dd>' + s.stats.stabilized + ' ／ ' + s.stats.isolated + '</dd></dl>' +
+      '<dt>穩定／隔離</dt><dd>' + s.stats.stabilized + ' ／ ' + s.stats.isolated + '</dd>' +
+      Object.keys(V.data.zones).map(function (z) { return '<dt>' + U.esc(V.data.zones[z].name) + '</dt><dd>連通度 ' + Math.round(s.conn[z] || 0) + '・' + (V.rules.VEIN_NAMES[Gm.vein(z)] || '') + '</dd>'; }).join('') +
+      '</dl>' +
       '<h3>手技</h3><ul class="st-skills">' + (skills || '<li class="muted">還沒有學會的手技。</li>') + '</ul></div>';
   };
 
@@ -107,9 +109,8 @@
       if (!d.use || d.usable === 'battle') { V.audio.play('error'); return; }
       if (!(await UI.confirm('使用' + d.name + '？', '使用', '取消'))) return;
       Gm.take(it.id, 1, true);
-      if (d.use.stamina) s.stamina = U.clamp(s.stamina + d.use.stamina, 0, Gm.maxStamina());
-      if (d.use.load) Gm.addLoad(d.use.load);
-      V.audio.play('heal'); UI.toast('使用了' + d.name + '。', 'heal');
+      var eff = Gm.useItem(d);
+      V.audio.play('heal'); UI.toast('使用了' + d.name + '。' + eff, 'heal');
       setTab('items');
     };
     if (!items.length) { m.list.set([]); m.detailEl.innerHTML = '<p class="muted pad">背包是空的。</p>'; return; }
@@ -156,7 +157,7 @@
     };
     m.onChoose = function (it) {
       if (it.id === '@glyphs') V.battle.help();
-      else if (it.id.indexOf('@tut:') === 0) { var t = V.data.tutorials[it.id.slice(5)]; UI.pages(t.title, t.pages); }
+      else if (it.id.indexOf('@tut:') === 0) Gm.showTutorial(it.id.slice(5), true);
     };
     m.list.set(items);
   };

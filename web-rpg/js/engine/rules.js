@@ -17,8 +17,10 @@
   //   quest:任務id@階段id  目前正位於此階段
   //   quest:任務id>=階段id 已到達或超過此階段（完成也算）
   //   level>=N             等級
-  //   dim:bo>=N            四向度（bo 播／fen 焚／rong 融／lu 錄）
-  //   conn:區域id>=N       連通度
+  //   dim:bo>=N            四向度（bo 播／fen 焚／rong 融／lu 錄；亦可寫 axis.sow 等劇本代號）
+  //   conn:區域id>=N       連通度（亦可寫 conn:world.connectivity.區域id>=N）
+  //   vein:區域id=slow_flow 脈況階段（可用 >= 比較先後：taste_shift<mist_recede<slow_flow<sealed<withered）
+  //   seen:tut:T-01        看過某教學（或其他 seen 記錄）
   //   folio:F-004          已繪製；folio:F-004=ready 條件齊備可繪製
   //   stamina>=N / load>=N 目前體力／感官負荷（百分比）
   // 組合：陣列＝全部成立；{ any:[...] }＝任一成立；{ not: 條件 }
@@ -26,8 +28,18 @@
   R.COND_KINDS = {
     flag: { arg: true }, item: { arg: true, ref: 'item' }, quest: { arg: true, ref: 'quest' },
     level: { arg: false }, dim: { arg: true, ref: 'dim' }, conn: { arg: true, ref: 'zone' },
-    folio: { arg: true, ref: 'folio' }, stamina: { arg: false }, load: { arg: false }
+    folio: { arg: true, ref: 'folio' }, stamina: { arg: false }, load: { arg: false },
+    vein: { arg: true, ref: 'zone' }, seen: { arg: true }
   };
+  R.VEIN_STAGES = ['taste_shift', 'mist_recede', 'slow_flow', 'sealed', 'withered'];
+  R.VEIN_NAMES = { taste_shift: '味變', mist_recede: '霧退', slow_flow: '流慢', sealed: '封脈', withered: '乾化／野化' };
+  var DIM_ALIAS = { bo: 'bo', fen: 'fen', rong: 'rong', lu: 'lu', sow: 'bo', burn: 'fen', merge: 'rong', record: 'lu',
+    '播': 'bo', '焚': 'fen', '融': 'rong', '錄': 'lu' };
+  R.dimKey = function (k) { k = String(k).replace(/^axis\./, ''); return DIM_ALIAS[k] || k; };
+  R.isDim = function (k) { return !!DIM_ALIAS[String(k).replace(/^axis\./, '')]; };
+  R.zoneKey = function (z) { return String(z).replace(/^world\.(connectivity|veinstate)\./, ''); };
+  // 葉帖條件等欄位：不含 ':'、運算子的字串視為旗標名稱
+  R.isFlagRef = function (c) { return typeof c === 'string' && !/[:<>=!@]/.test(c); };
 
   var cache = {};
   R.parseAtom = function (str) {
@@ -109,6 +121,12 @@
       case 'dim': r = a.op ? cmp(ctx.dim(a.arg), a.op, a.val) : ctx.dim(a.arg) > 0; break;
       case 'conn': r = a.op ? cmp(ctx.conn(a.arg), a.op, a.val) : ctx.conn(a.arg) > 0; break;
       case 'folio': r = a.op ? ctx.folioReady(a.arg) : ctx.folio(a.arg); break;
+      case 'vein': {
+        var cv = R.VEIN_STAGES.indexOf(ctx.vein(a.arg)), tv = R.VEIN_STAGES.indexOf(a.val);
+        r = a.op ? (a.op === '=' ? ctx.vein(a.arg) === a.val : a.op === '!=' ? ctx.vein(a.arg) !== a.val : cmp(cv, a.op, tv)) : true;
+        break;
+      }
+      case 'seen': r = ctx.seen(a.arg); break;
       case 'stamina': r = cmp(ctx.stamina(), a.op, a.val); break;
       case 'load': r = cmp(ctx.load(), a.op, a.val); break;
       default: r = false;
@@ -149,7 +167,7 @@
     exp: ['number'],                     // 見識
     heal: ['number?', 'number?'],        // 回復體力（省略＝全滿），第二參數為負荷下降量（省略＝歸零）
     hurt: ['number'],                    // 扣體力（歸零會撤離）
-    load: ['number'],                    // 感官負荷增減（百分比）
+    load: ['number'],                    // 感官負荷增減（點數，可為負）
     learn: ['ref:skill'],                // 學會手技
     shop: ['ref:shop'],                  // 開啟以物易物
     craft: ['string?'],                  // 開啟調劑介面（參數：台名稱，可省略）
@@ -160,7 +178,10 @@
     respawn: ['ref:map', 'number', 'number'], // 設定撤離回歸點
     glossary: ['ref:glossary'],          // 解鎖詞彙
     actor: ['string', 'string'],         // ['actor', 實體id, 'show'|'hide']
-    ending: ['string?']                  // 顯示章末畫面（參數：結尾畫面 id，對應 meta.endings）
+    ending: ['string?'],                 // 顯示章末畫面（參數：結尾畫面 id，對應 meta.endings）
+    tutorial: ['ref:tutorial', 'string?'], // 彈出教學（看過不再彈；第二參數 'force' 強制再顯示）
+    vein: ['ref:zone', 'vein'],          // 設定區域脈況階段
+    lines: ['lines']                     // 就地播放幾行對白（同對話的 lines 格式）
   };
   // 只能出現在過場中的指令（等待／畫面控制）
   R.CUTSCENE_CMDS = {
@@ -177,6 +198,12 @@
     banner: ['string'],                  // 地名橫幅
     if: ['cond', 'array', 'array?'],     // ['if', 條件, [指令...], [否則...]]
     lock: [], unlock: []                 // 一般不需要：過場期間自動鎖定玩家
+  };
+  // 行首「〔若 條件〕」：該行只在條件成立時出現。回傳 { cond, rest } 或 null
+  R.lineCond = function (line) {
+    if (typeof line !== 'string') return null;
+    var m = /^〔若\s*([^〕]+)〕\s*([\s\S]*)$/.exec(line);
+    return m ? { cond: m[1].trim(), rest: m[2] } : null;
   };
   R.SFX = ['confirm', 'cancel', 'cursor', 'blip', 'taste', 'treat', 'backfire', 'hit', 'heal',
     'item', 'save', 'folio', 'warp', 'door', 'splash', 'hiss', 'craft', 'level', 'alert', 'guard',
@@ -208,9 +235,12 @@
   var RE_SIGNAL = /^([^：〔（「]{1,12})〔([^〕]*)〕（([^：）]{1,8})譯：([\s\S]*)）\s*$/;
   var RE_TAGGED = /^([^：〔（「]{1,12})〔([^〕]*)〕：([\s\S]*)$/;
   var RE_PLAIN = /^([^：〔（「\s]{1,12})：([\s\S]*)$/;
+  var RE_NOTE = /^([^：〔（「\s]{1,12})（([^）]{1,10})）：([\s\S]*)$/;
   R.parseLine = function (line) {
     if (line && typeof line === 'object') return line;
     var s = String(line), m;
+    if ((m = /^〔旁白〕\s*([\s\S]*)$/.exec(s))) return { speaker: null, style: 'narration', text: m[1] };
+    if ((m = RE_NOTE.exec(s))) return { speaker: m[1], style: 'tagged', tag: m[2], text: m[3] };
     if ((m = RE_SIGNAL.exec(s))) {
       return { speaker: m[1], style: 'signal', signal: m[2], translator: m[3], text: m[4] };
     }

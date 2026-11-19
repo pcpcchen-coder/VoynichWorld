@@ -32,19 +32,20 @@
           awaiting: !!st.resolveCmd, items: st.list.items.map(function (i) { return i.id; }) };
       },
       battleExec: function (cmd) { return B.exec(cmd); },
-      // 自動完成目前的遭遇（以正確處置穩定對象）
+      // 自動完成目前的遭遇：只嚐不治型就逐一嚐味；其餘以正確處置穩定對象（缺藥時直接補一份）
       winEncounter: async function () {
         var guard = 0;
-        while (guard++ < 400) {
+        while (guard++ < 600) {
           var top = UI.top();
           if (!B.st) return Gm.s.flags.last_result;
-          if (top && top.kind === 'pages') { V.input.press('cancel'); await sleep(40); continue; }
-          if (top && top.kind === 'result') { V.input.press('confirm'); await sleep(40); continue; }
+          if (top && (top.kind === 'pages' || top.kind === 'dialogue' || top.kind === 'result' || top.kind === 'wait')) { V.input.press('confirm'); await sleep(40); continue; }
           var st = B.st;
           if (st.resolveCmd && !st.result) {
             Gm.s.stamina = Gm.maxStamina(); Gm.s.load = 0;
+            if (st.def.endOnReveal) { B.exec({ cmd: 'taste', low: false }); await sleep(30); continue; }
             var front = st.seq[0].g;
-            if (front === '甜') { st.seq[0].known = '甜'; B.exec({ cmd: 'guard' }); }
+            if (st.clamp) B.exec({ cmd: 'unclamp' });
+            else if (front === '甜') B.exec({ cmd: 'guard' });
             else if (front === '腥') B.exec({ cmd: 'clear' });
             else {
               var id = Object.keys(V.data.items).filter(function (k) { return V.data.items[k].treats === front; })[0];
@@ -56,6 +57,16 @@
         }
         return 'timeout';
       },
+      // 完成目前的對話（一路按確認；遇到選項選第 index 個）
+      skipDialogue: async function (index) {
+        for (var i = 0; i < 400; i++) {
+          var top = UI.top();
+          if (!top || top.kind !== 'dialogue') { if (!F.busy) return true; }
+          V.input.press('confirm'); await sleep(30);
+        }
+        return false;
+      },
+      notices: function () { return Gm.notices.length; },
       save: function (slot) { return V.save.write(slot || 'slot1'); },
       errors: []
     };

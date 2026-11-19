@@ -18,22 +18,27 @@
       skills: (st.skills || []).slice(),
       folios: {}, folioNotified: {},
       dims: { bo: 0, fen: 0, rong: 0, lu: 0 },
-      conn: {},
-      stats: { stabilized: 0, isolated: 0, retreated: 0, evacuated: 0, encounters: 0, crafted: 0, steps: 0, folios: 0 },
+      conn: {}, vein: {},
+      stats: { stabilized: 0, isolated: 0, collapsed: 0, retreated: 0, evacuated: 0, encounters: 0, crafted: 0, steps: 0, folios: 0 },
       playtime: 0,
       map: st.map, x: st.x, y: st.y, dir: st.dir || 'down',
       respawn: st.respawn || { map: st.map, x: st.x, y: st.y },
       tones: {}, actorVis: {}, seen: {}, glossary: {}, objUsed: {}, encDone: {},
       partyName: st.name || '珂潾'
     };
-    if (st.dims) Object.keys(st.dims).forEach(function (k) { s.dims[k] = st.dims[k]; });
-    Object.keys(D().zones || {}).forEach(function (z) { s.conn[z] = D().zones[z].start != null ? D().zones[z].start : 50; });
-    if (st.conn) Object.keys(st.conn).forEach(function (z) { s.conn[z] = st.conn[z]; });
+    if (st.dims) Object.keys(st.dims).forEach(function (k) { s.dims[Gm.dimKey(k)] = st.dims[k]; });
+    Object.keys(D().zones || {}).forEach(function (z) {
+      var zd = D().zones[z];
+      s.conn[z] = zd.start != null ? zd.start : 50;
+      if (zd.vein) s.vein[z] = zd.vein;
+    });
+    if (st.conn) Object.keys(st.conn).forEach(function (z) { s.conn[Gm.zoneKey(z)] = st.conn[z]; });
     Gm.s = s;
     if (st.exp) s.exp = st.exp;
     // 依見識推回等級
     s.level = Math.max(s.level, Gm.levelForExp(s.exp));
     s.stamina = Gm.maxStamina(); s.load = 0;
+    levels().forEach(function (row) { if (row.level <= s.level) U.toArray(row.learn).forEach(function (sk) { if (s.skills.indexOf(sk) < 0) s.skills.push(sk); }); });
     (st.glossary || []).forEach(function (g) { s.glossary[g] = true; });
     Object.keys(st.items || {}).forEach(function (id) { s.items[id] = st.items[id]; });
     (st.quests || []).forEach(function (q) { s.quests[q] = { status: 'active', stage: 0 }; });
@@ -41,7 +46,8 @@
   };
 
   // ---- 成長 ----
-  function levels() { var l = D().levels; return (l && l.length) ? l : [{ level: 1, exp: 0, stamina: 60, load: 100 }]; }
+  function levels() { var l = D().levels; return (l && l.length) ? l : [{ level: 1, exp: 0, stamina: 30, load: 40 }]; }
+  Gm.levels = levels;
   Gm.levelRow = function (lv) {
     var L = levels(), row = L[0];
     for (var i = 0; i < L.length; i++) if (L[i].level <= lv) row = L[i];
@@ -65,7 +71,31 @@
     if (Gm.hasSkill(id)) return;
     Gm.s.skills.push(id);
     var sk = D().skills[id];
-    if (!silent && sk) { V.ui.toast('學會手技：' + sk.name, 'skill'); }
+    if (!silent && sk) {
+      V.audio.play('level');
+      Gm.notices.push({ title: '手技', pages: [{ title: '學會手技：' + sk.name, text: sk.desc || '' }] });
+    }
+  };
+  // 等待顯示的說明視窗（升級、學會手技）；地圖空閒時由 field 依序彈出
+  Gm.notices = [];
+  Gm.flushNotices = async function () {
+    while (Gm.notices.length) { var n = Gm.notices.shift(); await V.ui.pages(n.title, n.pages, { skippable: true }); }
+  };
+  // 教學：data.tutorials[id] = { title, pages:[{title,text|html}] }；看過的可在選單「教學」重看
+  Gm.showTutorial = async function (id, force) {
+    var t = D().tutorials[id];
+    if (!t) { console.warn('找不到教學', id); return; }
+    if (Gm.s.seen['tut:' + id] && !force) return;
+    Gm.s.seen['tut:' + id] = true;
+    await V.ui.pages(t.title, t.pages, { skippable: true });
+  };
+  // 使用消耗品：item.use = { stamina, load, clearResidue, text }；回傳效果說明
+  Gm.useItem = function (it) {
+    var u = it.use || {}, s = Gm.s, out = [];
+    if (u.stamina) { s.stamina = U.clamp(s.stamina + u.stamina, 0, Gm.maxStamina()); out.push('體力 ' + (u.stamina > 0 ? '+' : '') + u.stamina); }
+    if (u.load) { Gm.addLoad(u.load); out.push('感官負荷 ' + (u.load > 0 ? '+' : '') + u.load); }
+    if (u.clearResidue) out.push('味覺殘留清除');
+    return out.length ? '（' + out.join('・') + '）' : '';
   };
   Gm.addExp = function (n) {
     var s = Gm.s; if (!n) return;
@@ -74,10 +104,15 @@
     while (s.level < target) {
       s.level++;
       var row = Gm.levelRow(s.level);
-      s.stamina = Gm.maxStamina();
+      s.stamina = Gm.maxStamina(); s.load = 0;   // 升級：體力回滿、感官負荷歸零
       V.audio.play('level');
       V.ui.toast('等級提升至 ' + s.level + '　體力上限 ' + row.stamina + '・負荷上限 ' + row.load, 'level');
-      U.toArray(row.learn).forEach(function (sk) { Gm.learn(sk); });
+      var learned = [];
+      U.toArray(row.learn).forEach(function (sk) { if (!Gm.hasSkill(sk)) { Gm.learn(sk, true); learned.push(sk); } });
+      // 畫面顯示手技說明：排入佇列，於地圖上空閒時彈出（不打斷遭遇結算）
+      Gm.notices.push({ title: '等級 ' + s.level, pages: [{ title: '等級提升至 ' + s.level,
+        html: '<p>體力上限 ' + row.stamina + '・感官負荷上限 ' + row.load + '。體力回滿，感官負荷歸零。</p>' +
+          learned.map(function (id) { var k = D().skills[id] || { name: id }; return '<h3>學會手技：' + V.util.esc(k.name) + '</h3><p>' + V.util.esc(k.desc || '') + '</p>'; }).join('') }] });
       V.emit('levelup', s.level);
     }
   };
@@ -115,7 +150,7 @@
   Gm.loseUnbanked = function (ratio) {
     var lost = [];
     Object.keys(Gm.s.unbanked).forEach(function (id) {
-      var k = Math.ceil(Gm.s.unbanked[id] * ratio);
+      var k = Math.floor(Gm.s.unbanked[id] * ratio);   // 未入庫樣本失去一半（無條件捨去）
       if (k > 0) { Gm.take(id, k, true); lost.push((Gm.item(id) || {}).name + ' ×' + k); }
     });
     Gm.s.unbanked = {};
@@ -155,21 +190,28 @@
     if (idx < 0) { console.warn('任務 ' + id + ' 沒有階段 ' + what); return; }
     if (!cur) Gm.s.quests[id] = cur = { status: 'active', stage: 0 };
     if (cur.status === 'done') return;
-    if (idx <= cur.stage && cur.stage !== 0) return;
+    if (idx <= cur.stage) return;
     cur.stage = idx;
     V.audio.play('quest'); V.ui.toast('任務更新：' + q.stages[idx].text, 'quest');
   };
 
   // ---- 四向度與連通度 ----
-  Gm.addDim = function (k, n) { if (Gm.s.dims[k] == null) Gm.s.dims[k] = 0; Gm.s.dims[k] += n; };
-  Gm.addConn = function (z, n) { Gm.s.conn[z] = U.clamp((Gm.s.conn[z] != null ? Gm.s.conn[z] : 50) + n, 0, 100); };
+  // 四向度代號：bo／fen／rong／lu，也接受劇本代號 axis.sow／axis.burn／axis.merge／axis.record 與 sow／burn／merge／record、播／焚／融／錄
+  Gm.dimKey = function (k) { return R.dimKey(k); };
+  // 連通度代號：區域 id，也接受 world.connectivity.區域id
+  Gm.zoneKey = function (z) { return R.zoneKey(z, 'connectivity'); };
+  Gm.addDim = function (k, n) { k = Gm.dimKey(k); if (Gm.s.dims[k] == null) Gm.s.dims[k] = 0; Gm.s.dims[k] += n; };
+  Gm.addConn = function (z, n) { z = Gm.zoneKey(z); Gm.s.conn[z] = U.clamp((Gm.s.conn[z] != null ? Gm.s.conn[z] : 50) + n, 0, 100); };
+  // 脈況（味變→霧退→流慢→封脈→乾化）：world.veinstate.區域id 或區域 id
+  Gm.setVein = function (z, stage) { z = R.zoneKey(z, 'veinstate'); Gm.s.vein[z] = stage; V.emit('vein', z); };
+  Gm.vein = function (z) { z = R.zoneKey(z, 'veinstate'); return Gm.s.vein[z] || ((D().zones[z] || {}).vein) || R.VEIN_STAGES[0]; };
 
   // ---- 葉帖 ----
   Gm.folioConds = function (id) {
     var f = D().folios[id]; if (!f) return [];
     var c = f.conditions || {}, out = [];
     [['observe', '觀察'], ['sample', '取樣'], ['diagnose', '診斷']].forEach(function (p) {
-      if (c[p[0]]) out.push({ kind: p[0], label: p[1], flag: c[p[0]], done: !!Gm.s.flags[c[p[0]]], hint: (f.hints || {})[p[0]] });
+      if (c[p[0]]) out.push({ kind: p[0], label: p[1], flag: c[p[0]], done: R.isFlagRef(c[p[0]]) ? !!Gm.s.flags[c[p[0]]] : Gm.cond(c[p[0]]), hint: (f.hints || {})[p[0]] });
     });
     return out;
   };
@@ -208,8 +250,10 @@
     questStageId: function (id) { var q = Gm.s.quests[id], d = Gm.quest(id); return q && d && d.stages[q.stage] ? d.stages[q.stage].id : null; },
     questStageIndex: function (id, st) { return Gm.questStageIndex(id, st); },
     level: function () { return Gm.s.level; },
-    dim: function (k) { return Gm.s.dims[k] || 0; },
-    conn: function (z) { return Gm.s.conn[z] || 0; },
+    dim: function (k) { return Gm.s.dims[Gm.dimKey(k)] || 0; },
+    conn: function (z) { return Gm.s.conn[Gm.zoneKey(z)] || 0; },
+    vein: function (z) { return Gm.vein(z); },
+    seen: function (k) { return !!Gm.s.seen[k]; },
     folio: function (id) { return !!Gm.s.folios[id]; },
     folioReady: function (id) { return Gm.folioReady(id); },
     stamina: function () { return Gm.s.stamina; },
@@ -226,7 +270,9 @@
     s.stamina = st == null ? Gm.maxStamina() : Math.min(Gm.maxStamina(), s.stamina + st);
     s.load = ld == null ? 0 : Math.max(0, s.load - ld);
   };
-  Gm.addLoad = function (pct) { Gm.s.load = U.clamp(Gm.s.load + pct / 100 * Gm.maxLoad(), 0, Gm.maxLoad()); };
+  // 感官負荷以「點數」計（上限見等級表 load 欄）；百分比用 loadPct()
+  Gm.addLoad = function (n) { Gm.s.load = U.clamp(Gm.s.load + n, 0, Gm.maxLoad()); };
+  Gm.hurt = function (n) { Gm.s.stamina = Math.max(0, Gm.s.stamina - n); };
 
   // 地圖上體力歸零：撤離回種源龕
   Gm.evacuate = async function (reason) {
@@ -234,7 +280,7 @@
     s.stats.evacuated++;
     var lost = Gm.loseUnbanked(0.5);
     await V.ui.fade('out', 600, '#0b0a0e');
-    s.stamina = Math.max(1, Math.round(Gm.maxStamina() * 0.6)); s.load = 0;
+    s.stamina = Math.max(1, Math.floor(Gm.maxStamina() / 2)); s.load = 0;   // 回到最近碰過的種源龕，體力回復一半
     await V.field.warp(s.respawn.map, s.respawn.x, s.respawn.y, 'down', { noFade: true });
     await V.ui.fade('in', 600);
     var lines = [(reason || '體力耗盡。') + '珂潾被帶回最近的種源龕。'];
@@ -270,7 +316,7 @@
       case 'exp': Gm.addExp(a[1]); break;
       case 'heal': Gm.heal(a[1], a[2]); V.audio.play('heal'); break;
       case 'hurt':
-        Gm.s.stamina = Math.max(0, Gm.s.stamina - a[1]);
+        Gm.hurt(a[1]);
         if (Gm.s.stamina <= 0) await Gm.evacuate();
         break;
       case 'load': Gm.addLoad(a[1]); break;
@@ -287,6 +333,9 @@
         break;
       case 'actor': Gm.s.actorVis[Gm.s.map + '/' + a[1]] = a[2] === 'show'; break;
       case 'ending': await V.screens.ending(a[1]); break;
+      case 'tutorial': await Gm.showTutorial(a[1], a[2] === 'force'); break;
+      case 'vein': Gm.setVein(a[1], a[2]); break;
+      case 'lines': await V.dialogue.lines(a[1]); break;
       default:
         if (V.cutscene && V.cutscene.isCmd(n)) await V.cutscene.cmd(a);
         else console.warn('未知動作', a);

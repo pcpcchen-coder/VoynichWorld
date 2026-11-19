@@ -49,7 +49,7 @@
       var e = makeActor(ed.type, ed, pos.x, pos.y);
       e.key = mapId + '/' + (ed.id || (ed.type + i));
       e.id = ed.id || (ed.type + i);
-      if (ed.type === 'npc') { e.sheet = S.character(actorSpec(ed)); e.inWater = !!ed.inWater; }
+      if (ed.type === 'npc') { e.sheet = S.character(actorSpec(ed)); e.inWater = !!ed.inWater; e.solid = ed.solid != null ? ed.solid : true; }
       else if (ed.type === 'encounter') {
         var enc = V.data.encounters[ed.encounter] || {};
         e.cspec = ed.sprite || enc.sprite || {};
@@ -82,8 +82,10 @@
       var vis = ov != null ? ov : Gm.cond(e.def.cond);
       if (e.type === 'encounter') {
         e.done = s.encDone[e.key];
-        if (e.done && (e.done === 'isolated' || !e.def.calm)) vis = false;
+        // 穩定／讀完：留在原地變成健康外觀；隔離／失穩：消失（hideOnDone 可強制消失）
+        if (e.done && (e.done === 'isolated' || e.done === 'collapsed' || e.def.hideOnDone)) vis = false;
       }
+      e.marked = e.def.mark != null && vis && Gm.cond(e.def.mark);
       if (e.type === 'object') e.used = !!s.objUsed[e.key];
       e.visible = vis;
     });
@@ -152,6 +154,7 @@
   F.control = function (dt) {
     var p = F.player, I = V.input;
     if (F.busy || p.step || p.queue) return;
+    if (Gm.notices.length) { F.script(Gm.flushNotices); return; }
     if (I.pressed('menu') || I.pressed('cancel')) { V.audio.play('confirm'); V.menu.open(); return; }
     if (I.pressed('confirm')) { if (F.interact()) return; }
     var d = I.heldDir();
@@ -176,6 +179,8 @@
   function onPlayerStep() {
     var p = F.player, s = Gm.s, pm = F.map.pm;
     s.x = p.x; s.y = p.y; s.dir = p.dir; s.stats.steps++;
+    // 遭遇外，感官負荷每走 5 格自然 −1
+    if (s.load > 0 && s.stats.steps % 5 === 0) s.load = Math.max(0, s.load - 1);
     var gt = V.TILES[pm.ground[p.y * pm.w + p.x]];
     if (gt.sfx && s.stats.steps % 2 === 0) V.audio.play(gt.sfx);
     if (gt.hazard) {
@@ -199,20 +204,26 @@
     }
     checkEncounters();
   }
+  // 可見遭遇：預設要走到相鄰格按互動鍵才觸發；只有 auto:true 的對象會在靠近（range 格內）時自動觸發
   function checkEncounters() {
     if (F.busy) return;
     var p = F.player, es = F.map.ents;
     for (var i = 0; i < es.length; i++) {
       var e = es[i];
-      if (e.type !== 'encounter' || !e.visible || e.done || e.cool > 0) continue;
+      if (e.type !== 'encounter' || !e.def.auto || !e.visible || e.done || e.cool > 0) continue;
       var r = e.def.range != null ? e.def.range : 1;
-      if (Math.abs(e.x - p.x) + Math.abs(e.y - p.y) <= r) { startEncounter(e); return; }
+      if (Math.abs(e.x - p.x) + Math.abs(e.y - p.y) <= r) { startEncounter(e, true); return; }
     }
   }
   function doWarp(e) {
     var d = e.def;
     F.script(async function () {
-      if (d.cond2 && !Gm.cond(d.cond2)) return;
+      if (d.requires && !Gm.cond(d.requires)) {
+        await V.dialogue.lines(d.lockedText || '現在還不能過去。');
+        var back = V.opposite[F.player.dir], bv = V.DIRS[back];
+        if (!F.blocked(F.player.x + bv.x, F.player.y + bv.y, F.player)) await F.moveActor('player', back.charAt(0).toUpperCase(), PLAYER_SPEED);
+        return;
+      }
       var tm = V.data.maps[d.to], tpm = V.parseMap(d.to, tm);
       var pos = V.resolvePos(tpm, d, 'tx', 'ty', 'toAt');
       V.audio.play(d.sfx || 'warp');
@@ -228,9 +239,16 @@
       if (d.actions) await Gm.run(d.actions);
     });
   }
-  function startEncounter(e) {
+  function startEncounter(e, auto) {
     var p = F.player;
     F.script(async function () {
+      var enc = V.data.encounters[e.def.encounter] || {};
+      if (e.def.before) await V.dialogue.lines(e.def.before);
+      if (!e.def.noConfirm) {
+        var r = await UI.choose(e.def.prompt || enc.approach || ((enc.name || '對象') + '就在前面。'), [
+          { id: 'go', label: '靠近', sub: '開始嚐味診療' }, { id: 'no', label: '先不要' }], { index: 0 });
+        if (!r || r.id !== 'go') { e.cool = 2; return; }
+      }
       e.alert = 0.7; V.audio.play('alert');
       // 互相面對
       var dx = e.x - p.x, dy = e.y - p.y;
@@ -238,7 +256,7 @@
       await U.wait(650);
       var res = await V.battle.start(e.def.encounter, { entity: e });
       Gm.setFlag('last_result', res);
-      if (res === 'stabilized' || res === 'isolated') { Gm.s.encDone[e.key] = res; }
+      if (res === 'stabilized' || res === 'isolated' || res === 'collapsed' || res === 'read') { Gm.s.encDone[e.key] = res; }
       else { e.cool = 3; }
       F.refresh();
       var on = e.def.onResult || {};
@@ -254,7 +272,11 @@
       var e = cands[i];
       if (e.type === 'npc') { talk(e); return true; }
       if (e.type === 'object') { F.script(function () { return useObject(e); }); return true; }
-      if (e.type === 'encounter' && e.done && e.def.calm) { F.script(function () { return V.dialogue.lines(e.def.calm); }); return true; }
+      if (e.type === 'encounter') {
+        if (!e.done) { startEncounter(e, false); return true; }
+        var calm = e.def.calm || (V.data.encounters[e.def.encounter] || {}).calmText;
+        if (calm) { F.script(function () { return V.dialogue.lines(calm); }); return true; }
+      }
     }
     return false;
   };
@@ -473,6 +495,7 @@
       var h = wet ? 17 : S.FH;
       ctx.drawImage(a.sheet, fr * S.FW, S.dirIndex[a.dir] * S.FH, S.FW, h, x, y - 8 + (wet ? 3 : 0), S.FW, h);
       if (wet) { ctx.fillStyle = 'rgba(190,240,232,0.6)'; var rw = 10 + Math.round(Math.sin(t * 3 + a.x) * 2); ctx.fillRect(x + 8 - rw / 2, y + 11, rw, 1); }
+      if (a.marked) drawMark(ctx, x + 5, y - 17 + Math.round(Math.sin(t * 4) * 1.2));
     } else if (a.type === 'encounter') {
       var size = a.csize, f = Math.floor(t * 2.5 + a.x) % 2;
       var spec = a.done ? calmSpec(a.cspec) : a.cspec;
@@ -485,7 +508,14 @@
       var k = a.def.kind, fr2 = Math.floor(t * 2 + a.x * 0.7) % 2;
       var once = a.def.once != null ? a.def.once : (k === 'chest' || k === 'gather' || k === 'observe');
       ctx.drawImage(S.object(k, fr2, a.used && once), x, y - 8);
+      if (a.marked) drawMark(ctx, x + 5, y - 15 + Math.round(Math.sin(t * 4) * 1.2));
     }
+  }
+  // 對話標記（實體 mark 條件成立時，頭上的「！」）
+  function drawMark(ctx, x, y) {
+    ctx.fillStyle = '#1b1420'; ctx.fillRect(x, y, 7, 9); ctx.fillRect(x + 2, y + 9, 3, 1);
+    ctx.fillStyle = '#D8CCB3'; ctx.fillRect(x + 1, y + 1, 5, 7);
+    ctx.fillStyle = '#D66A32'; ctx.fillRect(x + 3, y + 2, 1, 3); ctx.fillRect(x + 3, y + 6, 1, 1);
   }
   var calmCache = {};
   function calmSpec(spec) {
