@@ -16,9 +16,10 @@
   var SOLID = { 'R': 1, '#': 1, '0': 1 };
   var GROUND_COLOR = {
     '.': '#4e3f3e', ',': '#8f7258', ';': '#2e4166', '"': '#30405c', '^': '#b5a184', 'x': '#a2927c', '!': '#8a6e3e',
-    '_': '#3a3442', ':': '#6e5844', 'D': '#8c6a4c', '>': '#9a8a74', '~': '#2b5856', 'W': '#10303a', 's': '#3d7c72',
+    '_': '#5a5262', ':': '#6e5844', 'D': '#8c6a4c', '>': '#9a8a74', '~': '#2b5856', 'W': '#10303a', 's': '#3d7c72',
     '=': '#10303a', 'H': '#5b4334', '|': '#4a3a2e', 'R': '#6a5e58', '#': '#3a3440', '0': '#2a2630'
   };
+  var MOSS = new THREE.Color('#2c3f62'), MINERAL = new THREE.Color('#8a8070');
   var OFFSET = { '~': -0.24, 's': -0.18, 'W': -0.75, '=': -0.75 };
 
   function isWater(ch) { return ch === '~' || ch === 'W' || ch === 's'; }
@@ -43,7 +44,7 @@
     var p = V.quality.p();
     W.sun.castShadow = p.shadows && W.cfg.kind !== 'indoor';
     if (p.shadows) { W.sun.shadow.mapSize.set(p.shadowSize, p.shadowSize); if (W.sun.shadow.map) { W.sun.shadow.map.dispose(); W.sun.shadow.map = null; } }
-    W.points.forEach(function (pl) { pl.visible = p.lights > 0; });
+    W.points.forEach(function (pl, j) { pl.visible = j < p.lights; });
     W.spores.geometry.setDrawRange(0, Math.floor(W.spores.userData.count * p.spores * W.sporeDensity));
     if (W.mistGroup) W.mistGroup.visible = p.mist;
     if (W.grassMesh) W.grassMesh.count = Math.floor(W.grassMesh.userData.full * p.grass);
@@ -120,7 +121,7 @@
   // ======================= 水面 =======================
   function waterMaterial(chasm) {
     var u = THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {
-      time: { value: 0 }, deep: { value: new THREE.Color(chasm ? '#0b2430' : '#0f3a44') }, shallow: { value: new THREE.Color('#2f8a84') },
+      time: { value: 0 }, deep: { value: new THREE.Color(chasm ? '#0b2430' : '#0f3a44') }, shallow: { value: new THREE.Color('#1f706c') },
       glow: { value: new THREE.Color('#73D6D0') }, sky: { value: new THREE.Color('#e88a4a') }, fancy: { value: 1 }
     }]);
     return new THREE.ShaderMaterial({
@@ -145,7 +146,7 @@
         '  float caust = smoothstep(0.62, 0.72, w) * (1.0 - dn) * 0.35;',
         '  c += glow * caust;',
         '  if (fancy > 0.5) { float sp = step(0.985, h(floor(p * 9.0))) * (0.5 + 0.5 * sin(time * 2.0 + h(floor(p * 9.0) + 3.0) * 30.0)); c += glow * sp * 0.9; }',
-        '  float a = (mix(0.55, 0.9, dn) + fr * 0.1) * smoothstep(0.0, 0.06, vD); c += vec3(0.75, 0.95, 0.9) * (1.0 - smoothstep(0.0, 0.07, vD)) * 0.6;',
+        '  float a = (mix(0.42, 0.88, dn) + fr * 0.1) * smoothstep(0.0, 0.06, vD); c += vec3(0.75, 0.95, 0.9) * (1.0 - smoothstep(0.0, 0.07, vD)) * 0.6;',
         '  gl_FragColor = vec4(c, a);',
         '  #include <tonemapping_fragment>',
         '  #include <colorspace_fragment>',
@@ -194,7 +195,19 @@
     return (a + (b - a) * fx) * (1 - fy) + (c + (d - c) * fx) * fy;
   }
   W.vnoise = vnoise;
-  function isSolidCh(ch, cfg) { return ch == null || SOLID[ch] || (cfg.kind === 'indoor' && ch === '|'); }
+  function isSolidCh(ch, cfg) {
+    if (cfg.kind === 'indoor') return false;
+    return ch == null || SOLID[ch];
+  }
+  // 脈橋地圖：橋面範圍內的可走格（橋上的草、花）也是橋；地圖南北外側是開闊的峽谷
+  function terrainCh(pm, cfg, x, y) {
+    var ch = tileAt(pm, x, y);
+    if (cfg.chasm) {
+      if (ch == null && x >= 4 && x < pm.w - 4) return 'W';
+      if (ch != null && ch !== 'W' && ch !== '~' && ch !== '=' && !SOLID[ch] && W.bridgeBox && x >= W.bridgeBox.x0 && x <= W.bridgeBox.x1 && y >= W.bridgeBox.y0 && y <= W.bridgeBox.y1) return '=';
+    }
+    return ch;
+  }
 
   function buildTerrain(pm, cfg) {
     var mg = cfg.margin || 0, w = pm.w, h = pm.h;
@@ -204,7 +217,9 @@
     // 1) 格級距離場：每格到最近「非實心」格的距離（chamfer）
     var TW = x1 - x0, TH = y1 - y0, dist = new Float32Array(TW * TH);
     var INF = 1e6, i, x, y;
-    for (y = 0; y < TH; y++) for (x = 0; x < TW; x++) dist[y * TW + x] = isSolidCh(tileAt(pm, x + x0, y + y0), cfg) ? INF : 0;
+    W.bridgeBox = null;
+    if (cfg.chasm) { var bb = null; for (var by = 0; by < pm.h; by++) for (var bx = 0; bx < pm.w; bx++) if (tileAt(pm, bx, by) === '=') { if (!bb) bb = { x0: bx, x1: bx, y0: by, y1: by }; bb.x0 = Math.min(bb.x0, bx); bb.x1 = Math.max(bb.x1, bx); bb.y0 = Math.min(bb.y0, by); bb.y1 = Math.max(bb.y1, by); } W.bridgeBox = bb; }
+    for (y = 0; y < TH; y++) for (x = 0; x < TW; x++) dist[y * TW + x] = isSolidCh(terrainCh(pm, cfg, x + x0, y + y0), cfg) ? INF : 0;
     var D1 = 1, D2 = 1.4142;
     for (y = 0; y < TH; y++) for (x = 0; x < TW; x++) {
       i = y * TW + x; var d = dist[i]; if (!d) continue;
@@ -223,7 +238,7 @@
     var pos = new Float32Array(nx * ny * 3), colr = new Float32Array(nx * ny * 3), uv = new Float32Array(nx * ny * 2);
     var hts = W.hgrid = new Float32Array(nx * ny);
     W.hinfo = { x0: x0, y0: y0, nx: nx, ny: ny };
-    var c = new THREE.Color(), acc = new THREE.Color(), rockC = new THREE.Color(cfg.kind === 'cave' ? '#3e3846' : '#6a5e58'), mossTop = new THREE.Color(cfg.kind === 'cave' ? '#242a3a' : '#2d3a56');
+    var c = new THREE.Color(), acc = new THREE.Color(), rockC = new THREE.Color(cfg.rock || (cfg.kind === 'cave' ? '#6a6680' : '#5e5a68')), mossTop = new THREE.Color(cfg.kind === 'cave' ? '#242a3a' : '#2d3a56');
     var U = V.util;
     for (var vy = 0; vy < ny; vy++) for (var vx = 0; vx < nx; vx++) {
       var px = x0 + vx / SUB, py = y0 + vy / SUB;
@@ -231,7 +246,7 @@
       var best = INF, wsum = 0, hsum = 0; acc.setRGB(0, 0, 0);
       var tx0 = Math.floor(px), ty0 = Math.floor(py);
       for (var dy = -2; dy <= 1; dy++) for (var dx = -2; dx <= 1; dx++) {
-        var tx = tx0 + dx, ty = ty0 + dy, ch = tileAt(pm, tx, ty);
+        var tx = tx0 + dx, ty = ty0 + dy, ch = terrainCh(pm, cfg, tx, ty);
         if (isSolidCh(ch, cfg)) continue;
         var ex = Math.max(tx - px, 0, px - (tx + 1)), ey = Math.max(ty - py, 0, py - (ty + 1));
         var dd = Math.sqrt(ex * ex + ey * ey); if (dd < best) best = dd;
@@ -257,7 +272,8 @@
       if (best > 0.001) {
         // 岩崖：離可走區越遠越高，外圍再緩緩抬升
         var k = U.clamp(best / 0.85, 0, 1); k = k * k * (3 - 2 * k);
-        hgt = base + (wsum ? hsum / wsum * (1 - k) : 0) + k * (cliff + nz * 0.8) + Math.max(0, best - 1.5) * (cfg.kind === 'cave' ? 0.4 : 0.55) + Math.max(0, best - 5) * 0.4;
+        var lowRow = cfg.lowRows && cfg.lowRows.some(function (r) { return py >= r[0] && py < r[1] + 1 && px > 1 && px < pm.w - 1; });
+        hgt = lowRow ? base + (wsum ? hsum / wsum * (1 - k) : 0) + k * (0.35 + nz * 0.15) : base + (wsum ? hsum / wsum * (1 - k) : 0) + k * (cliff + nz * 0.8) + Math.max(0, best - 1.5) * (cfg.kind === 'cave' ? 0.12 : 0.55) + (cfg.kind === 'cave' ? 0 : Math.max(0, best - 5) * 0.4);
         if (cfg.kind === 'outdoor' && best > 1.2) hgt += Math.sin(px * 0.35) * Math.cos(py * 0.3) * 0.8 * Math.min(1, (best - 1.2) / 3);
         var steep = U.clamp(k * 1.6 - 0.2, 0, 1);
         c.copy(rockC).multiplyScalar(0.8 + nz * 0.4);
@@ -266,12 +282,16 @@
       } else {
         hgt = base + (wsum ? hsum / wsum : 0);
         acc.multiplyScalar(1 / (wsum || 1)); c.copy(acc).multiplyScalar(0.88 + nz * 0.24);
+        if (cfg.kind === 'outdoor' && hsum >= -0.01) {   // 活土上的靛苔斑與礦物淺斑
+          var mo = vnoise(px * 0.16, py * 0.16, 11), mi = vnoise(px * 0.3 + 40, py * 0.3, 5);
+          c.lerp(MOSS, U.clamp((mo - 0.5) * 2.2, 0, 0.6)); c.lerp(MINERAL, U.clamp((mi - 0.72) * 2.5, 0, 0.35));
+        }
       }
       var vi = vy * nx + vx;
       hts[vi] = hgt;
       pos[vi * 3] = px; pos[vi * 3 + 1] = hgt; pos[vi * 3 + 2] = py;
       colr[vi * 3] = c.r; colr[vi * 3 + 1] = c.g; colr[vi * 3 + 2] = c.b;
-      uv[vi * 2] = px * 0.5; uv[vi * 2 + 1] = py * 0.5;
+      uv[vi * 2] = (px + hgt * 0.35) * 0.5; uv[vi * 2 + 1] = (py + hgt * 0.8) * 0.5;
     }
     var idx = new Uint32Array((nx - 1) * (ny - 1) * 6), k2 = 0;
     for (vy = 0; vy < ny - 1; vy++) for (vx = 0; vx < nx - 1; vx++) {
@@ -304,7 +324,7 @@
   // 人物站立高度：在脈橋上就是橋面
   W.standHeight = function (x, y) {
     var pm = W.pm; if (!pm) return 0;
-    var tx = Math.floor(x), ty = Math.floor(y), ch = tileAt(pm, tx, ty);
+    var tx = Math.floor(x), ty = Math.floor(y), ch = terrainCh(pm, W.cfg, tx, ty);
     var base = L.baseHeight(W.cfg, Math.max(0, Math.min(pm.h - 0.001, y)));
     if (ch === '=') return base + 0.06;
     // 橋頭：與橋相鄰時不要陷下去
@@ -356,7 +376,7 @@
       var pg = new THREE.PlaneGeometry(pm.w + 60, pm.h + 60); pg.rotateX(-Math.PI / 2);
       var dep = new Float32Array(pg.attributes.position.count).fill(1);
       pg.setAttribute('depth', new THREE.BufferAttribute(dep, 1));
-      var cm = W.chasmMat = waterMaterial(true);
+      var cm = W.chasmMat = waterMaterial(true); cm.uniforms.sky.value.set('#20404a'); cm.uniforms.shallow.value.set('#14484a');
       var river = new THREE.Mesh(pg, cm); river.position.set(pm.w / 2, -7.5, pm.h / 2); river.renderOrder = 1;
       W.group.add(river);
     }
@@ -501,7 +521,7 @@
     // 導管根柱：粗大的活體導管，帶脈光環
     pipes.forEach(function (p) {
       var gx = new THREE.Group(), bx = p[0] + 0.5, bz = p[1] + 0.5; gx.position.set(bx, sh(bx, bz), bz);
-      var col2 = M.mesh(M.geo('pipe-col', function () { var g = new THREE.CylinderGeometry(0.28, 0.36, 3.2, 12); g.translate(0, 1.6, 0); return g; }), M.mat('#8a6048', { map: T.bark(), rough: 0.7 }));
+      var col2 = M.mesh(M.geo('pipe-col', function () { var g = new THREE.CylinderGeometry(0.28, 0.36, 2.2, 12); g.translate(0, 1.1, 0); return g; }), M.mat('#8a6048', { map: T.bark(), rough: 0.7 }));
       gx.add(col2);
       for (var k = 0; k < 3; k++) {
         var ring = M.mesh(M.geo('pipe-ring', function () { var g = new THREE.TorusGeometry(0.33, 0.035, 6, 16); g.rotateX(Math.PI / 2); return g; }), M.mat('#bff1ea', { emissive: '#73D6D0', ei: 1.4 }), false);
@@ -697,7 +717,7 @@
     var floor = new THREE.Mesh(new THREE.PlaneGeometry(pm.w, pm.h), M.mat('#6e5844', { map: T.bark(), rough: 0.9 }));
     floor.rotation.x = -Math.PI / 2; floor.position.set(pm.w / 2, 0.005, pm.h / 2); floor.receiveShadow = true;
     floor.material.map.repeat && floor.material.map.repeat.set(1, 1);
-    W.group.add(floor);
+    // 地板已在地形中（屋內地板色），不另外加平面
     // 每間房一盞吊燈
     var rooms = [];
     for (x = 1; x < pm.w - 1; x++) if (pm.ground[2 * pm.w + x] !== '|' && pm.ground[2 * pm.w + x - 1] === '|') rooms.push(x);
@@ -713,8 +733,9 @@
   // ======================= 脈橋 =======================
   function buildBridges(pm, cfg) {
     var cells = [], x, y;
-    for (y = 0; y < pm.h; y++) for (x = 0; x < pm.w; x++) if (pm.ground[y * pm.w + x] === '=') cells.push([x, y]);
+    for (y = 0; y < pm.h; y++) for (x = 0; x < pm.w; x++) if (terrainCh(pm, cfg, x, y) === '=') cells.push([x, y]);
     if (!cells.length) return;
+    var tc = function (x2, y2) { return terrainCh(pm, cfg, x2, y2); };
     // 橋面：每格一塊根板，用實例化
     var deck = new THREE.BoxGeometry(1.02, 0.18, 1.02); deck.translate(0, -0.09, 0);
     var dm = new THREE.InstancedMesh(deck, new THREE.MeshStandardMaterial({ color: 0xffffff, map: T.bark(), roughness: 0.85 }), cells.length);
@@ -723,7 +744,7 @@
       var top = L.baseHeight(cfg, c[1] + 0.5) + 0.06;
       dummy.position.set(c[0] + 0.5, top, c[1] + 0.5); dummy.rotation.set(0, 0, 0); dummy.scale.set(1, 1, 1); dummy.updateMatrix();
       dm.setMatrixAt(i, dummy.matrix);
-      col.set(V.util.hash2(c[0], c[1], 4) < 0.5 ? '#7a5a44' : '#6a4e3c'); dm.setColorAt(i, col);
+      var hv = V.util.hash2(c[0], c[1], 4); col.set(hv < 0.33 ? '#5e4a40' : hv < 0.66 ? '#4e4450' : '#665040'); if (V.util.hash2(c[0], c[1], 8) < 0.25) col.set('#34466a'); dm.setColorAt(i, col);
     });
     dm.receiveShadow = true; dm.castShadow = true; W.group.add(dm);
     // 橋腹：垂下的根束與拱
@@ -731,7 +752,7 @@
     var depth = cfg.chasm ? 4.5 : 0.9;
     cells.forEach(function (c) {
       var r = V.util.hash2(c[0], c[1], 9);
-      var edge = tileAt(pm, c[0], c[1] - 1) !== '=' || tileAt(pm, c[0], c[1] + 1) !== '=' || tileAt(pm, c[0] - 1, c[1]) !== '=' || tileAt(pm, c[0] + 1, c[1]) !== '=';
+      var edge = tc(c[0], c[1] - 1) !== '=' || tc(c[0], c[1] + 1) !== '=';
       if (!edge && r > 0.35) return;
       var top = L.baseHeight(cfg, c[1] + 0.5);
       var n = edge ? 2 : 1;
@@ -749,7 +770,7 @@
       var rail = M.mat('#7a5a44', { map: T.bark() });
       cells.forEach(function (c) {
         [[0, -1], [0, 1]].forEach(function (d) {
-          if (tileAt(pm, c[0], c[1] + d[1]) === '=') return;
+          if (tc(c[0], c[1] + d[1]) === '=') return;
           var post = M.mesh(M.geo('br-post', function () { var g = new THREE.CylinderGeometry(0.05, 0.07, 0.75, 5); g.translate(0, 0.37, 0); return g; }), rail);
           var top = L.baseHeight(cfg, c[1] + 0.5) + 0.06;
           post.position.set(c[0] + 0.5, top, c[1] + 0.5 + d[1] * 0.45); W.group.add(post);
@@ -813,9 +834,9 @@
     } else if (cfg.kind === 'cave') {
       W.sun.visible = true; W.sun.color.set('#5a7a9a'); W.sun.intensity = 0.35;
       W.sunDir = new THREE.Vector3(0.3, 1, 0.4).normalize();
-      W.hemi.color.set('#3a5a6a'); W.hemi.groundColor.set('#1a1418'); W.hemi.intensity = 0.55;
-      W.amb.intensity = 0.15;
-      W.scene.fog = new THREE.FogExp2(fogCol, 0.06);
+      W.hemi.color.set('#6a90a8'); W.hemi.groundColor.set('#2a2230'); W.hemi.intensity = 1.25;
+      W.amb.intensity = 0.35;
+      W.scene.fog = new THREE.FogExp2(fogCol, 0.04);
     } else {
       W.sun.visible = true; W.sun.color.set('#ffd8b0'); W.sun.intensity = 0.5; W.sunDir = new THREE.Vector3(-0.3, 1, 0.5).normalize();
       W.hemi.color.set('#ffe0c0'); W.hemi.groundColor.set('#3a2a20'); W.hemi.intensity = 0.7;
@@ -862,7 +883,7 @@
       m.material.opacity = 0.16 + Math.sin(t * 0.3 + m.userData.ph) * 0.07;
     });
     // 點光源：取離焦點最近的幾個光源
-    var maxL = V.quality.p().lights;
+    var maxL = Math.min(V.quality.p().lights, W.points.length);
     if (maxL && (!W._lt || t - W._lt > 0.4)) {
       W._lt = t;
       var list = W.lightSources.slice().sort(function (p, q) { return ((p.x - focus.x) * (p.x - focus.x) + (p.z - focus.z) * (p.z - focus.z)) - ((q.x - focus.x) * (q.x - focus.x) + (q.z - focus.z) * (q.z - focus.z)) - (p.always ? 1000 : 0) + (q.always ? 1000 : 0); });

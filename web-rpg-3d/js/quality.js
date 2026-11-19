@@ -14,7 +14,7 @@
   V.save.settings.quality = 'auto';
   var PRESETS = {
     high: { shadows: true, shadowSize: 2048, pixelRatio: 2, spores: 1, mist: true, lights: 6, aa: true, water: 'fancy', grass: 1 },
-    low: { shadows: false, shadowSize: 0, pixelRatio: 1, spores: 0.4, mist: false, lights: 0, aa: false, water: 'simple', grass: 0.45 }
+    low: { shadows: false, shadowSize: 0, pixelRatio: 1, spores: 0.4, mist: false, lights: 2, aa: false, water: 'simple', grass: 0.45 }
   };
   Q.isMobile = (navigator.maxTouchPoints || 0) > 0 && Math.min(screen.width, screen.height) < 820;
   Q.pick = function () {

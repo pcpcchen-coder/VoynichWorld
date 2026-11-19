@@ -185,7 +185,7 @@
     day: { top: '#2a3f66', mid: '#7f8fa0', low: '#e0a070', sun: '#ffc890', fog: '#8a9a98' },
     dusk: { top: '#141c38', mid: '#4a3a5a', low: '#b8604a', sun: '#ff9060', fog: '#4a4a62' },
     wither: { top: '#4a4a4c', mid: '#8a7a6c', low: '#c09a70', sun: '#ffd8a0', fog: '#9a9080' },
-    cave: { top: '#06060a', mid: '#0b0d14', low: '#121820', sun: '#000000', fog: '#0c1218' },
+    cave: { top: '#0a0e14', mid: '#0b0d14', low: '#121820', sun: '#000000', fog: '#1a2c32' },
     indoor: { top: '#0b0a0e', mid: '#0b0a0e', low: '#0b0a0e', sun: '#000000', fog: '#14100c' },
     none: { top: '#2a3f66', mid: '#7f8fa0', low: '#e0a070', sun: '#ffc890', fog: '#8a9a98' }
   };

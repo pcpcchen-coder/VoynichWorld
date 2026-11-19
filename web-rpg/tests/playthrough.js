@@ -10,10 +10,12 @@ const path = require('path');
 const fs = require('fs');
 const { chromium } = require('playwright');
 
-const ROOT = path.resolve(__dirname, '..');
-const OUT = path.join(__dirname, 'out');
+// VELLORA_3D=1：改測 3D 版（web-rpg-3d/），同一套流程；走路改成按住直到走進下一格（3D 版是連續移動）
+const IS3D = process.env.VELLORA_3D === '1';
+const ROOT = IS3D ? path.resolve(__dirname, '..', '..', 'web-rpg-3d') : path.resolve(__dirname, '..');
+const OUT = IS3D ? path.join(ROOT, 'tests', 'out') : path.join(__dirname, 'out');
 fs.mkdirSync(OUT, { recursive: true });
-const URL_BASE = 'file://' + path.join(ROOT, 'index.html') + '?debug=1&speed=4';
+const URL_BASE = 'file://' + path.join(ROOT, 'index.html') + '?debug=1&speed=4' + (IS3D ? '&quality=' + (process.env.VELLORA_QUALITY || 'low') : '');
 const errors = [];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let page, shotNo = 0;
@@ -36,8 +38,29 @@ async function waitFor(fn, arg, ms, what) {
 async function key(k) { await page.keyboard.press(k); await sleep(60); }
 // 一次走一格：暫時把遊戲速度調回 1 倍，避免按住時多走
 async function walk(k, n) {
+  if (IS3D) return walk3d(k, n);
   await q(() => window.__vellora.speed(1));
   for (let i = 0; i < n; i++) { await page.keyboard.down(k); await sleep(60); await page.keyboard.up(k); await sleep(120); await waitIdleMove(); }
+  await q(() => window.__vellora.speed(4));
+}
+// 3D：按住方向鍵直到走進下一格並接近格心（真實鍵盤輸入）；進入傳送點或觸發劇情就停
+async function walk3d(k, n) {
+  await q(() => window.__vellora.speed(1));
+  for (let i = 0; i < n; i++) {
+    const a = await q(() => window.__vellora.player());
+    await page.keyboard.down(k);
+    const t0 = Date.now();
+    while (Date.now() - t0 < 5000) {
+      await sleep(25);
+      const b = await q(() => { const p = window.__vellora.player(), c = window.__vellora.p3 ? window.__vellora.p3() : null; return { p: p, c: c, busy: window.__vellora.busy() }; });
+      if (!b.p || b.p.map !== a.map) break;
+      if (b.p.x !== a.x || b.p.y !== a.y) {
+        if (b.busy) break;
+        if (!b.c || (Math.abs(b.c.fx - (b.p.x + 0.5)) < 0.18 && Math.abs(b.c.fy - (b.p.y + 0.5)) < 0.18)) break;
+      }
+    }
+    await page.keyboard.up(k); await sleep(120); await waitIdleMove();
+  }
   await q(() => window.__vellora.speed(4));
 }
 async function waitIdleMove() { for (let i = 0; i < 40; i++) { const p = await q(() => window.__vellora.player()); if (p && !p.moving) return; await sleep(40); } }

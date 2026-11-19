@@ -11,7 +11,7 @@
   var F = V.field, Gm = V.game, UI = V.ui;
   var F3 = V.field3d = {};
   var TS = 16, SPEED = 4.2, RADIUS = 0.28;
-  var cam = { yaw: 0, pitch: 0.62, dist: 8.5, focus: new THREE.Vector3(), tween: null, override: null, zoomK: 1 };
+  var cam = { yaw: 0, pitch: 0.52, dist: 8, focus: new THREE.Vector3(), tween: null, override: null, zoomK: 1 };
   F3.cam = cam;
   var camera = null, visuals = [], playerVis = null, markTex = null, promptEl = null, target = null;
   var tmpV = new THREE.Vector3();
@@ -51,7 +51,7 @@
     W.group.add(ch.root);
     var p = F.player; p.fx = p.x + 0.5; p.fy = p.y + 0.5;
     var cfg = W.cfg;
-    cam.pitch = cfg.pitch || 0.62; cam.baseDist = cfg.dist || 8.5;
+    cam.pitch = cfg.pitch || 0.52; cam.baseDist = cfg.dist || 8;
     if (cfg.yaw != null) cam.yaw = cfg.yaw;
     cam.override = null; cam.tween = null;
     snapVisuals();
@@ -106,6 +106,10 @@
     var sp = SPEED * (mv.analog ? Math.max(0.35, mag) : 1) * dt;
     var nx = wx / Math.hypot(wx, wz), nz = wz / Math.hypot(wx, wz);
     move(p, nx * sp, nz * sp);
+    // 沿格線走時把另一軸輕輕拉回格心，窄道與門口不容易卡住
+    var pull = Math.min(1, dt * 7);
+    if (Math.abs(nx) > 0.92) p.fy += (Math.floor(p.fy) + 0.5 - p.fy) * pull;
+    else if (Math.abs(nz) > 0.92) p.fx += (Math.floor(p.fx) + 0.5 - p.fx) * pull;
     p.moving3d = mv.analog ? mag : 1;
     playerVis.targetAng = Math.atan2(nx, nz);
     p.dir = Math.abs(nx) > Math.abs(nz) ? (nx > 0 ? 'right' : 'left') : (nz > 0 ? 'down' : 'up');
@@ -214,6 +218,9 @@
     if (camera.position.y < gh + 0.8) camera.position.y = gh + 0.8;
     if (F.shakeT > 0) { var a = F.shakeAmp * 0.025; camera.position.x += (Math.random() - 0.5) * a; camera.position.y += (Math.random() - 0.5) * a; }
     camera.lookAt(f);
+    // 擋在鏡頭前的近物（樹冠、導管柱）直接被近裁切面切開，不會整片遮住珂潾
+    var nr = Math.max(0.1, dist * 0.42);
+    if (Math.abs(camera.near - nr) > 0.05) { camera.near = nr; camera.updateProjectionMatrix(); }
   }
 
   // ======================= 每幀 =======================
@@ -292,6 +299,21 @@
     promptEl.hidden = false;
   }
   F3.target = function () { return target; };
+  // 偵錯 API（?debug=1）：連續座標、鏡頭、可見性，供 3D 測試使用
+  V.debug3dInit = function () {
+    var api = window.__vellora; if (!api) return;
+    api.p3 = function () { var p = F.player; return p ? { fx: p.fx, fy: p.fy, yaw: cam.yaw, pitch: cam.pitch, ang: playerVis && playerVis.ang } : null; };
+    api.setYaw = function (y) { cam.yaw = y; };
+    api.r3d = function () { return { mode: V.r3d.mode, fps: V.runtime.fps, frameMs: V.runtime.frameMs, quality: V.quality.level, calls: V.r3d.renderer.info.render.calls, tris: V.r3d.renderer.info.render.triangles }; };
+    api.target = function () { var t = target; return t ? { id: t.id, type: t.type } : null; };
+    // 實體在螢幕上的位置（判斷模型是否在畫面內）
+    api.screenOf = function (id) {
+      for (var i = 0; i < visuals.length; i++) if (visuals[i].e.id === id) { var v = visuals[i], q = v.pos.clone(); q.y += (v.height || 1) * 0.5; return F3.project(q); }
+      if (id === 'player' && playerVis) { var q2 = playerVis.pos.clone(); q2.y += 0.6; return F3.project(q2); }
+      return null;
+    };
+    api.creatureScreen = function () { return V.battle3d.projectCreature(); };
+  };
   F3.playerVisual = function () { return playerVis; };
   F3.visuals = function () { return visuals; };
   // 世界座標 → 螢幕座標（測試用）

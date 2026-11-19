@@ -24,15 +24,15 @@
     },
     // 熱柱上方的階梯溫泉池：三層池台，最上層是泉源
     'map.miststep.terrace': {
-      kind: 'outdoor', margin: 14, cliff: 2.2, sun: { az: 100, el: 28 },
-      rows: [[0, 7, 4.2, 4.2], [8, 9, 4.2, 2.1], [10, 16, 2.1, 2.1], [17, 18, 2.1, 0], [19, 31, 0, 0]],
+      kind: 'outdoor', margin: 14, cliff: 2.2, sun: { az: 100, el: 28 }, rock: '#b9b0a2', lowRows: [[8, 9], [17, 18]],
+      rows: [[0, 7, 2.6, 2.6], [8, 9, 2.6, 1.3], [10, 16, 1.3, 1.3], [17, 18, 1.3, 0], [19, 31, 0, 0]],
       steam: [[19, 4, 14], [16, 3, 6], [22, 3, 6], [19, 13, 10], [16, 12, 5], [22, 14, 5], [19, 21, 8], [16, 20, 5], [22, 22, 5]]
     },
     'map.miststep.soilflat': { kind: 'outdoor', margin: 14, cliff: 2.2, sun: { az: 110, el: 32 } },
     // 脈橋：活體根橋跨過深谷；橋腹下方是導管洞
     'map.miststep.bridge': { kind: 'outdoor', margin: 10, cliff: 2.8, chasm: true, sun: { az: 100, el: 28 } },
-    'map.miststep.conduit_upper': { kind: 'cave', margin: 3, cliff: 2.3, pitch: 0.98, dist: 8.5 },
-    'map.miststep.conduit_lower': { kind: 'cave', margin: 3, cliff: 2.3, pitch: 0.98, dist: 8.5 },
+    'map.miststep.conduit_upper': { kind: 'cave', margin: 3, cliff: 1.5, pitch: 0.95, dist: 7.5 },
+    'map.miststep.conduit_lower': { kind: 'cave', margin: 3, cliff: 1.5, pitch: 0.98, dist: 8.5 },
     'map.miststep.sheds': { kind: 'indoor', margin: 0, pitch: 1.02, dist: 8.2 }
   };
 

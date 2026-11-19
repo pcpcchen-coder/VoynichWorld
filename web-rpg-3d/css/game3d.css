@@ -57,7 +57,12 @@ body.v3d.portrait .b-intent { font-size: .76rem; }
 @media (orientation: landscape) and (max-height: 520px) {
   body.v3d .battle { grid-template-columns: minmax(0, 1fr) minmax(18em, 46%) !important; gap: .35em !important; padding: .35em !important; }
   body.v3d .b-mood { display: none; }
-  body.v3d .b-player { padding: .2em .6em; }
+  body.v3d .battle { grid-template-rows: auto auto minmax(0, 1fr) auto !important; }
+  body.v3d .b-info { grid-row: 1 !important; }
+  body.v3d .b-player { grid-column: 1 !important; grid-row: 1 !important; align-self: start; padding: .2em .6em; font-size: .85rem; max-width: 20em; }
+  body.v3d .b-cmdwrap { grid-row: 2 / span 3 !important; }
+  body.v3d .b-cmdtitle { min-height: 0; }
+  body.v3d .b-cmd .li { min-height: 2.2em; }
   body.v3d .b-log { display: none; }
   body.v3d .b-seqwrap { padding: .25em .6em; }
   body.v3d .b-seqhead small { display: none; }

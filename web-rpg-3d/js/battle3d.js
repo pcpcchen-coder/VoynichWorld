@@ -38,7 +38,7 @@
     stage = new THREE.Group(); scene.add(stage);
     var bg = BG[st.def.bg || 'cave'] || BG.cave;
     scene.background = new THREE.Color(bg.sky);
-    scene.fog = new THREE.FogExp2(new THREE.Color(bg.fog), 0.07);
+    scene.fog = new THREE.FogExp2(new THREE.Color(bg.fog), 0.022);
     // 場地：碟形的地面
     var g = new THREE.CircleGeometry(14, 48); g.rotateX(-Math.PI / 2);
     var pos = g.attributes.position;
@@ -129,14 +129,14 @@
     var core = new THREE.Mesh(M.geo('b3-drop', function () { var g = new THREE.SphereGeometry(0.07, 8, 6); g.scale(1, 1.4, 1); return g; }), M.mat(color, { emissive: color, ei: 1.5 }));
     var g2 = new THREE.Group(); g2.add(s, core);
     g2.position.set(-0.9, 1.4, 2.2); stage.add(g2);
-    drops.push({ g: g2, t: 0, to: new THREE.Vector3(0, cur.cr.focusY * cur.big, 0) });
+    drops.push({ g: g2, t: 0, from: cur.kor.root.position.clone().add(new THREE.Vector3(0.2, 1.1, 0)), to: new THREE.Vector3(0, cur.cr.focusY * cur.big, 0) });
   }
   function onTaste(glyph) {
     if (!cur) return;
     var info = V.GLYPHS[glyph] || { color: '#ffffff' };
     var s = M.glowSprite(info.color, 0.5, 1); s.material = s.material.clone();
     s.position.set(0, cur.cr.focusY * cur.big, 0); stage.add(s);
-    tastes.push({ g: s, t: 0, from: s.position.clone(), to: new THREE.Vector3(-1.2, 1.25, 2.55) });
+    tastes.push({ g: s, t: 0, from: s.position.clone(), to: cur.kor.root.position.clone().add(new THREE.Vector3(0, 1.1, 0)) });
   }
 
   B3.render = function (dt, raw) {
@@ -172,7 +172,7 @@
     // 藥滴與嚐味的光點
     drops = drops.filter(function (d) {
       d.t += raw / 0.6; var k2 = Math.min(1, d.t);
-      d.g.position.set(-0.9 + (d.to.x + 0.9) * k2, 1.4 + (d.to.y - 1.4) * k2 + Math.sin(k2 * Math.PI) * 0.9, 2.2 + (d.to.z - 2.2) * k2);
+      d.g.position.lerpVectors(d.from, d.to, k2); d.g.position.y += Math.sin(k2 * Math.PI) * 0.9;
       if (d.t >= 1) { stage.remove(d.g); return false; } return true;
     });
     tastes = tastes.filter(function (d) {
@@ -188,18 +188,17 @@
     var W = V.r3d.w, H = V.r3d.h;
     camera.aspect = W / H;
     var stEl = st.el && st.el.querySelector('.b-stage'), rect = stEl ? stEl.getBoundingClientRect() : null;
-    var fy = cur.cr.focusY * cur.big;
-    var dist = 5.2 + (cur.big > 1.2 ? 0 : 0.3) + (st.def.sprite && st.def.sprite.shape === 'beast' ? 3.2 : 0);
+    var fy = cur.cr.focusY * cur.big, fit = Math.max(1.2, cur.cr.height * cur.big * 1);
+    var rh = rect && rect.height > 20 ? rect.height : H * 0.6;
+    // 讓對象約佔舞台高度的六成
+    var d = fit / (0.6 * rh / H) / (2 * Math.tan(camera.fov * Math.PI / 360)) + 1.2;
     var sway = Math.sin(t * 0.25) * 0.15;
-    camera.position.set(0.9 + sway, fy + 1.35, dist);
-    camera.lookAt(0, fy * 0.85, 0);
+    camera.position.set(0.15 * d + sway, fy + d * 0.28, d);
+    camera.lookAt(0, fy * 0.9, 0);
+    var kz = Math.min(0.55 * d, d - 2.6), kx = -0.1 * kz - 0.35; cur.kor.root.position.set(kx, 0, kz); cur.shield.position.set(kx, 0.7, kz);
     if (rect && rect.width > 20 && rect.height > 20) {
-      // 讓畫面中心（對象）對到舞台中心
       var cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
       camera.setViewOffset(W, H, W / 2 - cx, H / 2 - cy, W, H);
-      // 舞台太小時拉遠
-      var k4 = Math.max(0.7, Math.min(1.6, (H * 0.55) / Math.max(rect.height, 1)));
-      camera.position.multiplyScalar(1).setZ(dist * Math.min(1.5, k4));
     } else camera.clearViewOffset();
     camera.updateProjectionMatrix();
     r.render(scene, camera);
