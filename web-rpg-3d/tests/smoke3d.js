@@ -251,7 +251,10 @@ async function mobile(browser, w, h, name) {
   check(cmdVisible, '所有指令都在畫面內（沒有被裁切）');
   await q(() => window.__vellora.winEncounter()); await sleep(500); await drive();
   // 選單
+  // 等遭遇結算、升級說明等都結束、遊戲空閒時再點 ≡（忙碌時開選單會被忽略，與 2D 版相同）
+  await waitFor(() => !window.__vellora.busy() && window.__vellora.ui().length === 0, null, 20000, '遭遇後回到可操作的地圖');
   await page.tap('.tp-menu'); await sleep(700);
+  if (!(await q(() => !!document.querySelector('.menu-frame')))) { await drive(); await page.tap('.tp-menu'); await sleep(700); }
   await shot('menu'); await topmost('.menu-frame', '選單');
   await q(() => { window.__vellora.V.menu.close(); }); await sleep(300);
   await q(() => { window.__vellora.V.screens.ending('default'); }); await sleep(1200);

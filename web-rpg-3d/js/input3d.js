@@ -85,6 +85,10 @@
       ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (ev) { b.addEventListener(ev, function () { b.classList.remove('down'); }); });
     });
     menuBtn.addEventListener('pointerdown', function (e) { e.preventDefault(); V.audio && V.audio.unlock(); I.press('menu'); });
+    // 觸控放開後瀏覽器會補發 click；不擋掉的話，click 會落在剛開啟的選單上（≡ 正下方是選單的「關閉」鈕）
+    [menuBtn].concat(Array.prototype.slice.call(pad.querySelectorAll('.tp-btn'))).forEach(function (b) {
+      b.addEventListener('touchend', function (e) { e.preventDefault(); }, { passive: false });
+    });
     pad.addEventListener('contextmenu', function (e) { e.preventDefault(); });
   };
   X.release = function () {};
