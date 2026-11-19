@@ -177,7 +177,7 @@
     dim: ['ref:dim', 'number'],          // 四向度增減
     conn: ['ref:zone', 'number'],        // 連通度增減
     exp: ['number'],                     // 見識
-    heal: ['number?', 'number?'],        // 回復體力（省略＝全滿），第二參數為負荷下降量（省略＝歸零）
+    heal: ['any?', 'number?'],           // 回復體力（省略＝全滿；可寫 '50%'＝上限的一半），第二參數為負荷下降量（省略＝歸零）
     hurt: ['number'],                    // 扣體力（歸零會撤離）
     load: ['number'],                    // 感官負荷增減（點數，可為負）
     learn: ['ref:skill'],                // 學會手技
@@ -193,7 +193,8 @@
     ending: ['string?'],                 // 顯示章末畫面（參數：結尾畫面 id，對應 meta.endings）
     tutorial: ['ref:tutorial', 'string?'], // 彈出教學（看過不再彈；第二參數 'force' 強制再顯示）
     vein: ['ref:zone', 'vein'],          // 設定區域脈況階段
-    lines: ['lines']                     // 就地播放幾行對白（同對話的 lines 格式）
+    lines: ['lines'],                    // 就地播放幾行對白（同對話的 lines 格式）
+    engage: ['string']                   // 擴充：['engage', 實體id]——直接開始目前地圖上該遭遇實體的診療（不經確認），結果記錄與 onResult 同一般遭遇
   };
   // 只能出現在過場中的指令（等待／畫面控制）
   R.CUTSCENE_CMDS = {
@@ -202,7 +203,7 @@
     face: ['string', 'dir'],             // 轉向
     camera: ['any', 'number?', 'number?'], // ['camera', x, y, 毫秒] 或 ['camera','player'] 或 ['camera', 實體id, 毫秒]
     fade: ['string', 'number?', 'string?'], // ['fade','out'|'in', 毫秒, 顏色]
-    image: ['string', 'string?', 'string?'], // 顯示全幅圖片：['image', 路徑, 旁白, 標題]
+    image: ['string', 'any?', 'string?'], // 顯示全幅圖片：['image', 路徑, 旁白（字串或行陣列）, 標題]
     imageclose: [],
     narrate: ['string'],                 // 黑底置中旁白
     wait: ['number'],

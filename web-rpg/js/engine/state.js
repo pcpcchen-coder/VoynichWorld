@@ -79,7 +79,12 @@
   // 等待顯示的說明視窗（升級、學會手技）；地圖空閒時由 field 依序彈出
   Gm.notices = [];
   Gm.flushNotices = async function () {
-    while (Gm.notices.length) { var n = Gm.notices.shift(); await V.ui.pages(n.title, n.pages, { skippable: true }); }
+    while (Gm.notices.length) {
+      var n = Gm.notices.shift();
+      if (n.fn) await n.fn();                                   // 擴充：自訂流程（例如自動繪製葉帖）
+      else if (n.tutorial) await Gm.showTutorial(n.tutorial);   // 擴充：等級表 tutorial
+      else await V.ui.pages(n.title, n.pages, { skippable: true });
+    }
   };
   // 教學：data.tutorials[id] = { title, pages:[{title,text|html}] }；看過的可在選單「教學」重看
   Gm.showTutorial = async function (id, force) {
@@ -113,6 +118,7 @@
       Gm.notices.push({ title: '等級 ' + s.level, pages: [{ title: '等級提升至 ' + s.level,
         html: '<p>體力上限 ' + row.stamina + '・感官負荷上限 ' + row.load + '。體力回滿，感官負荷歸零。</p>' +
           learned.map(function (id) { var k = D().skills[id] || { name: id }; return '<h3>學會手技：' + V.util.esc(k.name) + '</h3><p>' + V.util.esc(k.desc || '') + '</p>'; }).join('') }] });
+      if (row.tutorial) Gm.notices.push({ tutorial: row.tutorial });
       V.emit('levelup', s.level);
     }
   };
@@ -129,7 +135,7 @@
     var it = Gm.item(id);
     if (!it) { console.warn('未知物品', id); return; }
     Gm.s.items[id] = Gm.count(id) + n;
-    if (it.cat === 'sample') Gm.s.unbanked[id] = (Gm.s.unbanked[id] || 0) + n;
+    if (it.cat === 'sample' && !it.material) Gm.s.unbanked[id] = (Gm.s.unbanked[id] || 0) + n;   // 擴充：material＝藥材，不算未入庫診斷樣本
     if (!silent) { V.audio.play('item'); V.ui.toast('取得　' + it.name + (n > 1 ? ' ×' + n : ''), 'item', it.icon); }
     Gm.checkFolios();
   };
@@ -145,7 +151,18 @@
   Gm.bankSamples = function () {
     var n = 0; Object.keys(Gm.s.unbanked).forEach(function (k) { n += Gm.s.unbanked[k]; });
     Gm.s.unbanked = {};
+    var br = D().meta && D().meta.bankReward;   // 擴充：入庫每件換貨幣 { item, per }
+    if (n && br && D().items[br.item]) Gm.give(br.item, n * (br.per || 1), true);
     return n;
+  };
+  // 擴充：meta.gatherRespawn＝在種源龕或床休息後，採集點（kind:'gather'，respawn !== false）重新長出來
+  Gm.respawnGathers = function () {
+    if (!(D().meta && D().meta.gatherRespawn)) return;
+    Object.keys(D().maps).forEach(function (mid) {
+      (D().maps[mid].entities || []).forEach(function (ed, i) {
+        if (ed.type === 'object' && ed.kind === 'gather' && ed.respawn !== false) delete Gm.s.objUsed[mid + '/' + (ed.id || (ed.type + i))];
+      });
+    });
   };
   Gm.loseUnbanked = function (ratio) {
     var lost = [];
@@ -211,7 +228,7 @@
     var f = D().folios[id]; if (!f) return [];
     var c = f.conditions || {}, out = [];
     [['observe', '觀察'], ['sample', '取樣'], ['diagnose', '診斷']].forEach(function (p) {
-      if (c[p[0]]) out.push({ kind: p[0], label: p[1], flag: c[p[0]], done: R.isFlagRef(c[p[0]]) ? !!Gm.s.flags[c[p[0]]] : Gm.cond(c[p[0]]), hint: (f.hints || {})[p[0]] });
+      if (c[p[0]]) out.push({ kind: p[0], label: (f.labels || {})[p[0]] || p[1], flag: c[p[0]], done: R.isFlagRef(c[p[0]]) ? !!Gm.s.flags[c[p[0]]] : Gm.cond(c[p[0]]), hint: (f.hints || {})[p[0]] });
     });
     return out;
   };
@@ -226,9 +243,35 @@
     Object.keys(D().folios).forEach(function (id) {
       if (!Gm.s.folioNotified[id] && Gm.folioReady(id)) {
         Gm.s.folioNotified[id] = true;
-        if (V.ui && V.ui.toast) V.ui.toast('葉帖 ' + id + '〈' + D().folios[id].name + '〉可以繪製了（選單 → 葉帖）', 'folio');
+        if (D().meta && D().meta.autoDrawFolios) { Gm.notices.push({ fn: function () { return Gm.autoDrawFolio(id); } }); return; }
+        if (V.ui && V.ui.toast) V.ui.toast('葉帖 ' + id + '〈' + Gm.folioName(id) + '〉可以繪製了（選單 → 葉帖）', 'folio');
       }
     });
+  };
+  // 擴充：葉帖名稱與筆記可依條件變化。nameAlt:[{cond,name}]；note 可為行陣列，行首「〔若 條件〕」才顯示，可用樣板
+  Gm.folioName = function (id) {
+    var f = D().folios[id]; if (!f) return id;
+    var alt = (f.nameAlt || []).filter(function (a) { return Gm.cond(a.cond); })[0];
+    return alt ? alt.name : f.name;
+  };
+  Gm.folioNote = function (id) {
+    var f = D().folios[id]; if (!f) return '';
+    var n = f.note; if (!Array.isArray(n)) return Gm.tpl(n || '');
+    var out = [];
+    n.forEach(function (line) {
+      var m = /^〔若\s*([^〕]+)〕/.exec(line);
+      if (m) { if (!Gm.cond(m[1].trim())) return; line = line.slice(m[0].length); }
+      out.push(Gm.tpl(line));
+    });
+    return out.join('\n');
+  };
+  // 擴充：meta.autoDrawFolios＝條件齊備時，地圖空閒就自動播放 before 行→繪製→after 行
+  Gm.autoDrawFolio = async function (id) {
+    var f = D().folios[id];
+    if (!f || Gm.s.folios[id] || !Gm.folioReady(id)) return;
+    if (f.before) await V.dialogue.lines(f.before);
+    await V.folio.draw(id);
+    if (f.after) await V.dialogue.lines(f.after);
   };
   Gm.drawFolio = function (id) {
     var f = D().folios[id]; if (!f || !Gm.folioReady(id)) return false;
@@ -267,6 +310,7 @@
   // ---- 體力／負荷 ----
   Gm.heal = function (st, ld) {
     var s = Gm.s;
+    if (typeof st === 'string' && /%$/.test(st)) st = Math.round(Gm.maxStamina() * parseFloat(st) / 100);   // 擴充：'50%'＝上限的一半
     s.stamina = st == null ? Gm.maxStamina() : Math.min(Gm.maxStamina(), s.stamina + st);
     s.load = ld == null ? 0 : Math.max(0, s.load - ld);
   };
@@ -315,6 +359,7 @@
       case 'conn': Gm.addConn(a[1], a[2]); break;
       case 'exp': Gm.addExp(a[1]); break;
       case 'heal': Gm.heal(a[1], a[2]); V.audio.play('heal'); break;
+      case 'engage': await V.field.engage(a[1]); break;
       case 'hurt':
         Gm.hurt(a[1]);
         if (Gm.s.stamina <= 0) await Gm.evacuate();

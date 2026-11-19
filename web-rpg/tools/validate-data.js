@@ -27,7 +27,7 @@ const BEHAVIOR_TYPES = JSON.parse(/B\.BEHAVIOR_TYPES = (\[[^\]]*\])/.exec(battle
 const RESULTS = JSON.parse(/B\.RESULTS = (\[[^\]]*\])/.exec(battleSrc)[1].replace(/'/g, '"'));
 const BG = ['cave', 'pool', 'wild', 'wither'];
 const CATS = ['sample', 'medicine', 'consumable', 'key'];
-const KINDS = ['altar', 'gauge', 'filter', 'shrine', 'bed', 'gather', 'observe', 'chest', 'sign'];
+const KINDS = ['altar', 'gauge', 'filter', 'shrine', 'bed', 'gather', 'observe', 'chest', 'sign', 'hidden', 'filterpatch', 'valve', 'membrane', 'hatch'];
 
 run(DEMO ? 'js/data-demo/manifest.js' : 'js/data/manifest.js');
 const list = (V.dataManifest || {})[DEMO ? 'demo' : 'official'] || [];
@@ -168,6 +168,17 @@ Object.keys(D.maps).forEach((mid) => {
     if (o.cutscene && !D.cutscenes[o.cutscene]) err(loc, 'onEnter 過場「' + o.cutscene + '」不存在');
     if (o.actions) checkActions(o.actions, loc + ' onEnter#' + (i + 1));
   });
+  (def.patches || []).forEach((pt, i) => {   // 擴充：條件地形覆寫
+    const pl = loc + ' patches#' + (i + 1);
+    if (pt.cond != null) checkCond(pt.cond, pl);
+    if (typeof pt.x !== 'number' || typeof pt.y !== 'number') err(pl, '需要數字 x、y');
+    (pt.ground || []).forEach((row, dy) => row.split('').forEach((ch, dx) => {
+      if (ch === ' ') return;
+      const t = V.TILES[ch];
+      if (!t || t.layer !== 'ground') err(pl, '(' + (pt.x + dx) + ',' + (pt.y + dy) + ') 字元「' + ch + '」不是地面圖塊');
+      if (pt.x + dx >= pm.w || pt.y + dy >= pm.h) err(pl, '超出地圖範圍');
+    }));
+  });
   const ids = {};
   (def.entities || []).forEach((e, i) => {
     const el = loc + ' 實體 ' + (e.id || '#' + i) + '（' + e.type + '）';
@@ -298,6 +309,8 @@ Object.keys(D.encounters).forEach((id) => {
     if (b.glyph && !V.GLYPHS[b.glyph]) err(loc, '行為#' + (k + 1) + ' glyph「' + b.glyph + '」不是味符');
     (b.pool || []).forEach((g) => { if (!V.GLYPHS[g]) err(loc, '行為#' + (k + 1) + ' pool 中「' + g + '」不是味符'); });
     if (b.say) checkLines(b.say.lines || b.say, loc + ' 行為#' + (k + 1));
+    if (b.actions) checkActions(b.actions, loc + ' 行為#' + (k + 1));
+    if (b.when && b.when.cond != null) checkCond(b.when.cond, loc + ' 行為#' + (k + 1) + ' when.cond');
   });
   const blocks = { rewards: e.rewards, isolate: e.isolate, collapse: e.collapse };
   Object.keys(blocks).forEach((bk) => {
@@ -312,6 +325,11 @@ Object.keys(D.encounters).forEach((id) => {
     const one = (x, kk) => { if (x && (x.lines || x.actions)) { if (x.lines) checkLines(x.lines, loc + ' events.' + kk); if (x.actions) checkActions(x.actions, loc + ' events.' + kk); } else if (x) checkLines(x, loc + ' events.' + kk); };
     if (v && !Array.isArray(v) && typeof v === 'object' && !v.lines && !v.actions) Object.keys(v).forEach((n) => one(v[n], k + '.' + n)); else one(v, k);
   });
+  if (e.softFail) {
+    if (e.softFail.lines) checkLines(e.softFail.lines, loc + ' softFail');
+    if (e.softFail.actions) checkActions(e.softFail.actions, loc + ' softFail');
+    if (e.softFail.warp) { if (D.maps[e.softFail.warp.map]) walkableAt(e.softFail.warp.map, e.softFail.warp.x, e.softFail.warp.y, loc + ' softFail.warp'); else err(loc, 'softFail.warp 地圖不存在'); }
+  }
   if (e.retreatWarp && D.maps[e.retreatWarp.map]) walkableAt(e.retreatWarp.map, e.retreatWarp.x, e.retreatWarp.y, loc + ' retreatWarp');
   else if (e.retreatWarp) err(loc, 'retreatWarp 地圖不存在');
 });
@@ -328,6 +346,8 @@ Object.keys(D.folios).forEach((id) => {
     if (!R.isFlagRef(c[k])) checkCond(c[k], loc + ' conditions.' + k);
   });
   Object.keys((f.reward || {}).flags || {}).forEach(() => {});
+  if (f.before) checkLines(f.before, loc + ' before'); if (f.after) checkLines(f.after, loc + ' after');
+  (f.nameAlt || []).forEach((n, k) => checkCond(n.cond, loc + ' nameAlt#' + (k + 1)));
 });
 (D.levels || []).forEach((row, i) => {
   const loc = (origin.levels || '?') + ' levels[' + i + ']';

@@ -136,12 +136,18 @@
         '<div class="title-bg" style="background-image:url(' + (e.image || 'assets/ending.jpg') + ')"></div><div class="title-shade"></div>' +
         '<div class="end-inner"><div class="end-box panel">' +
         '<p class="tag">' + U.esc(e.kicker || meta.chapter || '') + '</p><h1>' + U.esc(e.title || '章末') + '</h1>' +
-        U.toArray(e.text).map(function (t) { return '<p>' + U.esc(t) + '</p>'; }).join('') +
+        // 擴充：text 每行可用「〔若 條件〕」開頭（條件成立才顯示）與樣板 {conn:區域} 等
+        U.toArray(e.text).map(function (t) {
+          var m = /^〔若\s*([^〕]+)〕/.exec(t);
+          if (m) { if (!Gm.cond(m[1].trim())) return ''; t = t.slice(m[0].length); }
+          return '<p>' + U.esc(Gm.tpl(t)) + '</p>';
+        }).join('') +
         '<dl class="end-stats"><dt>遊玩時間</dt><dd>' + U.fmtTime(s.playtime) + '</dd><dt>等級</dt><dd>' + s.level + '</dd>' +
         '<dt>葉帖</dt><dd>' + Object.keys(s.folios).length + ' / ' + Object.keys(V.data.folios).length + '</dd>' +
         '<dt>穩定</dt><dd>' + s.stats.stabilized + ' 次</dd><dt>隔離</dt><dd>' + s.stats.isolated + ' 次</dd>' + conn + '</dl>' +
-        '<h3>四向度</h3><div class="end-dims">' + dims + '</div><p class="end-lean">' + U.esc(Sc.dimSummary()) + '</p>' +
+        (e.hideDims ? '' : '<h3>四向度</h3><div class="end-dims">' + dims + '</div>') + '<p class="end-lean">' + U.esc(Sc.dimSummary()) + '</p>' +   // 擴充：hideDims 不顯示四向度數值
         '<p class="end-tbc">— 待續 —</p>' +
+        U.toArray(e.after).map(function (t) { return '<p class="end-after">' + U.esc(t) + '</p>'; }).join('') +   // 擴充：待續之後的段落（下一章預告）
         '<p class="fine">' + U.esc(e.note || '後續章節的完整劇本收錄於 docs/script/（尚未實作為可玩內容）。') + '</p>' +
         '<div class="end-btns">' + (e.allowContinue ? '<button type="button" class="btn ghost" data-a="stay">繼續探索</button>' : '') +
         '<button type="button" class="btn" data-a="title" data-id="end-title">回到標題</button></div></div></div>');

@@ -336,6 +336,7 @@ body.short .title-inner { gap: .5em; padding-top: .6em; padding-bottom: 2em; } b
 .end-dims { display: grid; gap: .25em; } .end-dim { display: flex; align-items: center; gap: .7em; font-size: .9rem; } .end-dim span { font-family: var(--serif); font-weight: 700; width: 1.4em; } .end-dim em { font-style: normal; min-width: 1.6em; text-align: right; }
 .end-lean { font-family: var(--serif); margin-top: .7em; }
 .end-tbc { text-align: center; font-family: var(--serif); font-size: 1.2rem; letter-spacing: .5em; color: var(--teal); margin: .8em 0 .4em; }
+.end-after { text-align: center; font-family: var(--serif); font-style: italic; opacity: .9; margin: .3em 0; }
 .end-btns { position: sticky; bottom: -1.2em; margin: 0 -1.5em -1.2em; padding: .7em 1.5em 1em; background: linear-gradient(rgba(228,217,192,0), #e2d6bc 35%); }
 .end-btns { display: flex; justify-content: flex-end; gap: .6em; margin-top: .8em; }
 

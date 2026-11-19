@@ -28,7 +28,7 @@
       var doneN = cs.filter(function (c) { return c.done; }).length;
       items.push({
         id: id, cls: 'folio-' + st,
-        label: '<span class="fo-id">' + id + '</span>' + (known(id) ? U.esc(f.name) : '？？？'),
+        label: '<span class="fo-id">' + id + '</span>' + (known(id) ? U.esc(Gm.folioName(id)) : '？？？'),
         sub: U.esc(f.cat || ''),
         right: st === 'drawn' ? '已繪製' : st === 'ready' ? '可繪製' : doneN + ' / ' + cs.length
       });
@@ -36,9 +36,9 @@
     m.onMove = function (it) {
       if (!it || it.header) return;
       var f = V.data.folios[it.id], st = Fo.status(it.id), cs = Gm.folioConds(it.id);
-      var html = '<div class="fo-card"><p class="tag">' + it.id + '・' + U.esc(f.cat || '') + '</p><h2>' + (known(it.id) ? U.esc(f.name) : '？？？') + '</h2>';
+      var html = '<div class="fo-card"><p class="tag">' + it.id + '・' + U.esc(f.cat || '') + '</p><h2>' + (known(it.id) ? U.esc(Gm.folioName(it.id)) : '？？？') + '</h2>';
       if (st === 'drawn') {
-        html += '<div class="fo-thumb"><img alt="" src="' + U.esc(f.image) + '"></div><p class="fo-note">' + U.esc(f.note || '') + '</p><p class="fine">按確認翻開這一葉。</p>';
+        html += '<div class="fo-thumb"><img alt="" src="' + U.esc(f.image) + '"></div><p class="fo-note" style="white-space:pre-line">' + U.esc(Gm.folioNote(it.id)) + '</p><p class="fine">按確認翻開這一葉。</p>';
       } else {
         html += '<ul class="fo-conds">' + cs.map(function (c) {
           return '<li class="' + (c.done ? 'done' : '') + '"><b>' + (c.done ? '✓' : '・') + ' ' + c.label + '</b>' + (c.hint ? '<span>' + U.esc(c.hint) + '</span>' : '') + '</li>';
@@ -72,8 +72,8 @@
       var el = UI.el('div', 'folio-view' + (drawing ? ' drawing' : ''),
         '<div class="fv-book">' +
         '<div class="fv-page"><div class="fv-img"><img alt="手稿頁圖" src="' + U.esc(f.image) + '"><div class="fv-ink"></div></div></div>' +
-        '<div class="fv-side panel"><p class="tag">' + id + '・' + U.esc(f.cat || '') + '</p><h2>' + U.esc(f.name) + '</h2>' +
-        '<p class="fv-note">' + U.esc(f.note || '') + '</p>' +
+        '<div class="fv-side panel"><p class="tag">' + id + '・' + U.esc(f.cat || '') + '</p><h2>' + U.esc(Gm.folioName(id)) + '</h2>' +
+        '<p class="fv-note" style="white-space:pre-line">' + U.esc(Gm.folioNote(id)) + '</p>' +
         '<p class="fv-sign">—— 珂潾　記</p>' +
         (drawing ? '<p class="fv-stamp">入帖</p>' : '') +
         '<p class="fine">頁圖取自伏尼契手稿掃描；與葉帖的配對是本作的虛構設計，不是對手稿的解讀。</p>' +

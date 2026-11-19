@@ -18,8 +18,12 @@
     };
   }
 
+  // 擴充：meta.medCap＝處置藥持有上限
+  function capped(id) { var cap = V.data.meta && V.data.meta.medCap, it = V.data.items[id]; return !!(cap && it && it.cat === 'medicine' && Gm.count(id) >= cap); }
+  Cr.capped = capped;
   Cr.canCraft = function (r) {
     if ((r.level || 1) > Gm.s.level) return false;
+    if (capped(r.output)) return false;
     if (r.cond && !Gm.cond(r.cond)) return false;
     return Object.keys(r.inputs).every(function (id) { return Gm.count(id) >= r.inputs[id]; });
   };
@@ -93,8 +97,9 @@
         var src = mode === 'buy' ? (shop.stock || []) : (shop.buys || []);
         return src.filter(function (e) { return Gm.cond(e.cond); }).map(function (e) {
           var d = V.data.items[e.item];
-          var ok = mode === 'buy' ? Gm.count(cur) >= e.price : Gm.count(e.item) > 0;
-          return { id: e.item, label: U.esc(d.name), icon: V.gfx.icon(d.icon), right: (mode === 'buy' ? '' : '+') + e.price + ' 籤', sub: '持有 ' + Gm.count(e.item), cls: ok ? '' : 'dim', data: e };
+          var left = mode === 'buy' && e.qty != null ? e.qty - (Gm.s.flags['shop:' + id + ':' + e.item] || 0) : null;   // 擴充：qty＝存量
+          var ok = mode === 'buy' ? Gm.count(cur) >= e.price && left !== 0 && !capped(e.item) : Gm.count(e.item) > 0;
+          return { id: e.item, label: U.esc(d.name), icon: V.gfx.icon(d.icon), right: (mode === 'buy' ? '' : '+') + e.price + ' 籤', sub: '持有 ' + Gm.count(e.item) + (left != null ? '・存量 ' + left : ''), cls: ok ? '' : 'dim', data: e, left: left };
         });
       }
       function detail(it) {
@@ -108,8 +113,12 @@
         onChoose: function (it) {
           var e = it.data;
           if (mode === 'buy') {
+            if (it.left === 0) { V.audio.play('error'); UI.toast('這樣已經換完了。', 'warn'); return; }
+            if (capped(e.item)) { V.audio.play('error'); UI.toast('這種藥已經帶滿了。', 'warn'); return; }
             if (Gm.count(cur) < e.price) { V.audio.play('error'); UI.toast(curDef.name + '不夠。', 'warn'); return; }
             Gm.take(cur, e.price, true); Gm.give(e.item, 1, true);
+            if (e.qty != null) Gm.s.flags['shop:' + id + ':' + e.item] = (Gm.s.flags['shop:' + id + ':' + e.item] || 0) + 1;
+            if (e.say && !Gm.s.flags['shop:' + id + ':' + e.item + ':said']) { Gm.s.flags['shop:' + id + ':' + e.item + ':said'] = true; UI.toast(e.say); }
           } else {
             if (Gm.count(e.item) < 1) { V.audio.play('error'); UI.toast('手上沒有這樣東西。', 'warn'); return; }
             Gm.take(e.item, 1, true); Gm.give(cur, e.price, true);

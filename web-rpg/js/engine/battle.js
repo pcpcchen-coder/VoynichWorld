@@ -27,7 +27,10 @@
     collapseConn: -1,        // 失穩：連通度 −1
     stableConn: 2,           // 穩定（未指定 rewards.conn 時）：連通度 +2
     isolateConn: -3,         // 隔離（未指定 isolate.conn 時）：連通度 −3
-    stableExp: 20
+    stableExp: 20,
+    isolateAutoRead: 0,      // 擴充：>0 時，隔離前若味序未讀全，自動補嚐全部（負荷 +此值）並觸發 allRevealed
+    mistreatFlag: null,      // 擴充：每次誤治（含對甜）把此數值旗標 +1
+    noisyTutorial: null      // 擴充：負荷第一次 ≥ noisyAt 時彈出的教學 id
   };
   B.rule = function () {
     var r = U.clone(DEFAULT_RULE), o = (V.data.meta && V.data.meta.battleRules) || {};
@@ -36,7 +39,7 @@
   };
   B.DEFAULT_RULE = DEFAULT_RULE;
   B.RESULTS = ['stabilized', 'isolated', 'collapsed', 'retreated', 'evacuated', 'read'];
-  B.BEHAVIOR_TYPES = ['attack', 'load', 'drain', 'reorder', 'grow', 'surge', 'settle', 'idle'];
+  B.BEHAVIOR_TYPES = ['attack', 'load', 'drain', 'reorder', 'swap', 'forget', 'reveal', 'grow', 'surge', 'settle', 'idle'];
   B.COMMANDS = ['taste', 'treat', 'clear', 'guard', 'rinse', 'item', 'isolate', 'retreat'];
 
   // ---- 能力：由手技（skills）與重要物品（items 的 unlock）決定 ----
@@ -59,6 +62,12 @@
     var n = 0; owned().forEach(function (o) { if (o.passive && o.passive[key]) n += o.passive[key]; });
     return n;
   }
+  // 擴充：防護時保留的比例（預設 0.5；持有 passive.guardCut 的物品／手技取最小值）
+  function guardKeep() {
+    var k = 0.5;
+    owned().forEach(function (o) { if (o.passive && o.passive.guardCut != null && o.passive.guardCut < k) k = o.passive.guardCut; });
+    return k;
+  }
   function otherGlyph(g) {
     var pool = V.GLYPH_ORDER.filter(function (x) { return x !== g; });
     return pool[Math.floor(U.rand() * pool.length)];
@@ -71,15 +80,21 @@
     opts = opts || {};
     var def = V.data.encounters[id];
     if (!def) { console.warn('找不到遭遇', id); return 'retreated'; }
+    // 擴充：地圖實體的 override 可覆寫同一遭遇的欄位（例：同 id 的「三符型」味序與獎勵）
+    if (opts.entity && opts.entity.def && opts.entity.def.override) {
+      var od = {}; Object.keys(def).forEach(function (k) { od[k] = def[k]; });
+      Object.keys(opts.entity.def.override).forEach(function (k) { od[k] = opts.entity.def.override[k]; });
+      def = od;
+    }
     var seqSrc = def.sequences ? def.sequences[Math.floor(U.rand() * def.sequences.length)] : def.sequence;
     if (typeof seqSrc === 'string') seqSrc = seqSrc.split('');
     var RULE = B.rule();
     var st = B.st = {
       id: id, def: def, opts: opts, R: RULE,
       seq: seqSrc.map(function (g) { return { g: g, known: null, reliable: true }; }),
-      imbalance: def.imbalance != null ? def.imbalance : 50,
+      imbalance: (Gm.s.encImb && Gm.s.encImb[id] != null) ? Gm.s.encImb[id] : (def.imbalance != null ? def.imbalance : 50),
       turn: 0, guard: false, mis: false, residue: null, log: [], intent: null,
-      used: {}, said: {}, revealed: 0, sweetHurt: 0, clamp: 0, rinsed: false,
+      used: {}, said: {}, revealed: 0, sweetHurt: 0, clamp: 0, rinsed: false, cleared: 0, clearedG: {}, times: {}, veil: 0, misN: 0,
       result: null, menu: 'busy', frame: 0, animT: 0, lastCmd: null,
       zone: opts.zone || def.zone || (V.field.map && V.field.map.def.zone) || null
     };
@@ -105,9 +120,17 @@
       if (!st.result) await creatureAct();
       if (!st.result) await specialRules();
       if (!st.result) await endRound();
+      await noisyHook();
     }
     var result = st.result;
-    await say(ev(result));
+    Gm.s.flags.last_mistreats = st.misN;   // 擴充：本場誤治次數（旗標 last_mistreats）
+    // 擴充：softFail——失穩／力竭不算結束：對象留在原地（下次以 imbalance 重新開始），可選擇全回復與傳送
+    var sf = def.softFail;
+    if (sf && (U.toArray(sf.on || ['collapsed', 'evacuated']).indexOf(result) >= 0)) {
+      st.soft = result; result = st.result = 'retreated';
+      if (sf.imbalance != null) { Gm.s.encImb = Gm.s.encImb || {}; Gm.s.encImb[id] = sf.imbalance; }
+    }
+    await say(st.soft ? (sf.lines || null) : ev(result));
     await finish(result);
     await UI.fade('out', 220, '#0b0a0e');
     UI.pop(st.modal);
@@ -115,7 +138,11 @@
     if (V.field.map) V.audio.ambience(V.field.map.def.ambience || 'village');
     await UI.fade('in', 260);
     if (result === 'evacuated' && !opts.noEvacWarp) await Gm.evacuate('體力耗盡，再撐下去會出事。');
-    if (result === 'retreated' && def.retreatWarp && V.field.map) {
+    if (st.soft) {
+      if (sf.heal) Gm.heal();
+      if (sf.warp && V.field.map) await V.field.warp(sf.warp.map, sf.warp.x, sf.warp.y, sf.warp.dir || 'down');
+      if (sf.actions) await Gm.run(sf.actions);
+    } else if (result === 'retreated' && def.retreatWarp && V.field.map) {
       var w = def.retreatWarp; await V.field.warp(w.map, w.x, w.y, w.dir || 'down');
     }
     return result;
@@ -128,6 +155,10 @@
     if (v == null) return null;
     if (key != null) { if (Array.isArray(v) || typeof v !== 'object') return null; return v[key] || null; }
     return v;
+  }
+  async function noisyHook() {
+    var st = B.st, t = st.R.noisyTutorial;
+    if (t && !st.result && Gm.loadPct() >= st.R.noisyAt && !Gm.s.seen['tut:' + t]) await Gm.showTutorial(t);
   }
   async function say(lines) {
     if (!lines) return;
@@ -409,6 +440,7 @@
         Gm.take(cmd.item, 1, true);
         var txt = Gm.useItem(it);
         if (it.use && it.use.clearResidue) st.residue = null;
+        if (it.use && it.use.veil) st.veil = Math.max(st.veil, it.use.veil);   // 擴充：本場感官灌入減少
         V.audio.play('heal'); log('使用了' + it.name + '。' + (it.use.text || txt)); await pause(450);
         break;
       }
@@ -420,6 +452,12 @@
           await pause(700); break;
         }
         st.clamp = 0;
+        if (R.isolateAutoRead && st.seq.some(function (x) { return !x.known || !x.reliable || x.known !== x.g; })) {
+          st.seq.forEach(function (x) { x.known = x.g; x.reliable = true; x.fresh = true; });
+          Gm.addLoad(R.isolateAutoRead);
+          log('下夾之前，珂潾把剩下的味序一口補嚐完（負荷 +' + R.isolateAutoRead + '）。', 'read'); render(); await pause(500);
+          if (!st.said.all) { st.said.all = true; await say(ev('allRevealed')); }
+        }
         V.audio.play('isolate'); fx('fx-isolate', 1200);
         log((st.def.isolate && st.def.isolate.text) || '珂潾夾住接口，封死管段。訊號一截一截地暗下去。', 'bad');
         await pause(1200); st.result = 'isolated'; break;
@@ -460,13 +498,14 @@
       log('味序裡的每一味都已經讀清楚了。', 'read');
     } else {
       var fakeAt = noisy && U.rand() < R.falseChance ? Math.floor(U.rand() * idx.length) : -1;
-      var read = [];
+      var read = [], newGlyphs = [];
       for (var k = 0; k < idx.length; k++) {
         var g = st.seq[idx[k]], shown = g.g, reliable = true;
         if (k === 0 && residue) { shown = residue; reliable = false; }
         if (noisy) reliable = false;
         if (k === fakeAt) shown = otherGlyph(g.g);
         g.known = shown; g.reliable = reliable; g.fresh = true;
+        if (shown === g.g) newGlyphs.push(shown);
         read.push(shown + (reliable ? '' : '？'));
         V.audio.play('taste', { glyph: shown });
         render(); await pause(420);
@@ -479,6 +518,10 @@
       var before = st.revealed;
       st.revealed += idx.length;
       for (var r = before + 1; r <= st.revealed; r++) await say(ev('reveal', r));
+      for (var q = 0; q < newGlyphs.length; q++) {   // 擴充：events.revealGlyph{味符}：該味第一次被讀出時
+        if (st.said['g:' + newGlyphs[q]]) continue; st.said['g:' + newGlyphs[q]] = true;
+        await say(ev('revealGlyph', newGlyphs[q]));
+      }
       if (st.seq.every(function (x) { return x.known; })) { if (!st.said.all) { st.said.all = true; await say(ev('allRevealed')); } }
     }
     Gm.addLoad(low ? R.tasteLowLoad : R.tasteHighLoad);
@@ -494,6 +537,11 @@
     if (front) { front.known = null; front.reliable = true; }
     V.audio.play('backfire'); fx('fx-bad', 700);
     log(text + '（誤治：失衡 +' + inc + '，這回合牠的反應會更猛）', 'bad');
+    countMis();
+  }
+  function countMis() {
+    var st = B.st; st.misN++;
+    if (st.R.mistreatFlag) Gm.s.flags[st.R.mistreatFlag] = (Number(Gm.s.flags[st.R.mistreatFlag]) || 0) + 1;
   }
   async function doTreat(itemId) {
     var st = B.st, R = st.R, it = V.data.items[itemId];
@@ -508,8 +556,12 @@
       front.known = '甜'; front.reliable = true; front.fresh = true;
       V.audio.play('backfire'); fx('fx-bad', 700);
       log('那是健康的糖流——藥把它也中和了。對象痛得整個縮起來。（失衡 +' + R.sweetImbalance + '，樣本會少一份）', 'bad');
+      countMis(); if (st.def.sweetFlag) Gm.setFlag(st.def.sweetFlag, true);
+      await say(ev('sweetHurt'));
     } else if (front.g === it.treats) {
       st.seq.shift(); st.imbalance = Math.max(0, st.imbalance - (st.def.treatImbalance != null ? st.def.treatImbalance : R.treatImbalance));
+      st.cleared++; st.clearedG[front.g] = true;
+      if (it.treatFlag) Gm.setFlag(it.treatFlag, true);
       fx('fx-good', 700);
       log(it.treatText || ('對症。「' + front.g + '」味散開了。'), 'good');
       await say(ev('cleared'));
@@ -528,6 +580,7 @@
     if (!front) return;
     if (front.g === '腥') {
       st.seq.shift(); st.imbalance = Math.max(0, st.imbalance - (st.def.treatImbalance != null ? st.def.treatImbalance : R.treatImbalance));
+      st.cleared++; st.clearedG[front.g] = true;
       fx('fx-good', 700); V.audio.play('treat');
       log('掏出一團已經不動的汲蟲。管路重新吸了一口氣，「腥」味退了。', 'good');
       await say(ev('cleared'));
@@ -536,6 +589,8 @@
       front.known = '甜'; front.reliable = true;
       V.audio.play('backfire'); fx('fx-bad', 700);
       log('那裡流的是健康的糖。手一攪，整股甜流都亂了。（失衡 +' + R.sweetImbalance + '）', 'bad');
+      countMis(); if (st.def.sweetFlag) Gm.setFlag(st.def.sweetFlag, true);
+      await say(ev('sweetHurt'));
     } else {
       misTreat('這裡沒有淤堵可清，最前面的不是「腥」。');
     }
@@ -555,12 +610,20 @@
     if (w.lenLt != null && st.seq.length >= w.lenLt) return false;
     if (w.clamped && !st.clamp) return false;
     if (w.once && st.used[b.id || b.type]) return false;
+    // 擴充條件
+    if (w.clearedGte != null && st.cleared < w.clearedGte) return false;
+    if (w.clearedLt != null && st.cleared >= w.clearedLt) return false;
+    if (w.has && !st.seq.some(function (x) { return U.toArray(w.has).indexOf(x.g) >= 0; })) return false;
+    if (w.clearedHas && !st.clearedG[w.clearedHas]) return false;
+    if (w.mis && !st.mis) return false;
+    if (w.cond != null && !Gm.cond(w.cond)) return false;
+    if (b.limit != null && (st.times[b.id || b.type] || 0) >= b.limit) return false;
     return true;
   }
   function usable(b, st) {
     if (!behOk(b, st)) return false;
     if (b.type === 'grow' && st.seq.length >= (b.max || 7)) return false;
-    if (b.type === 'reorder' && st.seq.length < 2) return false;
+    if ((b.type === 'reorder' || b.type === 'swap') && st.seq.length < 2) return false;
     return true;
   }
   function pickIntent() {
@@ -587,24 +650,27 @@
     var st = B.st, s = Gm.s, R = st.R;
     st.used[b.id || b.type] = true;
     var k = st.mis ? R.misDamage : 1;
-    function cut(v) { v = Math.round(v * k); return st.guard ? Math.floor(v / 2) : v; }
+    if (st.clamp && st.def.clampMul) k *= st.def.clampMul;   // 擴充：架夾期間對象行為效果加乘
+    var keep = guardKeep();
+    function cut(v) { v = Math.round(v * k); return st.guard ? Math.floor(v * keep) : v; }
+    function cutL(v) { v = cut(v); return st.veil ? Math.floor(v * (1 - st.veil)) : v; }  // 擴充：濾霧面巾
     switch (b.type) {
       case 'attack': {
         var dmg = cut(U.range(b.power != null ? b.power : [3, 5]));
         s.stamina = Math.max(0, s.stamina - dmg);
         V.audio.play('hit'); fx('fx-hurt', 500);
-        log((b.text || '對象猛然抽動。') + '（體力 −' + dmg + (st.guard ? '，防護擋下一半' : '') + '）', 'hurt');
+        log((b.text || '對象猛然抽動。') + '（體力 −' + dmg + (st.guard ? '，防護擋下一部分' : '') + '）', 'hurt');
         break;
       }
       case 'load': {
-        var ld = cut(U.range(b.power != null ? b.power : [4, 6]));
+        var ld = cutL(U.range(b.power != null ? b.power : [4, 6]));
         Gm.addLoad(ld);
         V.audio.play('hiss'); fx('fx-load', 500);
-        log((b.text || '一股強訊號灌進感官。') + '（感官負荷 +' + ld + (st.guard ? '，防護擋下一半' : '') + '）', 'hurt');
+        log((b.text || '一股強訊號灌進感官。') + '（感官負荷 +' + ld + (st.guard ? '，防護擋下一部分' : '') + '）', 'hurt');
         break;
       }
       case 'drain': {
-        var p = b.power || {}, d1 = cut(U.range(p.stamina != null ? p.stamina : 2)), d2 = cut(U.range(p.load != null ? p.load : 3));
+        var p = b.power || {}, d1 = cut(U.range(p.stamina != null ? p.stamina : 2)), d2 = cutL(U.range(p.load != null ? p.load : 3));
         s.stamina = Math.max(0, s.stamina - d1); Gm.addLoad(d2);
         V.audio.play('hit'); fx('fx-hurt', 500);
         log((b.text || '熱與訊號一起撲上來。') + '（體力 −' + d1 + '・負荷 +' + d2 + '）', 'hurt');
@@ -619,9 +685,29 @@
         log((b.text || '對象體內的流向亂了。') + '味序重排——先前的讀值全部作廢。', 'warn');
         break;
       }
+      case 'swap': {   // 擴充：最前面兩個互換，所有讀值作廢
+        var t0 = st.seq[0]; st.seq[0] = st.seq[1]; st.seq[1] = t0;
+        st.seq.forEach(function (g) { g.known = null; g.reliable = true; });
+        st.revealed = 0;
+        V.audio.play('warp'); fx('fx-shuffle', 700);
+        log((b.text || '對象體內的流向亂了。') + '先前的讀值全部作廢。', 'warn');
+        break;
+      }
+      case 'forget': { // 擴充：已揭示的讀值全部作廢（味序不變）
+        st.seq.forEach(function (g) { g.known = null; g.reliable = true; });
+        st.revealed = 0; fx('fx-shuffle', 700);
+        log((b.text || '') + '先前的讀值全部作廢。', 'warn');
+        break;
+      }
+      case 'reveal': { // 擴充：免費揭示最前面的味符
+        if (st.seq[0]) { st.seq[0].known = st.seq[0].g; st.seq[0].reliable = true; st.seq[0].fresh = true; V.audio.play('taste', { glyph: st.seq[0].g }); }
+        log((b.text || '') + (st.seq[0] ? '（最前面的味符是「' + st.seq[0].g + '」）' : ''), 'read');
+        break;
+      }
       case 'grow': {
         var g = b.glyph || (b.pool ? b.pool[Math.floor(U.rand() * b.pool.length)] : '苦');
-        var pos = b.at === 'front' ? 0 : (b.at === 'end' || b.at == null ? st.seq.length : U.randInt(Math.min(1, st.seq.length), st.seq.length));
+        var si = -1; st.seq.forEach(function (x, i) { if (x.g === '甜') si = i; });
+        var pos = b.at === 'front' ? 0 : b.at === 'beforeSweet' ? (si >= 0 ? si : st.seq.length) : (b.at === 'end' || b.at == null ? st.seq.length : U.randInt(Math.min(1, st.seq.length), st.seq.length));
         st.seq.splice(pos, 0, { g: g, known: null, reliable: true, fresh: true });
         if (b.imbalance) st.imbalance = Math.min(100, st.imbalance + b.imbalance);
         V.audio.play('rumble'); fx('fx-shuffle', 700);
@@ -637,6 +723,8 @@
       default:
         if (b.text) log(b.text);
     }
+    st.times[b.id || b.type] = (st.times[b.id || b.type] || 0) + 1;
+    if (b.actions) await Gm.run(b.actions);   // 擴充：每次發生都執行的動作
     if (b.say && !st.said['b:' + (b.id || b.type)]) { st.said['b:' + (b.id || b.type)] = true; if (b.shake) V.field.shake(300, 3); await say(b.say); }
     await pause(isAction ? 600 : 450);
     checkEnd();
@@ -702,6 +790,9 @@
       exp = Math.floor((rw.exp != null ? rw.exp : R.stableExp) * R.collapseExp);
       applyBlock(co, { conn: R.collapseConn });
       post = co.actions;
+    } else if (result === 'retreated' && st.soft) {
+      title = st.soft === 'collapsed' ? '失穩' : '力竭';
+      lines.push(def.softFail.text || '對象退回原處。重新來過。');
     } else if (result === 'retreated') {
       s.stats.retreated++;
       title = '撤離'; lines.push('珂潾退到安全的距離。對象還在原地。');

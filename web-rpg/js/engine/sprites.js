@@ -329,6 +329,29 @@
         R(x, 1, 5, 14, 9, C.copD); R(x, 2, 6, 12, 7, C.bone);
         R(x, 3, 8, 9, 1, '#4d4560'); R(x, 3, 10, 7, 1, '#4d4560');
         break;
+      // ---- 擴充外觀 ----
+      case 'hidden': break;                      // 不畫：用來讓地圖圖塊（家具、根管等）可以互動
+      case 'filterpatch':                        // 割過、補了一塊的濾幕
+        R(x, 1, 21, 14, 2, sh);
+        R(x, 1, 3, 2, 19, C.copD); R(x, 13, 3, 2, 19, C.copD); R(x, 1, 3, 14, 2, C.cop);
+        x.globalAlpha = 0.75; R(x, 3, 5, 10, 14, '#c9bc9f'); x.globalAlpha = 1;
+        R(x, 5, 9, 6, 6, '#e8dcc0'); R(x, 5, 9, 6, 1, '#7a4a2e'); R(x, 5, 14, 6, 1, '#7a4a2e'); R(x, 5, 9, 1, 6, '#7a4a2e'); R(x, 10, 9, 1, 6, '#7a4a2e');
+        break;
+      case 'valve':                              // 管壁上的隔膜瓣（眼皮狀）
+        R(x, 2, 20, 12, 2, sh);
+        G.disc(x, 8, 13, 6, '#5a3e4a'); G.disc(x, 8, 13, 5, frame ? '#8a5a6a' : '#7a4e5c');
+        R(x, 3, 13, 10, 1, '#2a1a22'); P(x, 8, 12, frame ? '#73D6D0' : '#4fb3ab');
+        break;
+      case 'membrane':                           // 骨白色的乾膜、硬化斷面、封板
+        R(x, 1, 21, 14, 2, sh);
+        R(x, 1, 5, 14, 17, '#d9cdb4'); R(x, 2, 6, 12, 15, '#efe4cc');
+        for (var q = 7; q < 20; q += 4) R(x, 3, q, 10, 1, '#b7a98c');
+        P(x, 5, 9, '#9c8f74'); P(x, 10, 15, '#9c8f74');
+        break;
+      case 'hatch':                              // 舊排水口
+        R(x, 1, 21, 14, 2, sh);
+        G.disc(x, 8, 15, 6, '#3a2a22'); G.disc(x, 8, 15, 5, '#0d0a10'); R(x, 2, 15, 12, 1, '#6a4a32');
+        break;
       default:
         R(x, 5, 10, 6, 6, '#73D6D0');
     }

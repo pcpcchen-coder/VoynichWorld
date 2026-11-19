@@ -16,7 +16,7 @@
   var particles = [], mist = [], darkCanvas = null, refreshT = 0;
   var PLAYER_SPEED = 5.6;
 
-  var KIND_NAMES = { altar: '味診台', gauge: '水位尺', filter: '孢子濾幕', shrine: '種源龕', bed: '床', gather: '採集點', observe: '觀察點', chest: '寶匣', sign: '告示' };
+  var KIND_NAMES = { altar: '味診台', gauge: '水位尺', filter: '孢子濾幕', shrine: '種源龕', bed: '床', gather: '採集點', observe: '觀察點', chest: '寶匣', sign: '告示', valve: '活瓣', membrane: '痂膜', hatch: '維修口', hidden: '' };
   F.KIND_NAMES = KIND_NAMES;
 
   // ======================= 載入 =======================
@@ -39,7 +39,7 @@
   F.load = function (mapId, x, y, dir) {
     var def = V.data.maps[mapId];
     if (!def) throw new Error('找不到地圖：' + mapId);
-    var pm = V.parseMap(mapId, def);
+    var pm = V.parseMap(mapId, F.patchedDef(def));
     if (pm.errors.length) console.warn(pm.errors.join('\n'));
     var layers = G.renderMapLayers(pm);
     var m = F.map = { id: mapId, def: def, pm: pm, layers: layers, ents: [] };
@@ -70,6 +70,24 @@
     setupParticles();
     V.audio.ambience(def.ambience || ({ cave: 'cave', indoor: 'indoor', wither: 'wither' }[F.tone()] || 'village'));
     V.emit('mapload', mapId);
+  };
+
+  // 擴充：地圖 patches——[{ cond, x, y, ground: ['列', …] }]，條件成立時以 ground 覆寫該矩形（空白＝不改）。
+  // 載入地圖時套用；狀態改變後要重新 warp 到同一張地圖才會更新。驗證器只檢查未套用 patches 的基本地形。
+  F.patchedDef = function (def) {
+    if (!def.patches || !def.patches.length) return def;
+    var g = def.ground.slice();
+    def.patches.forEach(function (pt) {
+      if (!Gm.cond(pt.cond)) return;
+      (pt.ground || []).forEach(function (row, dy) {
+        var y = pt.y + dy; if (y < 0 || y >= g.length) return;
+        var line = g[y].split('');
+        for (var dx = 0; dx < row.length; dx++) { var ch = row.charAt(dx); if (ch !== ' ' && pt.x + dx < line.length) line[pt.x + dx] = ch; }
+        g[y] = line.join('');
+      });
+    });
+    var out = {}; Object.keys(def).forEach(function (k) { out[k] = def[k]; }); out.ground = g;
+    return out;
   };
 
   F.tone = function () { return (Gm.s.tones && Gm.s.tones[F.map.id]) || F.map.def.tone || 'day'; };
@@ -184,9 +202,10 @@
     var gt = V.TILES[pm.ground[p.y * pm.w + p.x]];
     if (gt.sfx && s.stats.steps % 2 === 0) V.audio.play(gt.sfx);
     if (gt.hazard) {
-      s.stamina = Math.max(0, s.stamina - gt.hazard);
+      var hz = (V.data.meta && V.data.meta.ventDamage) || gt.hazard;   // 擴充：meta.ventDamage 覆寫硫氣孔傷害
+      s.stamina = Math.max(0, s.stamina - hz);
       V.audio.play('hiss'); F.shake(160, 2);
-      if (F.time - hazardToastT > 4) { UI.toast('硫氣灼喉——體力 −' + gt.hazard, 'warn'); hazardToastT = F.time; }
+      if (F.time - hazardToastT > 4) { UI.toast('硫氣灼喉——體力 −' + hz, 'warn'); hazardToastT = F.time; }
       if (s.stamina <= 0) { F.script(function () { return Gm.evacuate('硫氣讓妳眼前一黑。'); }); return; }
     }
     var here = F.entsAt(p.x, p.y), i, e;
@@ -239,12 +258,19 @@
       if (d.actions) await Gm.run(d.actions);
     });
   }
-  function startEncounter(e, auto) {
+  function startEncounter(e, auto) { F.script(function () { return runEncounter(e, false); }); }
+  // 擴充：['engage', 實體id]
+  F.engage = function (id) {
+    var e = F.ent(id);
+    if (!e || e.type !== 'encounter') { console.warn('engage：找不到遭遇實體', id); return Promise.resolve(); }
+    return runEncounter(e, true);
+  };
+  async function runEncounter(e, forced) {
     var p = F.player;
-    F.script(async function () {
+    {
       var enc = V.data.encounters[e.def.encounter] || {};
-      if (e.def.before) await V.dialogue.lines(e.def.before);
-      if (!e.def.noConfirm) {
+      if (e.def.before && !forced) await V.dialogue.lines(e.def.before);
+      if (!e.def.noConfirm && !forced) {
         var r = await UI.choose(e.def.prompt || enc.approach || ((enc.name || '對象') + '就在前面。'), [
           { id: 'go', label: '靠近', sub: '開始嚐味診療' }, { id: 'no', label: '先不要' }], { index: 0 });
         if (!r || r.id !== 'go') { e.cool = 2; return; }
@@ -261,7 +287,7 @@
       F.refresh();
       var on = e.def.onResult || {};
       if (res !== 'evacuated' && on[res]) await Gm.run(on[res]);
-    });
+    }
   }
 
   // ======================= 互動 =======================
@@ -273,6 +299,7 @@
       if (e.type === 'npc') { talk(e); return true; }
       if (e.type === 'object') { F.script(function () { return useObject(e); }); return true; }
       if (e.type === 'encounter') {
+        if (!e.done && e.def.dialogue) { talk(e); return true; }   // 擴充：遭遇實體可先播對話（對話裡用 ['engage', 實體id] 開始）
         if (!e.done) { startEncounter(e, false); return true; }
         var calm = e.def.calm || (V.data.encounters[e.def.encounter] || {}).calmText;
         if (calm) { F.script(function () { return V.dialogue.lines(calm); }); return true; }
@@ -310,7 +337,7 @@
       case 'shrine': await shrine(e); break;
       case 'bed':
         if (await UI.confirm('要在這裡休息嗎？', '休息', '不用')) {
-          await UI.fade('out', 500, '#0b0a0e'); Gm.heal(); V.audio.play('heal'); await U.wait(400); await UI.fade('in', 500);
+          await UI.fade('out', 500, '#0b0a0e'); Gm.heal(); Gm.respawnGathers(); V.audio.play('heal'); await U.wait(400); await UI.fade('in', 500);
           UI.toast('體力與感官都恢復了。', 'heal');
         }
         break;
@@ -333,7 +360,7 @@
         { id: 'leave', label: '離開' }]);
       if (!r || r.id === 'leave') return;
       if (r.id === 'rest') {
-        var n = Gm.bankSamples(); Gm.heal(); V.audio.play('heal');
+        var n = Gm.bankSamples(); Gm.heal(); Gm.respawnGathers(); V.audio.play('heal');
         UI.toast(n ? '已入庫 ' + n + ' 份樣本。體力與感官恢復。' : '體力與感官恢復。', 'heal');
         V.save.auto();
       } else if (r.id === 'save') { await V.menu.openSaveLoad('save'); }
