@@ -35,6 +35,38 @@
 - 3D 版的對白、遭遇、調劑與 2D 版相同；步行速度約每秒 4.2 格（2D 版估算用每秒 3.36 格），但 3D 視角下找路、轉鏡頭、看場景會多花時間，估計整體多 5–10 分鐘。
 - 沒有真人計時的完整遊玩紀錄；自動測試的耗時受軟體繪圖拖慢，不能當作遊玩時間。
 
-## 5. 已知限制
+## 5. 驗證紀錄（2026-11-19，本環境：無頭 Chromium＋SwiftShader 軟體繪圖）
 
-（完成驗證後更新，見 README。）
+| 測試 | 對象 | 結果 |
+|---|---|---|
+| `node web-rpg/tools/validate-data.js` | 共用資料 | 零錯誤 |
+| `node web-rpg/tests/smoke.js --official` | 2D | 通過 |
+| `node web-rpg/tests/playthrough.js` | 2D | 通過 |
+| `node web-rpg/tests/routes.js` | 2D | 通過（78 項） |
+| `node web-rpg/tests/cutscene-visibility.js` | 2D | 通過 |
+| `node web-rpg-3d/tests/smoke3d.js` | 3D，三種尺寸 | 通過（90 項畫面內容檢查） |
+| `VELLORA_3D=1 node web-rpg/tests/playthrough.js` | 3D | 通過（新遊戲 → 主線 18 場 → 6 張葉帖 → 3 條支線 → 章末，65 項＋手機段） |
+| `VELLORA_3D=1 node web-rpg/tests/routes.js` | 3D | 通過（78 項：隔離、失敗重來、支線、章末 9 種組合、存讀檔、無本機儲存） |
+| `node web-rpg-3d/tests/real-input.js --until=m0-07` | 3D，只用真實鍵盤 | 通過：504 次真實按鍵，從標題「新遊戲」到第一張葉帖 F-006，再到 M0-07 味診台（沒有走完整個序章） |
+
+`routes.js`（3D）與 `real-input.js` 是在最後一輪「靜態網格合併、對話運鏡」之前的版本上跑的；那一輪只改呈現，之後重跑了 `smoke3d.js` 與 3D `playthrough.js`，皆通過。
+
+### 量測
+
+初次載入（`index.html` 引用的全部檔案＋13 個資料檔＋標題圖）：50 個檔案、約 1.42 MB，gzip 後約 0.57 MB；其中 three.js 543 KB、共用引擎 257 KB、資料 219 KB、3D 呈現層約 160 KB。
+
+幀率（`node web-rpg-3d/tests/measure.js`；SwiftShader 是 CPU 軟體繪圖，**不代表實機**，只能當相對比較）：
+
+| 情境 | 高畫質 | 低畫質 |
+|---|---|---|
+| 桌機 1280×720，霧階池站 | 約 2 fps | 約 6 fps |
+| 桌機 1280×720，首領遭遇 | 約 3 fps | 約 6 fps |
+| 模擬手機 390×844（DPR 3），霧階池站 | 約 2 fps | 約 15 fps |
+| 模擬手機 390×844（DPR 3），首領遭遇 | 約 4 fps | 約 17 fps |
+
+與 GPU 無關、可直接參考的繪製量（霧階池站，合併後）：高畫質約 150 次 draw call（含陰影 pass）、約 17 萬個三角形；低畫質地形網格減為四分之一，約 5.5 萬個三角形。
+實體 GPU 與實體手機上的幀率**沒有量到**（這個環境沒有）。
+
+## 6. 已知限制
+
+見 `web-rpg-3d/README.md` 的「已知限制」。

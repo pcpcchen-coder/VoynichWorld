@@ -64,17 +64,32 @@ web-rpg-3d/
 
 ## 測試
 
-需要 Node.js 與 Playwright（僅測試用）。無頭 Chromium 以 SwiftShader 軟體繪圖執行 WebGL，畫面很慢（約 5–10 fps），所以測試預設用低畫質。
+需要 Node.js 與 Playwright（僅測試用）。無頭 Chromium 以 SwiftShader（CPU 軟體繪圖）執行 WebGL，畫面很慢，
+所以測試預設用低畫質，並以 `scale` 參數降低渲染解析度（只影響測試速度，不影響規則）。
 
 ```bash
-node web-rpg-3d/tests/smoke3d.js           # 冒煙＋畫面檢查：標題、開場、各地圖、遭遇、選單、手機直橫向；檢查畫布不是單色、文字可見
+node web-rpg-3d/tests/smoke3d.js                 # 冒煙＋畫面檢查（桌機 1280×720、手機 390×844 直向、844×390 橫向）
 VELLORA_3D=1 node web-rpg/tests/playthrough.js   # 與 2D 版同一支通關測試，改開 3D 版：從新遊戲玩到章末
-VELLORA_3D=1 node web-rpg/tests/routes.js        # 分歧路線：隔離、失敗重來、支線、章末抉擇、存讀檔、無本機儲存
-node web-rpg-3d/tests/real-input.js        # 只用真實鍵盤輸入（不傳送、不自動完成遭遇）
+VELLORA_3D=1 node web-rpg/tests/routes.js        # 分歧路線：隔離、失敗重來、支線、章末 9 種組合、存讀檔、無本機儲存
+node web-rpg-3d/tests/real-input.js --until=m0-07  # 只用真實鍵盤輸入（不傳送、不自動完成遭遇）
+node web-rpg-3d/tests/measure.js                 # 初次載入大小、幀率與繪製量
+node web-rpg-3d/tools/build-single.js            # 打包成單一 HTML（dist/，不提交）
 ```
 
-截圖輸出到 `web-rpg-3d/tests/out/`。
+- **smoke3d.js** 不是一直按確認：每個畫面都斷言內容——3D 畫布不是單色（取樣色彩數、亮度分散度）、過場旁白／對話框／指令面板是畫面最上層（`elementFromPoint`，不被黑幕蓋住）、
+  按住方向鍵後玩家座標真的改變、轉鏡頭後方位角改變、遭遇對象模型投影在舞台區內、手機上所有遭遇指令都在畫面內、葉帖頁圖確實載入。截圖在 `tests/out/s3-*.png`。
+- **real-input.js**：用 BFS 規劃路線（只讀地圖），但移動、對話、選單、遭遇指令全部是真實按鍵；遭遇中依畫面上的味序決定嚐味或對症處置。
+- 2D 與 3D 的 `playthrough.js`、`routes.js` 是同一支腳本；3D 模式下「走一格」改成按住方向鍵直到走進下一格。
+
+最近一次結果見 [`docs/NOTES.md`](docs/NOTES.md) 的「驗證紀錄」。
 
 ## 已知限制
 
-（見 docs/NOTES.md 的「已知限制」，完成後更新。）
+- **造型精細度有限**：人物、生物、建物都是基本幾何體組合，臉部只有眼睛；動畫是程式驅動的肢體擺動，沒有骨架動畫或表情。
+- **沒有後製**：沒有泛光、景深、螢幕空間反射；生物發光用光暈貼片模擬。
+- **效能只在軟體繪圖下量過**：這個環境沒有實體 GPU，也沒有實體手機；實際幀率未知（數據與說明見 docs/NOTES.md）。觸控小螢幕預設低畫質。
+- **導管洞沒有洞頂**，牆做得較矮、鏡頭偏俯視；擋在鏡頭前的近物以近裁切面切開，偶爾會看到被切開的樹冠或柱子。
+- **過場運鏡**沿用 2D 過場指令，只移動鏡頭焦點，沒有電影式運鏡。
+- **音效**沿用 2D 版的合成音效，沒有 3D 空間音效。
+- **畫質切換**：抗鋸齒在啟動時決定；地形網格密度在下一次換地圖時才更新。
+- **存檔與 2D 版共用**（同一網域下互通），這是刻意的，但也代表兩版的自動存檔會互相覆蓋。
