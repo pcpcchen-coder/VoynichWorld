@@ -33,7 +33,7 @@
   var C = G.C = {
     soil: '#5b3a2c', soilD: '#45291f', soilL: '#6e4734', seep: '#2B7D79', glow: '#73D6D0',
     path: '#8a6244', pathL: '#9e7452', pathD: '#704e37',
-    moss: '#1f3a4f', mossL: '#2c5470', mossD: '#162b3d',
+    moss: '#24486a', mossL: '#3a6a90', mossD: '#17304a',
     sh: '#2d847f', shL: '#3f9c94', shD: '#236d6a', foam: '#a7ddd3',
     deep: '#163b57', deepL: '#1f4c6b', deepD: '#102c44',
     bone: '#D8CCB3', boneD: '#b3a688', boneL: '#ebe1cc',
@@ -85,9 +85,15 @@
       }
     });
   };
-  groundDraw[';'] = function (ctx, ox, oy, s) {
-    Rr(ctx, ox, oy, TS, TS, C.moss);
+  groundDraw[';'] = function (ctx, ox, oy, s, nb) {
+    soilBase(ctx, ox, oy, s);
     var rnd = U.rng(s);
+    // 靛苔：一叢一叢的圓塊，邊緣不鋪滿，讓活土從縫裡露出來（與相鄰苔地相接處鋪滿）
+    var full = function (dx, dy) { return nb && nb(dx, dy) === ';'; };
+    for (var yy = 0; yy < TS; yy++) for (var xx = 0; xx < TS; xx++) {
+      var e = Math.min(full(-1, 0) ? 9 : xx, full(1, 0) ? 9 : TS - 1 - xx, full(0, -1) ? 9 : yy, full(0, 1) ? 9 : TS - 1 - yy);
+      if (e >= 3 || (e >= 1 && rnd() < 0.45 + e * 0.15)) P(ctx, ox + xx, oy + yy, C.moss);
+    }
     for (var i = 0; i < 10; i++) {
       var x = ox + Math.floor(rnd() * 15), y = oy + 1 + Math.floor(rnd() * 14);
       P(ctx, x, y, C.mossL); P(ctx, x, y - 1, C.mossD);
@@ -537,7 +543,8 @@
       }
       case 'f': {
         var g2 = 0.18 + 0.2 * (0.5 + 0.5 * Math.sin(t * 1.7 + ph));
-        ctx.globalAlpha = g2; ctx.fillStyle = C.glow; ctx.fillRect(sx + 2, sy + 3, 12, 10); ctx.globalAlpha = 1; break;
+        ctx.globalAlpha = g2 * 0.7; ctx.fillStyle = C.glow; ctx.beginPath(); ctx.arc(sx + 8, sy + 9, 5, 0, 6.283); ctx.fill();
+        ctx.globalAlpha = g2; ctx.beginPath(); ctx.arc(sx + 8, sy + 9, 2.5, 0, 6.283); ctx.fill(); ctx.globalAlpha = 1; break;
       }
       case 'P': {
         var g3 = 0.4 + 0.5 * (0.5 + 0.5 * Math.sin(t * 1.3 + ph));

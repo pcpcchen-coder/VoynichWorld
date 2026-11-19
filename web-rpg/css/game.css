@@ -90,6 +90,7 @@ p { margin: 0 0 .6em; }
 .bn-sub { display: block; font-size: .72rem; letter-spacing: .2em; opacity: .8; }
 #toasts { position: absolute; z-index: 45; right: max(.6em, env(safe-area-inset-right)); top: max(.6em, env(safe-area-inset-top)); display: flex; flex-direction: column; align-items: flex-end; gap: .35em; pointer-events: none; max-width: min(24em, 78vw); }
 body.pad-on #toasts { top: 3.4em; }
+body.panel-open #toasts { top: auto; bottom: max(2.6em, env(safe-area-inset-bottom)); flex-direction: column-reverse; }
 .toast { display: flex; align-items: center; gap: .5em; background: rgba(23,42,70,.94); color: var(--bone-l); border: 1px solid rgba(115,214,208,.6); border-radius: 5px; padding: .35em .8em; font-size: .85rem; line-height: 1.4;
   animation: toast-in .25s ease-out; transition: opacity .45s, transform .45s; box-shadow: 0 3px 10px rgba(0,0,0,.4); }
 .toast img { width: 1.5em; height: 1.5em; image-rendering: pixelated; flex: none; }
@@ -137,7 +138,7 @@ body.pad-on #toasts { top: 3.4em; }
 .glyph-table td { padding: .3em .4em; border-bottom: 1px dotted rgba(23,42,70,.25); vertical-align: middle; line-height: 1.45; }
 
 /* ---------- 味符 ---------- */
-.glyph { --gc: #9a9384; --gr: #5d5a55; position: relative; display: inline-flex; align-items: center; justify-content: center; width: 2.7em; height: 2.7em; border-radius: 50%;
+.glyph { --gc: #9a9384; --gr: #5d5a55; position: relative; flex: none; display: inline-flex; align-items: center; justify-content: center; width: 2.7em; height: 2.7em; border-radius: 50%;
   background: radial-gradient(circle at 35% 30%, rgba(255,255,255,.55), rgba(255,255,255,0) 55%), var(--gc); border: 3px solid var(--gr); color: #14121a; box-shadow: 0 2px 5px rgba(0,0,0,.35); flex: none; }
 .glyph b { font-family: var(--serif); font-size: 1.35em; line-height: 1; }
 .glyph small { position: absolute; left: 50%; top: 100%; transform: translateX(-50%); margin-top: .25em; font-size: .62em; white-space: nowrap; color: #8a3a12; font-weight: 700; line-height: 1.2; }
@@ -240,6 +241,9 @@ body.portrait .b-seqhead { flex-direction: column; gap: 0; }
 .tab { flex: none; background: transparent; border: 1px solid transparent; border-bottom: none; border-radius: 5px 5px 0 0; padding: .35em .85em; min-height: 2.4em; font-family: var(--serif); letter-spacing: .14em; color: #3b4a66; }
 .tab.on { background: var(--indigo); color: var(--bone-l); border-color: #0d1830; }
 .menu-close { flex: none; margin-bottom: .3em; min-height: 2.1em; padding: .2em .8em; }
+body.portrait .menu-tabs { flex-wrap: wrap; overflow: visible; }
+body.portrait .menu-frame { height: min(44em, 100%); }
+body.portrait .menu-head { align-items: flex-start; padding-top: .35em; }
 .menu-body { flex: 1; min-height: 0; display: flex; }
 .menu-list { flex: 0 0 42%; overflow-y: auto; padding: .4em; border-right: 1px solid rgba(43,125,121,.45); }
 .menu-detail { flex: 1; min-width: 0; overflow-y: auto; padding: .8em 1em; }
@@ -332,6 +336,7 @@ body.short .title-inner { gap: .5em; padding-top: .6em; padding-bottom: 2em; } b
 .end-dims { display: grid; gap: .25em; } .end-dim { display: flex; align-items: center; gap: .7em; font-size: .9rem; } .end-dim span { font-family: var(--serif); font-weight: 700; width: 1.4em; } .end-dim em { font-style: normal; min-width: 1.6em; text-align: right; }
 .end-lean { font-family: var(--serif); margin-top: .7em; }
 .end-tbc { text-align: center; font-family: var(--serif); font-size: 1.2rem; letter-spacing: .5em; color: var(--teal); margin: .8em 0 .4em; }
+.end-btns { position: sticky; bottom: -1.2em; margin: 0 -1.5em -1.2em; padding: .7em 1.5em 1em; background: linear-gradient(rgba(228,217,192,0), #e2d6bc 35%); }
 .end-btns { display: flex; justify-content: flex-end; gap: .6em; margin-top: .8em; }
 
 /* ---------- 觸控虛擬鍵 ---------- */

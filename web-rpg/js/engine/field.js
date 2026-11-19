@@ -284,12 +284,13 @@
     var d = e.def, p = F.player;
     if (!e.step && !d.fixedDir) e.dir = V.opposite[p.dir];
     F.script(async function () {
-      var dlg = d.dialogue, name = F.entName(e);
+      // talk 由上往下取第一個條件成立的項目；都不成立時改用 dialogue，再沒有就用 lines
+      var dlg = d.dialogue, name = F.entName(e), hit = false;
       if (d.talk) {
-        for (var i = 0; i < d.talk.length; i++) if (Gm.cond(d.talk[i].cond)) { dlg = d.talk[i].dialogue; if (d.talk[i].lines) { await V.dialogue.lines(d.talk[i].lines, name); dlg = null; } break; }
+        for (var i = 0; i < d.talk.length; i++) if (Gm.cond(d.talk[i].cond)) { hit = true; dlg = d.talk[i].dialogue; if (d.talk[i].lines) { await V.dialogue.lines(d.talk[i].lines, name); dlg = null; } break; }
       }
       if (dlg) await V.dialogue.play(dlg);
-      else if (d.lines && !d.talk) await V.dialogue.lines(d.lines, name);
+      else if (d.lines && !hit) await V.dialogue.lines(d.lines, name);
       if (d.actions) await Gm.run(d.actions);
     });
   }
@@ -551,7 +552,12 @@
     else if (tone === 'wither') { mul(ctx, '#d9cdbf'); ctx.fillStyle = 'rgba(150,140,128,0.16)'; ctx.fillRect(0, 0, view.w, view.h); }
     else if (tone === 'cave') { mul(ctx, '#b4aacd'); }
     // 霧
-    if (mist.length) { var mb = G.mistBlob(); for (i = 0; i < mist.length; i++) ctx.drawImage(mb, Math.round(mist[i].x), Math.round(mist[i].y)); }
+    if (mist.length) {   // 只畫在地圖範圍內（小地圖置中時不飄到外面的黑底上）
+      var mb = G.mistBlob();
+      ctx.save(); ctx.beginPath(); ctx.rect(-ox, -oy, m.pm.w * TS, m.pm.h * TS); ctx.clip();
+      for (i = 0; i < mist.length; i++) ctx.drawImage(mb, Math.round(mist[i].x), Math.round(mist[i].y));
+      ctx.restore();
+    }
     // 黑暗與光源
     if (tone === 'cave' || tone === 'dusk') {
       if (!darkCanvas) darkCanvas = G.canvas(view.w, view.h);

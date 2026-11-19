@@ -14,7 +14,7 @@
       state: function () { return Gm.s; },
       scene: function () { return V.scene; },
       ui: function () { return UI.stack.map(function (m) { return m.kind; }); },
-      busy: function () { return F.busy > 0 || UI.stack.length > 0 || !!(F.player && (F.player.step || F.player.queue)); },
+      busy: function () { return F.busy > 0 || Gm.notices.length > 0 || UI.stack.length > 0 || !!(F.player && (F.player.step || F.player.queue)); },
       player: function () { var p = F.player; return p ? { map: F.map.id, x: p.x, y: p.y, dir: p.dir, moving: !!p.step } : null; },
       speed: function (n) { V.runtime.speed = n; return n; },
       press: function (name) { V.input.press(name); },
@@ -28,7 +28,7 @@
       battle: function () {
         var st = B.st; if (!st) return null;
         return { id: st.id, turn: st.turn, menu: st.menu, imbalance: st.imbalance, result: st.result, residue: st.residue,
-          truth: st.seq.map(function (g) { return g.g; }), known: st.seq.map(function (g) { return g.known; }),
+          truth: st.seq.map(function (g) { return g.g; }), known: st.seq.map(function (g) { return g.known; }), reliable: st.seq.map(function (g) { return g.reliable; }), readOnly: !!st.def.endOnReveal,
           awaiting: !!st.resolveCmd, items: st.list.items.map(function (i) { return i.id; }) };
       },
       battleExec: function (cmd) { return B.exec(cmd); },

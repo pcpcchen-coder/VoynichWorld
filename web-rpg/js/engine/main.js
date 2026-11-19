@@ -107,6 +107,8 @@
     // 觸控虛擬鍵：只在地圖（含對話）時顯示
     var t2 = V.ui.top();
     var want = V.scene === 'field' && (!t2 || t2.kind === 'dialogue' || t2.kind === 'wait');
+    // 選單／調劑／遭遇開啟時，提示改到下方，避免蓋住標題列的按鈕
+    document.body.classList.toggle('panel-open', V.ui.has('menu') || V.ui.has('craft') || V.ui.has('battle'));
     if (want !== padOn) { padOn = want; document.body.classList.toggle('pad-on', want); if (!want) V.input.releaseAll(); }
   }
 

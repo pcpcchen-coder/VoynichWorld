@@ -42,9 +42,21 @@
   R.isFlagRef = function (c) { return typeof c === 'string' && !/[:<>=!@]/.test(c); };
 
   var cache = {};
+  // 劇本記號簡寫（含「.」的裸名稱）：flag.xxx → 旗標；world.connectivity.區域 → conn；
+  // world.veinstate.區域 → vein；axis.sow 等 → dim。例：'!flag.prologue.puma_confessed'、'world.connectivity.miststep>=60'
+  var BARE = /^(!)?\s*([A-Za-z_][\w\-]*\.[\w.\-]+)\s*(?:(>=|<=|==|!=|=|>|<)\s*(.+))?$/;
+  function bareAtom(str) {
+    var m = BARE.exec(str); if (!m) return null;
+    var name = m[2], kind = 'flag', arg = name;
+    if (/^world\.connectivity\./.test(name)) { kind = 'conn'; arg = R.zoneKey(name); }
+    else if (/^world\.veinstate\./.test(name)) { kind = 'vein'; arg = R.zoneKey(name); }
+    else if (/^axis\./.test(name)) { kind = 'dim'; arg = name; }
+    return ATOM.exec((m[1] || '') + kind + ':' + arg + (m[3] ? m[3] + m[4] : ''));
+  }
   R.parseAtom = function (str) {
     if (cache[str]) return cache[str];
     var m = ATOM.exec(String(str).trim());
+    if (!m || !R.COND_KINDS[m[2]]) m = bareAtom(String(str).trim()) || m;
     if (!m) throw new Error('無法解析條件「' + str + '」');
     var kind = m[2];
     var def = R.COND_KINDS[kind];
