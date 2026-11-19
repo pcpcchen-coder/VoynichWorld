@@ -26,6 +26,7 @@
 - [路線 B：薇蘿世界 VELLORA](#路線-b薇蘿世界-vellora)
 - [角色與生態 IP 聖經 v0.2](#角色與生態-ip-聖經-v02)
 - [珂潾文章插畫集 v0.3](#珂潾文章插畫集-v03)
+- [網頁 RPG《薇蘿：葉帖紀行》](#網頁-rpg薇蘿葉帖紀行)
 - [手稿六大分區 → 世界六個面向](#手稿六大分區--世界六個面向)
 - [逐頁分區資料](#逐頁分區資料)
 - [倉庫結構](#倉庫結構)
@@ -187,6 +188,21 @@
 - 以「探索 → 合作 → 危機 → 選擇 → 延續」排序，可直接作為長篇設定文或小說章首的視覺節奏。
 - 完整生成規格見 [`ip-bible/KORIN_ARTICLE_PROMPTS.md`](ip-bible/KORIN_ARTICLE_PROMPTS.md)。
 
+### 網頁 RPG《薇蘿：葉帖紀行》
+
+[`web-rpg/`](web-rpg/) 是以薇蘿世界為設定的 HTML 網頁 RPG：你扮演珂潾，在脈枯逼近的池環之間採樣、診斷、調劑，
+一張一張畫下自己的葉帖。純靜態、無外部相依，下載後雙擊 [`web-rpg/index.html`](web-rpg/index.html) 就能玩，鍵盤與觸控皆可。
+
+- **可玩**：序章〈味變〉，約 1 小時——7 張地圖、13 位居民、主線 18 場、5 條支線、13 種遭遇、6 張葉帖。
+- **劇本**：全作規劃 109 小時；其餘 108 小時（第 1–9 章、終章四結局、終章後地球篇與二周目、勢力中篇三部）
+  的完整劇本在 [`web-rpg/docs/script/`](web-rpg/docs/script/)，尚未實作。
+- **核心玩法「嚐味診療」**：遭遇對象是中毒或野化的生命，不是敵人。先嚐出牠身上味序的到達順序，再對症處置；沒有擊殺。
+- **葉帖即進度**：全作 206 張葉帖，一一對應本倉庫 206 個手稿內容頁的掃描圖；配對是遊戲設計，不是對手稿的解讀。
+- 企劃總綱見 [`web-rpg/docs/00-master-outline.md`](web-rpg/docs/00-master-outline.md)；
+  把劇本做成可玩內容的資料格式見 [`web-rpg/docs/ENGINE.md`](web-rpg/docs/ENGINE.md)。
+
+本子專案的新增內容屬 C 層製作提案（僅限本遊戲的改編），不回寫 `ip-bible/`，與 `roblox-game/` 互相獨立。
+
 ### 設定聖經內容（20 頁 / 16 章）
 
 完整內容見 **[`docs/Vellora_WorldBible_v0.1.md`](docs/Vellora_WorldBible_v0.1.md)**（可在 GitHub 直接閱讀），
@@ -301,6 +317,14 @@ VoynichWorld/
 │   ├── singulion_hypothesis_2026.json         # 2026 頁序錯裝假說：數據、重排方案、物證與限制
 │   └── vellora_ip_entities_v0.2.json           # IP 實體機器可讀索引
 │
+├── web-rpg/                                   # 網頁 RPG《薇蘿：葉帖紀行》
+│   ├── index.html                             # 遊戲入口（序章〈味變〉可玩，約 1 小時）
+│   ├── js/engine/ · js/data/ · css/ · assets/ # 引擎、序章內容、樣式與圖檔
+│   ├── docs/00-master-outline.md              # 企劃總綱（109 小時）
+│   ├── docs/ENGINE.md                         # 資料格式文件
+│   ├── docs/script/                           # 全作劇本（序章＋第 1–9 章＋終章＋終章後＋勢力中篇）
+│   └── tools/ · tests/                        # 資料驗證與自動測試
+│
 ├── tools/
 │   └── build_vellora.js                       # 由內容產生 Word 檔的 docx-js 腳本
 │
@@ -327,6 +351,8 @@ VoynichWorld/
 | 世界觀設定全文 | [`docs/Vellora_WorldBible_v0.1.md`](docs/Vellora_WorldBible_v0.1.md) |
 | 全角色、動植物、星球、地貌與氣候 IP 設定 | [`ip-bible/README.md`](ip-bible/README.md) |
 | 12 張珂潾世界互動文章插畫 | [`ip-bible/09-korin-article-illustrations.md`](ip-bible/09-korin-article-illustrations.md) |
+| 玩網頁 RPG 序章 | [`web-rpg/index.html`](web-rpg/index.html)（下載後用瀏覽器開）· 說明見 [`web-rpg/README.md`](web-rpg/README.md) |
+| 讀全作 109 小時的遊戲劇本 | [`web-rpg/docs/script/`](web-rpg/docs/script/) |
 | 可列印的 PDF | [`guide/伏尼契手稿中文導讀_第一版.pdf`](guide/) |
 
 ### 在本機跑起來
@@ -342,13 +368,14 @@ cd VoynichWorld
 python3 -m http.server 8000
 # 章節導讀：http://localhost:8000/guide/
 # 逐頁圖版：http://localhost:8000/guide-full/
+# 網頁 RPG：http://localhost:8000/web-rpg/
 ```
 
 ### 發佈成網站
 
 倉庫本身就是純靜態內容，可直接開 GitHub Pages：
 **Settings → Pages → Source: Deploy from a branch → `main` / `/ (root)`**，
-發佈後即可透過 `/guide/` 與 `/guide-full/` 存取。
+發佈後即可透過 `/guide/`、`/guide-full/` 與 `/web-rpg/` 存取。
 
 ---
 
@@ -390,7 +417,9 @@ node build_vellora.js     # 在目前目錄產生 薇蘿世界設定聖經_v0.1.
 - [x] **2026-11** 設定聖經第十三章增補「散葉與錯裝」：記脈院葉帖制，把 2026 頁序錯裝研究接入正典
 - [ ] **植物圖鑑**：把手稿植物逐頁重畫為「拼裝體」條目，做成可收集的偽手稿圖版
 - [ ] **逐隻動物設定畫冊**：由 v0.2 角色板擴成多姿態、生命階段與棲地頁
-- [ ] **遊戲核心玩法文件**：「嚐味診斷」機制、探索循環、多結局分支
+- [x] **2026-11** 網頁 RPG《薇蘿：葉帖紀行》：序章〈味變〉可玩版（約 1 小時）、企劃總綱與全作 109 小時劇本
+- [x] **遊戲核心玩法文件**：「嚐味診斷」機制、探索循環、多結局分支（見 `web-rpg/docs/00-master-outline.md`）
+- [ ] 網頁 RPG 第 1 章起的實作（劇本已備）
 - [ ] **序章短篇小說**（由設定聖經序章擴寫）
 - [ ] **conlang（織脈者文字）** 的多通道書寫系統原型
 
