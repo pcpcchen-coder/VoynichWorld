@@ -33,6 +33,9 @@
     F.cameraTo = cameraTo;
     F.snapCamera = function () { snapVisuals(); cam.tween = null; cam.override = null; updateFocus(0, true); };
     F.render = function () {};
+    // 對話時鏡頭靠近說話的兩人
+    var baseInteract = F.interactWith;
+    F.interactWith = function (e) { var r = baseInteract(e); if (r && (e.type === 'npc' || e.type === 'encounter')) cam.talk = e; return r; };
   };
 
   // ======================= 載入地圖 =======================
@@ -199,6 +202,12 @@
       return;
     }
     goal = cam.override || playerFocus();
+    var talking = !cam.override && cam.talk && F.busy && V.dialogue.active() && cam.talk.visible;
+    if (talking) {
+      var tp = lpos(cam.talk);
+      goal = goal.clone(); goal.x = (goal.x + tp.x) / 2; goal.z = (goal.z + tp.y) / 2;
+    } else if (!F.busy) cam.talk = null;
+    cam.closeK = (cam.closeK || 0) + ((talking ? 1 : 0) - (cam.closeK || 0)) * Math.min(1, dt * 3);
     if (snap) cam.focus.copy(goal); else cam.focus.lerp(goal, 1 - Math.exp(-8 * dt));
   }
   function placeCamera(dt) {
@@ -209,7 +218,7 @@
       cam.pitch = U.clamp(cam.pitch + c.dy * 0.003, 0.28, 1.3);
       cam.zoomK = U.clamp(cam.zoomK + c.zoom * 0.08, 0.55, 1.5);
     }
-    var dist = (cam.baseDist || 9.5) * cam.zoomK;
+    var dist = (cam.baseDist || 9.5) * cam.zoomK * (1 - 0.3 * (cam.closeK || 0));
     if (V.r3d.h > V.r3d.w) dist *= 1.25;   // 直向畫面看得到的左右範圍較窄，拉遠一點
     var f = cam.focus, hd = Math.cos(cam.pitch) * dist;
     camera.position.set(f.x + Math.sin(cam.yaw) * hd, f.y + Math.sin(cam.pitch) * dist, f.z + Math.cos(cam.yaw) * hd);

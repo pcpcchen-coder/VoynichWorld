@@ -203,6 +203,16 @@
 
 本子專案的新增內容屬 C 層製作提案（僅限本遊戲的改編），不回寫 `ip-bible/`，與 `roblox-game/` 互相獨立。
 
+#### 3D 版
+
+[`web-rpg-3d/`](web-rpg-3d/) 是同一款遊戲的 **3D 版**，進度與 2D 版相同（序章〈味變〉完整可玩）。
+第三人稱、可旋轉的斜上視角，在立體的霧階池站、階梯溫泉池、活土地表、脈橋與橋腹導管洞之間探索；遭遇是 3D 的嚐味診療現場。
+雙擊 [`web-rpg-3d/index.html`](web-rpg-3d/index.html) 就能玩（需要 WebGL；`file://` 可用），鍵盤／滑鼠與觸控（類比搖桿、拖曳轉鏡頭）皆可，有高／低畫質設定。
+
+- 3D 版**不複製**劇情與規則：直接載入 `web-rpg/` 的同一批資料檔與引擎模組，只替換場景呈現、移動與鏡頭、輸入與遭遇現場，所以兩版的內容逐字相同、存檔可以互讀。
+- 場景、人物、生物、建物全部以程式生成（three.js r170，已放進倉庫 `web-rpg-3d/vendor/`，MIT）。
+- 說明見 [`web-rpg-3d/README.md`](web-rpg-3d/README.md)，技術文件見 [`web-rpg-3d/docs/TECH.md`](web-rpg-3d/docs/TECH.md)。
+
 ### 設定聖經內容（20 頁 / 16 章）
 
 完整內容見 **[`docs/Vellora_WorldBible_v0.1.md`](docs/Vellora_WorldBible_v0.1.md)**（可在 GitHub 直接閱讀），
@@ -325,6 +335,13 @@ VoynichWorld/
 │   ├── docs/script/                           # 全作劇本（序章＋第 1–9 章＋終章＋終章後＋勢力中篇）
 │   └── tools/ · tests/                        # 資料驗證與自動測試
 │
+├── web-rpg-3d/                                # 同一款遊戲的 3D 版（共用 web-rpg/ 的引擎與資料）
+│   ├── index.html                             # 3D 版入口（序章〈味變〉可玩）
+│   ├── js/ · css/ · assets/                   # 3D 呈現層、版面、圖檔
+│   ├── vendor/three.min.js                    # three.js r170（MIT），打包成可在 file:// 載入的 IIFE
+│   ├── docs/TECH.md · docs/NOTES.md           # 技術文件、與劇本／2D 版的出入
+│   └── tests/ · tools/                        # 3D 測試、three.js 打包設定
+│
 ├── tools/
 │   └── build_vellora.js                       # 由內容產生 Word 檔的 docx-js 腳本
 │
@@ -352,6 +369,7 @@ VoynichWorld/
 | 全角色、動植物、星球、地貌與氣候 IP 設定 | [`ip-bible/README.md`](ip-bible/README.md) |
 | 12 張珂潾世界互動文章插畫 | [`ip-bible/09-korin-article-illustrations.md`](ip-bible/09-korin-article-illustrations.md) |
 | 玩網頁 RPG 序章 | [`web-rpg/index.html`](web-rpg/index.html)（下載後用瀏覽器開）· 說明見 [`web-rpg/README.md`](web-rpg/README.md) |
+| 玩網頁 RPG 序章（3D 版） | [`web-rpg-3d/index.html`](web-rpg-3d/index.html)（需要 WebGL；整個倉庫下載後用瀏覽器開）· 說明見 [`web-rpg-3d/README.md`](web-rpg-3d/README.md) |
 | 讀全作 109 小時的遊戲劇本 | [`web-rpg/docs/script/`](web-rpg/docs/script/) |
 | 可列印的 PDF | [`guide/伏尼契手稿中文導讀_第一版.pdf`](guide/) |
 
@@ -369,13 +387,14 @@ python3 -m http.server 8000
 # 章節導讀：http://localhost:8000/guide/
 # 逐頁圖版：http://localhost:8000/guide-full/
 # 網頁 RPG：http://localhost:8000/web-rpg/
+# 網頁 RPG 3D 版：http://localhost:8000/web-rpg-3d/
 ```
 
 ### 發佈成網站
 
 倉庫本身就是純靜態內容，可直接開 GitHub Pages：
 **Settings → Pages → Source: Deploy from a branch → `main` / `/ (root)`**，
-發佈後即可透過 `/guide/`、`/guide-full/` 與 `/web-rpg/` 存取。
+發佈後即可透過 `/guide/`、`/guide-full/`、`/web-rpg/` 與 `/web-rpg-3d/` 存取。
 
 ---
 

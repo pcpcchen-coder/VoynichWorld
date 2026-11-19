@@ -121,7 +121,7 @@
   // ======================= 水面 =======================
   function waterMaterial(chasm) {
     var u = THREE.UniformsUtils.merge([THREE.UniformsLib.fog, {
-      time: { value: 0 }, deep: { value: new THREE.Color(chasm ? '#0b2430' : '#0f3a44') }, shallow: { value: new THREE.Color('#1f706c') },
+      time: { value: 0 }, deep: { value: new THREE.Color(chasm ? '#0b2430' : '#0a3640') }, shallow: { value: new THREE.Color('#17625f') },
       glow: { value: new THREE.Color('#73D6D0') }, sky: { value: new THREE.Color('#e88a4a') }, fancy: { value: 1 }
     }]);
     return new THREE.ShaderMaterial({
@@ -139,13 +139,13 @@
         'float n(vec2 p){ vec2 i=floor(p), f=fract(p); f=f*f*(3.0-2.0*f); return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+vec2(1,1)),f.x),f.y); }',
         'void main(){',
         '  vec2 p = vW.xz;',
-        '  float w = n(p * 1.3 + vec2(time * 0.15, time * 0.11)) * 0.5 + n(p * 3.1 - vec2(time * 0.21, time * 0.07)) * 0.5;',
+        '  float w = n(p * 1.7 + vec2(time * 0.15, time * 0.11)) * 0.5 + n(p * 3.9 - vec2(time * 0.21, time * 0.07)) * 0.5;',
         '  if (vD < 0.0) discard; float dn = clamp(vD / 0.75, 0.0, 1.0); vec3 c = mix(shallow, deep, dn);',
         '  vec3 V = normalize(cameraPosition - vW); float fr = pow(1.0 - max(V.y, 0.0), 3.0);',
-        '  c = mix(c, sky, fr * 0.45 + w * 0.06);',
-        '  float caust = smoothstep(0.62, 0.72, w) * (1.0 - dn) * 0.35;',
+        '  c = mix(c, sky, fr * 0.4);',
+        '  float caust = (smoothstep(0.46, 0.5, w) - smoothstep(0.5, 0.54, w)) * (0.55 - dn * 0.3);',
         '  c += glow * caust;',
-        '  if (fancy > 0.5) { float sp = step(0.985, h(floor(p * 9.0))) * (0.5 + 0.5 * sin(time * 2.0 + h(floor(p * 9.0) + 3.0) * 30.0)); c += glow * sp * 0.9; }',
+        '  if (fancy > 0.5) { vec2 cell = floor(p * 6.0); vec2 f = fract(p * 6.0) - 0.5; float on = step(0.97, h(cell)); float sp = on * smoothstep(0.18, 0.0, length(f)) * (0.5 + 0.5 * sin(time * 2.0 + h(cell + 3.0) * 30.0)); c += glow * sp * 1.2; }',
         '  float a = (mix(0.42, 0.88, dn) + fr * 0.1) * smoothstep(0.0, 0.06, vD); c += vec3(0.75, 0.95, 0.9) * (1.0 - smoothstep(0.0, 0.07, vD)) * 0.6;',
         '  gl_FragColor = vec4(c, a);',
         '  #include <tonemapping_fragment>',
@@ -274,7 +274,7 @@
         // 岩崖：離可走區越遠越高，外圍再緩緩抬升
         var k = U.clamp(best / 0.85, 0, 1); k = k * k * (3 - 2 * k);
         var lowRow = cfg.lowRows && cfg.lowRows.some(function (r) { return py >= r[0] && py < r[1] + 1 && px > 1 && px < pm.w - 1; });
-        hgt = lowRow ? base + (wsum ? hsum / wsum * (1 - k) : 0) + k * (0.35 + nz * 0.15) : base + (wsum ? hsum / wsum * (1 - k) : 0) + k * (cliff + nz * 0.8) + Math.max(0, best - 1.5) * (cfg.kind === 'cave' ? 0.12 : 0.55) + (cfg.kind === 'cave' ? 0 : Math.max(0, best - 5) * 0.4);
+        hgt = lowRow ? base + (wsum ? hsum / wsum * (1 - k) : 0) + k * (0.35 + nz * 0.15) : base + (wsum ? hsum / wsum * (1 - k) : 0) + k * (cliff + nz * 0.8) + Math.max(0, best - 1.5) * (cfg.kind === 'cave' ? 0.12 : 0.3) + (cfg.kind === 'cave' ? 0 : Math.max(0, best - 7) * 0.25);
         if (cfg.kind === 'outdoor' && best > 1.2) hgt += Math.sin(px * 0.35) * Math.cos(py * 0.3) * 0.8 * Math.min(1, (best - 1.2) / 3);
         var steep = U.clamp(k * 1.6 - 0.2, 0, 1);
         c.copy(rockC).multiplyScalar(0.8 + nz * 0.4);
@@ -856,7 +856,7 @@
     W.sky.material.uniforms.time.value = t;
     W.sky.position.copy(camera.position);
     if (W.waterMat) { W.waterMat.uniforms.time.value = t; W.waterMat.uniforms.fancy.value = V.quality.level === 'high' ? 1 : 0; }
-    if (W.chasmMat) W.chasmMat.uniforms.time.value = t;
+    if (W.chasmMat) { W.chasmMat.uniforms.time.value = t; W.chasmMat.uniforms.fancy.value = 0; }
     var su = W.spores.material.uniforms;
     su.time.value = t; su.center.value.set(focus.x, focus.y, focus.z); su.scale.value = V.r3d.h * 0.5;
     // 太陽與陰影框跟著焦點

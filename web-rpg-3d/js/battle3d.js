@@ -189,6 +189,12 @@
     var W = V.r3d.w, H = V.r3d.h;
     camera.aspect = W / H;
     var stEl = st.el && st.el.querySelector('.b-stage'), rect = stEl ? stEl.getBoundingClientRect() : null;
+    // 直向：資訊欄疊在舞台上方，對象要放在資訊欄下面露出的那一塊
+    var infoEl = st.el && st.el.querySelector('.b-info');
+    if (rect && infoEl) {
+      var ir = infoEl.getBoundingClientRect();
+      if (ir.bottom > rect.top && ir.top <= rect.top + 4 && ir.left <= rect.left + 4 && ir.bottom < rect.bottom - 40) rect = { left: rect.left, top: ir.bottom, width: rect.width, height: rect.bottom - ir.bottom, bottom: rect.bottom };
+    }
     var fy = cur.cr.focusY * cur.big, fit = Math.max(1.2, cur.cr.height * cur.big * 1);
     var rh = rect && rect.height > 20 ? rect.height : H * 0.6;
     // 讓對象約佔舞台高度的六成

@@ -31,19 +31,21 @@ const top = async () => { const u = await q(() => window.__vellora.ui()); return
 
 // 清單游標：按方向鍵直到選中 data-id（或文字）符合的項目，再按 Z
 async function chooseItem(want, scope) {
-  for (let i = 0; i < 16; i++) {
+  for (let i = 0; i < 20; i++) {
     const st = await q((a) => {
       const els = Array.from(document.querySelectorAll((a.scope || '') + ' button.li')).filter((e) => e.offsetParent !== null);
       const sel = els.findIndex((e) => e.classList.contains('sel'));
       const idx = typeof a.want === 'number' ? a.want : els.findIndex((e) => e.getAttribute('data-id') === a.want || e.textContent.indexOf(a.want) >= 0);
-      return { sel, idx, n: els.length };
+      if (idx < 0 || sel < 0) return { sel, idx };
+      const r1 = els[sel].getBoundingClientRect(), r2 = els[idx].getBoundingClientRect();
+      return { sel, idx, dy: Math.round(r2.top - r1.top), dx: Math.round(r2.left - r1.left) };
     }, { want, scope });
     if (st.idx < 0) throw new Error('清單裡找不到「' + want + '」');
     if (st.sel === st.idx) { await press('KeyZ'); return; }
-    await press(st.sel < st.idx ? 'ArrowDown' : 'ArrowUp');
-    // 兩欄清單：上下移不動時改左右
-    const st2 = await q((sc) => Array.from(document.querySelectorAll((sc || '') + ' button.li')).filter((e) => e.offsetParent !== null).findIndex((e) => e.classList.contains('sel')), scope);
-    if (st2 === st.sel) await press(st.sel < st.idx ? 'ArrowRight' : 'ArrowLeft');
+    // 依畫面上的位置決定方向鍵（兩欄的指令選單也適用）
+    if (st.sel < 0) await press('ArrowDown');
+    else if (Math.abs(st.dy) > 4) await press(st.dy > 0 ? 'ArrowDown' : 'ArrowUp');
+    else await press(st.dx > 0 ? 'ArrowRight' : 'ArrowLeft');
   }
   throw new Error('游標移不到「' + want + '」');
 }
@@ -81,7 +83,7 @@ async function solveBattle() {
       await chooseItem('taste', '.battle'); await sleep(200);
       await chooseItem(view.low && view.load < 60 ? 'taste:low' : 'taste:high', '.battle');
     } else if (front === '腥' && view.clear) await chooseItem('clear', '.battle');
-    else if (front && front !== '甜' && view.meds[front]) { await chooseItem('treat', '.battle'); await sleep(200); await chooseItem(view.meds[front], '.battle'); }
+    else if (front && front !== '甜' && view.meds[front]) { await chooseItem('treat', '.battle'); await sleep(200); await chooseItem('treat:' + view.meds[front], '.battle'); }
     else await chooseItem('guard', '.battle');
     await sleep(600);
   }
