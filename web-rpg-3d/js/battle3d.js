@@ -89,6 +89,7 @@
     var big = spec.shape === 'beast' ? 0.8 : st.def.rank === 'mid' ? 1.05 : 1.55;
     cr.root.scale.multiplyScalar(big);
     stage.add(cr.root);
+    if (spec.shape === 'beast') cr.root.rotation.y = 0.55;   // 首領斜側身，看得到拱背與背上的花園
     // 珂潾（背影，在鏡頭前方左側）
     var ps = (V.data.start && V.data.start.sprite) || {};
     var kor = M.character(ps, { player: true });
@@ -155,7 +156,7 @@
     for (var k in fxState) fxState[k] = Math.max(0, fxState[k] - raw * 1.6);
     cur.cr.update(raw, t, { wild: wild, calm: cur.calm, hurt: fxState.hurt, good: fxState.good });
     cur.cr.root.position.x = fxState.shuffle ? Math.sin(t * 40) * 0.08 * fxState.shuffle : 0;
-    cur.cr.root.rotation.y = fxState.shuffle * 2.5;
+    cur.cr.root.rotation.y = (cur.st.def.sprite && cur.st.def.sprite.shape === 'beast' ? 0.55 : 0) + fxState.shuffle * 2.5;
     cur.kor.update(raw, 0, t);
     cur.kor.armR.rotation.x = -0.6 - fxState.guard * 0.6; cur.kor.armL.rotation.x = -0.3 - fxState.guard * 0.8;
     cur.shield.material.opacity = (st.guard ? 0.12 : 0) + fxState.guard * 0.25;
@@ -195,7 +196,7 @@
     var sway = Math.sin(t * 0.25) * 0.15;
     camera.position.set(0.15 * d + sway, fy + d * 0.28, d);
     camera.lookAt(0, fy * 0.9, 0);
-    var kz = Math.min(0.55 * d, d - 2.6), kx = -0.1 * kz - 0.35; cur.kor.root.position.set(kx, 0, kz); cur.shield.position.set(kx, 0.7, kz);
+    var kz = Math.min(0.42 * d, d - 3.4), kx = -0.12 * kz - 0.45; cur.kor.root.position.set(kx, 0, kz); cur.shield.position.set(kx, 0.7, kz);
     if (rect && rect.width > 20 && rect.height > 20) {
       var cx = rect.left + rect.width / 2, cy = rect.top + rect.height / 2;
       camera.setViewOffset(W, H, W / 2 - cx, H / 2 - cy, W, H);

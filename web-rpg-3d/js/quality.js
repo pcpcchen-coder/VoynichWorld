@@ -84,10 +84,12 @@
     R.applyQuality();
     return true;
   };
+  // 網址 ?scale=0.5：渲染解析度倍率（只給自動化測試用，軟體繪圖下加快速度）
+  R.scale = Math.max(0.25, Math.min(1, parseFloat((/[?&]scale=([0-9.]+)/.exec(location.search) || [])[1]) || 1));
   R.applyQuality = function () {
     var p = PRESETS[Q.level], r = R.renderer; if (!r) return;
     r.shadowMap.enabled = p.shadows;
-    r.setPixelRatio(Math.min(window.devicePixelRatio || 1, p.pixelRatio) * (Q.level === 'low' && (window.devicePixelRatio || 1) <= 1 ? 0.85 : 1));
+    r.setPixelRatio(R.scale * Math.min(window.devicePixelRatio || 1, p.pixelRatio) * (Q.level === 'low' && (window.devicePixelRatio || 1) <= 1 ? 0.85 : 1));
     r.setSize(R.w, R.h, false);
   };
   R.resize = function (w, h) {

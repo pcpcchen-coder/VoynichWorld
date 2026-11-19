@@ -15,7 +15,7 @@ const IS3D = process.env.VELLORA_3D === '1';
 const ROOT = IS3D ? path.resolve(__dirname, '..', '..', 'web-rpg-3d') : path.resolve(__dirname, '..');
 const OUT = IS3D ? path.join(ROOT, 'tests', 'out') : path.join(__dirname, 'out');
 fs.mkdirSync(OUT, { recursive: true });
-const URL_BASE = 'file://' + path.join(ROOT, 'index.html') + '?debug=1&speed=4' + (IS3D ? '&quality=' + (process.env.VELLORA_QUALITY || 'low') : '');
+const URL_BASE = 'file://' + path.join(ROOT, 'index.html') + '?debug=1&speed=4' + (IS3D ? '&quality=' + (process.env.VELLORA_QUALITY || 'low') + '&scale=' + (process.env.VELLORA_SCALE || '0.5') : '');
 const errors = [];
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 let page, shotNo = 0;
@@ -88,7 +88,7 @@ async function drive(opts) {
   const queue = (opts.choices || []).slice();
   const t0 = Date.now();
   let idle = 0;
-  while (Date.now() - t0 < (opts.ms || 90000)) {
+  while (Date.now() - t0 < (opts.ms || 90000) * (IS3D ? 3 : 1)) {
     const s = await info();
     const top = s.ui[s.ui.length - 1];
     if (top === 'ending') return 'ending';

@@ -11,3 +11,4 @@ node_modules/
 # 預設不追蹤 PDF，但保留已發布的導讀 PDF
 *.pdf
 !guide/*.pdf
+web-rpg-3d/tests/out/

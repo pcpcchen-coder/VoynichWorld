@@ -205,7 +205,7 @@
     var c = X.takeCam();
     var free = V.scene === 'field' && !V.ui.has('battle');
     if (free) {
-      cam.yaw -= c.dx * 0.006 + X.keysRot * dt * 1.8 / Math.max(0.25, V.runtime.speed);
+      cam.yaw -= c.dx * 0.006 + X.keysRot * dt * 1.8;
       cam.pitch = U.clamp(cam.pitch + c.dy * 0.003, 0.28, 1.3);
       cam.zoomK = U.clamp(cam.zoomK + c.zoom * 0.08, 0.55, 1.5);
     }

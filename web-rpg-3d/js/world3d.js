@@ -166,6 +166,7 @@
     var cfg = W.cfg = L.get(mapRt.id, tone);
     W.tone = tone;
     W.sporeDensity = (mapRt.def.particles && mapRt.def.particles.spores != null) ? Math.min(1.6, mapRt.def.particles.spores / 16) : ({ dusk: 1.4, cave: 1, dawn: 1, day: 0.6, indoor: 0, wither: 0.25 }[tone] || 0.6);
+    SUB = V.quality.level === 'low' ? 2 : 4;   // 低畫質：地形網格減為四分之一
     buildTerrain(pm, cfg);
     buildWater(pm, cfg);
     buildDecor(pm, cfg);
@@ -237,7 +238,7 @@
 
     var pos = new Float32Array(nx * ny * 3), colr = new Float32Array(nx * ny * 3), uv = new Float32Array(nx * ny * 2);
     var hts = W.hgrid = new Float32Array(nx * ny);
-    W.hinfo = { x0: x0, y0: y0, nx: nx, ny: ny };
+    W.hinfo = { x0: x0, y0: y0, nx: nx, ny: ny, sub: SUB };
     var c = new THREE.Color(), acc = new THREE.Color(), rockC = new THREE.Color(cfg.rock || (cfg.kind === 'cave' ? '#6a6680' : '#5e5a68')), mossTop = new THREE.Color(cfg.kind === 'cave' ? '#242a3a' : '#2d3a56');
     var U = V.util;
     for (var vy = 0; vy < ny; vy++) for (var vx = 0; vx < nx; vx++) {
@@ -314,7 +315,7 @@
   // 地形高度（連續座標，單位：格）；雙線性取樣
   W.groundHeight = function (x, y) {
     var I = W.hinfo; if (!I) return 0;
-    var fx = (x - I.x0) * SUB, fy = (y - I.y0) * SUB;
+    var fx = (x - I.x0) * I.sub, fy = (y - I.y0) * I.sub;
     var ix = Math.max(0, Math.min(I.nx - 2, Math.floor(fx))), iy = Math.max(0, Math.min(I.ny - 2, Math.floor(fy)));
     var tx = Math.max(0, Math.min(1, fx - ix)), ty = Math.max(0, Math.min(1, fy - iy));
     var H = W.hgrid, n = I.nx;
