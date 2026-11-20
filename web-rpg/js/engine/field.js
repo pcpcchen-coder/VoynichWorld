@@ -294,17 +294,26 @@
   F.interact = function () {
     var p = F.player, v = V.DIRS[p.dir];
     var cands = F.entsAt(p.x + v.x, p.y + v.y).concat(F.entsAt(p.x, p.y));
-    for (var i = 0; i < cands.length; i++) {
-      var e = cands[i];
-      if (e.type === 'npc') { talk(e); return true; }
-      if (e.type === 'object') { F.script(function () { return useObject(e); }); return true; }
-      if (e.type === 'encounter') {
-        if (!e.done && e.def.dialogue) { talk(e); return true; }   // 擴充：遭遇實體可先播對話（對話裡用 ['engage', 實體id] 開始）
-        if (!e.done) { startEncounter(e, false); return true; }
-        var calm = e.def.calm || (V.data.encounters[e.def.encounter] || {}).calmText;
-        if (calm) { F.script(function () { return V.dialogue.lines(calm); }); return true; }
-      }
+    for (var i = 0; i < cands.length; i++) if (F.interactWith(cands[i])) return true;
+    return false;
+  };
+  // 與單一實體互動（2D 版由 F.interact 依面向挑選；3D 版由呈現層依距離挑選後直接呼叫）
+  F.interactWith = function (e) {
+    if (e.type === 'npc') { talk(e); return true; }
+    if (e.type === 'object') { F.script(function () { return useObject(e); }); return true; }
+    if (e.type === 'encounter') {
+      if (!e.done && e.def.dialogue) { talk(e); return true; }   // 擴充：遭遇實體可先播對話（對話裡用 ['engage', 實體id] 開始）
+      if (!e.done) { startEncounter(e, false); return true; }
+      var calm = e.def.calm || (V.data.encounters[e.def.encounter] || {}).calmText;
+      if (calm) { F.script(function () { return V.dialogue.lines(calm); }); return true; }
     }
+    return false;
+  };
+  // 能否互動（3D 版用來顯示互動提示）
+  F.canInteract = function (e) {
+    if (!e || !e.visible) return false;
+    if (e.type === 'npc' || e.type === 'object') return true;
+    if (e.type === 'encounter') return !e.done || !!(e.def.calm || (V.data.encounters[e.def.encounter] || {}).calmText);
     return false;
   };
   function talk(e) {
@@ -388,6 +397,10 @@
       }
     } finally { F.busy--; F.refresh(); }
   };
+
+  // 供其他呈現層（web-rpg-3d）重用的內部流程；2D 版本身不需要
+  F._internal = { onPlayerStep: onPlayerStep, updateActor: updateActor, startStep: startStep, checkEncounters: checkEncounters,
+    waterFree: waterFree, PLAYER_SPEED: PLAYER_SPEED };
 
   // ======================= 鏡頭／粒子 =======================
   var view = { w: 320, h: 180 };

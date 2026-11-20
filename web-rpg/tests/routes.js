@@ -18,11 +18,13 @@ const fs = require('fs');
 const { execFileSync } = require('child_process');
 const { chromium } = require('playwright');
 
-const ROOT = path.resolve(__dirname, '..');
-const OUT = path.join(__dirname, 'out');
+// VELLORA_3D=1：改測 3D 版（web-rpg-3d/），同一套流程；走路改成按住直到走進下一格（3D 版是連續移動）
+const IS3D = process.env.VELLORA_3D === '1';
+const ROOT = IS3D ? path.resolve(__dirname, '..', '..', 'web-rpg-3d') : path.resolve(__dirname, '..');
+const OUT = IS3D ? path.join(ROOT, 'tests', 'out') : path.join(__dirname, 'out');
 const CK = path.join(OUT, 'ckpt');
 fs.mkdirSync(OUT, { recursive: true });
-const URL_BASE = 'file://' + path.join(ROOT, 'index.html') + '?debug=1&speed=4';
+const URL_BASE = 'file://' + path.join(ROOT, 'index.html') + '?debug=1&speed=4' + (IS3D ? '&quality=' + (process.env.VELLORA_QUALITY || 'low') + '&scale=' + (process.env.VELLORA_SCALE || '0.5') : '');
 const ST = 'map.miststep.station', SH = 'map.miststep.sheds', TE = 'map.miststep.terrace',
   UP = 'map.miststep.conduit_upper', LO = 'map.miststep.conduit_lower';
 const Q = 'quest.main.p0_taste_shift';
@@ -41,8 +43,29 @@ async function waitFor(fn, arg, ms, what) {
   throw new Error('等待逾時：' + (what || fn.toString()));
 }
 async function key(k) { await page.keyboard.press(k); await sleep(60); }
+// 3D：按住方向鍵直到走進下一格並接近格心（真實鍵盤輸入）；進入傳送點或觸發劇情就停
+async function walk3d(k, n) {
+  await q(() => window.__vellora.speed(1));
+  for (let i = 0; i < n; i++) {
+    const a = await q(() => window.__vellora.player());
+    await page.keyboard.down(k);
+    const t0 = Date.now();
+    while (Date.now() - t0 < 5000) {
+      await sleep(25);
+      const b = await q(() => { const p = window.__vellora.player(), c = window.__vellora.p3 ? window.__vellora.p3() : null; return { p: p, c: c, busy: window.__vellora.busy() }; });
+      if (!b.p || b.p.map !== a.map) break;
+      if (b.p.x !== a.x || b.p.y !== a.y) {
+        if (b.busy) break;
+        if (!b.c || (Math.abs(b.c.fx - (b.p.x + 0.5)) < 0.18 && Math.abs(b.c.fy - (b.p.y + 0.5)) < 0.18)) break;
+      }
+    }
+    await page.keyboard.up(k); await sleep(120); await waitIdleMove();
+  }
+  await q(() => window.__vellora.speed(4));
+}
 async function waitIdleMove() { for (let i = 0; i < 40; i++) { const p = await q(() => window.__vellora.player()); if (p && !p.moving) return; await sleep(40); } }
 async function walk(k, n) {
+  if (IS3D) return walk3d(k, n);
   await q(() => window.__vellora.speed(1));
   for (let i = 0; i < n; i++) { await page.keyboard.down(k); await sleep(60); await page.keyboard.up(k); await sleep(120); await waitIdleMove(); }
   await q(() => window.__vellora.speed(4));
@@ -78,7 +101,7 @@ async function drive(opts) {
   const queue = (opts.choices || []).slice();
   const t0 = Date.now();
   let idle = 0;
-  while (Date.now() - t0 < (opts.ms || 90000)) {
+  while (Date.now() - t0 < (opts.ms || 90000) * (IS3D ? 3 : 1)) {
     const s = await info();
     const top = s.ui[s.ui.length - 1];
     if (top === 'ending') return 'ending';

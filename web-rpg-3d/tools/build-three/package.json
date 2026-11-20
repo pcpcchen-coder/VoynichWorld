@@ -1,0 +1,9 @@
+{
+  "name": "vellora-3d-three-build",
+  "private": true,
+  "description": "把 three.js 打包成可在 file:// 以傳統 <script> 載入的單一 IIFE（window.THREE）。只在更新 vendor/three.min.js 時需要。",
+  "scripts": {
+    "build": "esbuild entry.js --bundle --format=iife --global-name=THREE --minify --legal-comments=inline --banner:js=\"/*! three.js r170 (MIT License, Copyright 2010-2024 three.js authors) — 由 web-rpg-3d/tools/build-three 以 esbuild 打包為 IIFE */\" --outfile=../../vendor/three.min.js"
+  },
+  "devDependencies": { "three": "0.170.0", "esbuild": "0.24.0" }
+}

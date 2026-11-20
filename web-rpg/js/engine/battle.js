@@ -261,11 +261,13 @@
   function fx(cls, ms) {
     var st = B.st, el = st.el;
     el.classList.remove(cls); void el.offsetWidth; el.classList.add(cls);
+    V.emit('battle:fx', cls);   // 其他呈現層（web-rpg-3d）據此播放 3D 特效
     V.timers.add(ms || 600, function () { el.classList.remove(cls); });
   }
   function drop(color) {
     var st = B.st, d = UI.el('span', 'b-drop'); d.style.background = color;
     st.q('.b-fx').appendChild(d);
+    V.emit('battle:drop', color);
     V.timers.add(800, function () { if (d.parentNode) d.parentNode.removeChild(d); });
   }
 
@@ -508,6 +510,7 @@
         if (shown === g.g) newGlyphs.push(shown);
         read.push(shown + (reliable ? '' : '？'));
         V.audio.play('taste', { glyph: shown });
+        V.emit('battle:taste', shown);
         render(); await pause(420);
       }
       log('讀出：' + read.join(' → ') + (noisy ? '　（舌頭發麻，讀值在晃）' : residue ? '　（上一口的「' + residue + '」還黏在舌根）' : ''), 'read');
